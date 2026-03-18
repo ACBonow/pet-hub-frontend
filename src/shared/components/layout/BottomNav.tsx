@@ -49,11 +49,20 @@ function SearchIcon() {
   )
 }
 
+function PersonIcon() {
+  return (
+    <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+    </svg>
+  )
+}
+
 const navItems: NavItem[] = [
   { label: 'Início', to: ROUTES.HOME, icon: <HomeIcon /> },
   { label: 'Pets', to: ROUTES.PET.LIST, icon: <PawIcon /> },
   { label: 'Adoção', to: ROUTES.ADOPTION.LIST, icon: <HeartIcon /> },
   { label: 'Achados', to: ROUTES.LOST_FOUND.LIST, icon: <SearchIcon /> },
+  { label: 'Perfil', to: ROUTES.PROFILE, icon: <PersonIcon /> },
 ]
 
 export default function BottomNav() {

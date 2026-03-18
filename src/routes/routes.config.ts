@@ -27,4 +27,5 @@ export const ROUTES = {
     CREATE: '/achados-perdidos/novo',
     DETAIL: (id: string) => `/achados-perdidos/${id}`,
   },
+  PROFILE: '/perfil',
 } as const

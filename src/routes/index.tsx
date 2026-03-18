@@ -12,6 +12,7 @@ import LoginPage from '@/modules/auth/pages/LoginPage'
 import RegisterPage from '@/modules/auth/pages/RegisterPage'
 
 const HomePage = lazy(() => import('@/pages/HomePage'))
+const ProfilePage = lazy(() => import('@/modules/person/pages/ProfilePage'))
 
 function PageLoader() {
   return (
@@ -33,6 +34,14 @@ export const router = createBrowserRouter([
         element: (
           <Suspense fallback={<PageLoader />}>
             <HomePage />
+          </Suspense>
+        ),
+      },
+      {
+        path: ROUTES.PROFILE,
+        element: (
+          <Suspense fallback={<PageLoader />}>
+            <ProfilePage />
           </Suspense>
         ),
       },
