@@ -1,0 +1,11 @@
+/* Design tokens — custom properties usadas em toda a aplicação */
+
+:root {
+  /* Spacing */
+  --spacing-bottom-nav: 4rem;
+
+  /* Z-index */
+  --z-bottom-nav: 50;
+  --z-modal: 100;
+  --z-toast: 200;
+}
