@@ -18,4 +18,13 @@ export const ROUTES = {
     CREATE: '/pets/novo',
     DETAIL: (id: string) => `/pets/${id}`,
   },
+  ADOPTION: {
+    LIST: '/adocao',
+    DETAIL: (id: string) => `/adocao/${id}`,
+  },
+  LOST_FOUND: {
+    LIST: '/achados-perdidos',
+    CREATE: '/achados-perdidos/novo',
+    DETAIL: (id: string) => `/achados-perdidos/${id}`,
+  },
 } as const
