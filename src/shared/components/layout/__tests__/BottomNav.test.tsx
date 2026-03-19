@@ -18,7 +18,7 @@ describe('BottomNav', () => {
     expect(screen.getByRole('link', { name: /início/i })).toBeInTheDocument()
     expect(screen.getByRole('link', { name: /pets/i })).toBeInTheDocument()
     expect(screen.getByRole('link', { name: /adoção/i })).toBeInTheDocument()
-    expect(screen.getByRole('link', { name: /achados/i })).toBeInTheDocument()
+    expect(screen.getByRole('link', { name: /serviços/i })).toBeInTheDocument()
   })
 
   it('should link to the correct routes', () => {
@@ -27,7 +27,7 @@ describe('BottomNav', () => {
     expect(screen.getByRole('link', { name: /início/i })).toHaveAttribute('href', '/')
     expect(screen.getByRole('link', { name: /pets/i })).toHaveAttribute('href', '/pets')
     expect(screen.getByRole('link', { name: /adoção/i })).toHaveAttribute('href', '/adocao')
-    expect(screen.getByRole('link', { name: /achados/i })).toHaveAttribute('href', '/achados-perdidos')
+    expect(screen.getByRole('link', { name: /serviços/i })).toHaveAttribute('href', '/servicos')
   })
 
   it('should have lg:hidden class for mobile-only display', () => {

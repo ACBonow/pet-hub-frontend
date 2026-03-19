@@ -30,4 +30,9 @@ export const ROUTES = {
     DETAIL: (id: string) => `/achados-perdidos/${id}`,
   },
   PROFILE: '/perfil',
+  SERVICES: {
+    LIST: '/servicos',
+    DETAIL: (id: string) => `/servicos/${id}`,
+    CREATE: '/servicos/novo',
+  },
 } as const
