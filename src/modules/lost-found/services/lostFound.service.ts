@@ -1,0 +1,23 @@
+/**
+ * @module lost-found
+ * @file lostFound.service.ts
+ * @description API calls for the lost-found module endpoints.
+ */
+
+import api from '@/shared/services/api.client'
+import type { LostFoundReport, LostFoundFilters, CreateLostFoundData } from '@/modules/lost-found/types'
+
+export async function listReportsRequest(filters?: LostFoundFilters): Promise<LostFoundReport[]> {
+  const response = await api.get<{ success: true; data: LostFoundReport[] }>('/api/v1/lost-found', { params: filters })
+  return response.data.data
+}
+
+export async function getReportRequest(id: string): Promise<LostFoundReport> {
+  const response = await api.get<{ success: true; data: LostFoundReport }>(`/api/v1/lost-found/${id}`)
+  return response.data.data
+}
+
+export async function createReportRequest(data: CreateLostFoundData): Promise<LostFoundReport> {
+  const response = await api.post<{ success: true; data: LostFoundReport }>('/api/v1/lost-found', data)
+  return response.data.data
+}
