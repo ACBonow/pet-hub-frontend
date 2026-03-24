@@ -9,6 +9,6 @@ describe('App', () => {
 
   it('should display the app content', () => {
     render(<App />)
-    expect(screen.getByText(/PetHUB/i)).toBeInTheDocument()
+    expect(screen.getAllByText(/PetHUB/i).length).toBeGreaterThan(0)
   })
 })

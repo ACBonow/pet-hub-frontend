@@ -41,7 +41,7 @@ export default function RegisterForm() {
     setApiError(null)
     try {
       await registerUser(data)
-      navigate(ROUTES.HOME)
+      navigate(`${ROUTES.AUTH.CHECK_EMAIL}?email=${encodeURIComponent(data.email)}`)
     } catch (err) {
       const error = err as ApiError
       setApiError(error.message ?? 'Erro ao cadastrar. Tente novamente.')

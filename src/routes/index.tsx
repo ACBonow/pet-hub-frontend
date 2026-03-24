@@ -2,6 +2,10 @@
  * @module routes
  * @file index.tsx
  * @description Application router configuration.
+ *
+ * PUBLIC  — accessible without authentication (PublicLayout).
+ * AUTH    — login / register pages (no layout wrapper).
+ * PRIVATE — requires authentication via PrivateRoute (AppShell).
  */
 
 import { createBrowserRouter } from 'react-router-dom'
@@ -10,10 +14,31 @@ import { ROUTES } from './routes.config'
 import PrivateRoute from './PrivateRoute'
 import LoginPage from '@/modules/auth/pages/LoginPage'
 import RegisterPage from '@/modules/auth/pages/RegisterPage'
+import CheckEmailPage from '@/modules/auth/pages/CheckEmailPage'
+import VerifyEmailPage from '@/modules/auth/pages/VerifyEmailPage'
+import ForgotPasswordPage from '@/modules/auth/pages/ForgotPasswordPage'
+import ForgotPasswordSentPage from '@/modules/auth/pages/ForgotPasswordSentPage'
+import ResetPasswordPage from '@/modules/auth/pages/ResetPasswordPage'
 
-const HomePage = lazy(() => import('@/pages/HomePage'))
-const ProfilePage = lazy(() => import('@/modules/person/pages/ProfilePage'))
+// ── PUBLIC ────────────────────────────────────────────────────────────────────
+const LandingPage = lazy(() => import('@/pages/LandingPage'))
+const AdoptionListPage = lazy(() => import('@/modules/adoption/pages/AdoptionListPage'))
+const AdoptionDetailPage = lazy(() => import('@/modules/adoption/pages/AdoptionDetailPage'))
+const LostFoundListPage = lazy(() => import('@/modules/lost-found/pages/LostFoundListPage'))
+const LostFoundDetailPage = lazy(() => import('@/modules/lost-found/pages/LostFoundDetailPage'))
 const ServicesListPage = lazy(() => import('@/modules/services-directory/pages/ServicesListPage'))
+
+// ── PRIVATE ───────────────────────────────────────────────────────────────────
+const AdoptionFormPage = lazy(() => import('@/modules/adoption/pages/AdoptionFormPage'))
+const LostFoundFormPage = lazy(() => import('@/modules/lost-found/pages/LostFoundFormPage'))
+const PetListPage = lazy(() => import('@/modules/pet/pages/PetListPage'))
+const PetFormPage = lazy(() => import('@/modules/pet/pages/PetFormPage'))
+const PetDetailPage = lazy(() => import('@/modules/pet/pages/PetDetailPage'))
+const PetHealthPage = lazy(() => import('@/modules/pet-health/pages/PetHealthPage'))
+const OrganizationListPage = lazy(() => import('@/modules/organization/pages/OrganizationListPage'))
+const OrganizationFormPage = lazy(() => import('@/modules/organization/pages/OrganizationFormPage'))
+const OrganizationDetailPage = lazy(() => import('@/modules/organization/pages/OrganizationDetailPage'))
+const ProfilePage = lazy(() => import('@/modules/person/pages/ProfilePage'))
 
 function PageLoader() {
   return (
@@ -23,37 +48,43 @@ function PageLoader() {
   )
 }
 
+function S({ children }: { children: React.ReactNode }) {
+  return <Suspense fallback={<PageLoader />}>{children}</Suspense>
+}
+
 export const router = createBrowserRouter([
+  // ── AUTH ───────────────────────────────────────────────────────────────────
   { path: ROUTES.LOGIN, element: <LoginPage /> },
   { path: ROUTES.REGISTER, element: <RegisterPage /> },
-  {
-    path: ROUTES.SERVICES.LIST,
-    element: (
-      <Suspense fallback={<PageLoader />}>
-        <ServicesListPage />
-      </Suspense>
-    ),
-  },
+  { path: ROUTES.AUTH.CHECK_EMAIL, element: <CheckEmailPage /> },
+  { path: ROUTES.AUTH.VERIFY_EMAIL, element: <VerifyEmailPage /> },
+  { path: ROUTES.AUTH.FORGOT_PASSWORD, element: <ForgotPasswordPage /> },
+  { path: ROUTES.AUTH.FORGOT_PASSWORD_SENT, element: <ForgotPasswordSentPage /> },
+  { path: ROUTES.AUTH.RESET_PASSWORD, element: <ResetPasswordPage /> },
 
+  // ── PUBLIC ─────────────────────────────────────────────────────────────────
+  { path: ROUTES.HOME,               element: <S><LandingPage /></S> },
+  { path: ROUTES.ADOPTION.LIST,      element: <S><AdoptionListPage /></S> },
+  { path: ROUTES.ADOPTION.DETAIL(':id'), element: <S><AdoptionDetailPage /></S> },
+  { path: ROUTES.LOST_FOUND.LIST,    element: <S><LostFoundListPage /></S> },
+  { path: ROUTES.LOST_FOUND.DETAIL(':id'), element: <S><LostFoundDetailPage /></S> },
+  { path: ROUTES.SERVICES.LIST,      element: <S><ServicesListPage /></S> },
+
+  // ── PRIVATE ────────────────────────────────────────────────────────────────
   {
     element: <PrivateRoute />,
     children: [
-      {
-        path: ROUTES.HOME,
-        element: (
-          <Suspense fallback={<PageLoader />}>
-            <HomePage />
-          </Suspense>
-        ),
-      },
-      {
-        path: ROUTES.PROFILE,
-        element: (
-          <Suspense fallback={<PageLoader />}>
-            <ProfilePage />
-          </Suspense>
-        ),
-      },
+      { path: ROUTES.ADOPTION.CREATE,          element: <S><AdoptionFormPage /></S> },
+      { path: ROUTES.LOST_FOUND.CREATE,        element: <S><LostFoundFormPage /></S> },
+      { path: ROUTES.PET.LIST,                 element: <S><PetListPage /></S> },
+      { path: ROUTES.PET.CREATE,               element: <S><PetFormPage /></S> },
+      { path: ROUTES.PET.DETAIL(':id'),        element: <S><PetDetailPage /></S> },
+      { path: ROUTES.PET.HEALTH(':id'),        element: <S><PetHealthPage /></S> },
+      { path: ROUTES.ORGANIZATION.LIST,        element: <S><OrganizationListPage /></S> },
+      { path: ROUTES.ORGANIZATION.CREATE,      element: <S><OrganizationFormPage /></S> },
+      { path: ROUTES.ORGANIZATION.DETAIL(':id'), element: <S><OrganizationDetailPage /></S> },
+      { path: ROUTES.ORGANIZATION.EDIT(':id'), element: <S><OrganizationFormPage /></S> },
+      { path: ROUTES.PROFILE,                  element: <S><ProfilePage /></S> },
     ],
   },
 ])

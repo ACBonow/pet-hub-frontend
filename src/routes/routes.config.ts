@@ -22,12 +22,20 @@ export const ROUTES = {
   },
   ADOPTION: {
     LIST: '/adocao',
+    CREATE: '/adocao/novo',
     DETAIL: (id: string) => `/adocao/${id}`,
   },
   LOST_FOUND: {
     LIST: '/achados-perdidos',
     CREATE: '/achados-perdidos/novo',
     DETAIL: (id: string) => `/achados-perdidos/${id}`,
+  },
+  AUTH: {
+    VERIFY_EMAIL: '/verificar-email',
+    CHECK_EMAIL: '/verificar-email/enviado',
+    FORGOT_PASSWORD: '/esqueci-senha',
+    FORGOT_PASSWORD_SENT: '/esqueci-senha/enviado',
+    RESET_PASSWORD: '/redefinir-senha',
   },
   PROFILE: '/perfil',
   SERVICES: {

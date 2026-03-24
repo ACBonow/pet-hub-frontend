@@ -121,4 +121,93 @@ describe('useAuth', () => {
       expect(result.current.isAuthenticated).toBe(true)
     })
   })
+
+  describe('verifyEmail', () => {
+    it('should delegate to verifyEmailRequest', async () => {
+      mockAuthService.verifyEmailRequest.mockResolvedValueOnce(undefined)
+      const { result } = renderHook(() => useAuth())
+      await act(async () => {
+        await result.current.verifyEmail({ token: 'tok123' })
+      })
+      expect(mockAuthService.verifyEmailRequest).toHaveBeenCalledWith({ token: 'tok123' })
+    })
+
+    it('should propagate errors from verifyEmailRequest', async () => {
+      const error = { code: 'INVALID_VERIFICATION_TOKEN', message: 'Token inválido.' }
+      mockAuthService.verifyEmailRequest.mockRejectedValueOnce(error)
+      const { result } = renderHook(() => useAuth())
+      await expect(
+        act(async () => { await result.current.verifyEmail({ token: 'bad' }) }),
+      ).rejects.toMatchObject(error)
+    })
+  })
+
+  describe('resendVerification', () => {
+    it('should delegate to resendVerificationRequest', async () => {
+      mockAuthService.resendVerificationRequest.mockResolvedValueOnce(undefined)
+      const { result } = renderHook(() => useAuth())
+      await act(async () => {
+        await result.current.resendVerification({ email: 'joao@example.com' })
+      })
+      expect(mockAuthService.resendVerificationRequest).toHaveBeenCalledWith({
+        email: 'joao@example.com',
+      })
+    })
+
+    it('should propagate errors from resendVerificationRequest', async () => {
+      const error = { code: 'SERVER_ERROR', message: 'Erro.' }
+      mockAuthService.resendVerificationRequest.mockRejectedValueOnce(error)
+      const { result } = renderHook(() => useAuth())
+      await expect(
+        act(async () => { await result.current.resendVerification({ email: 'x@x.com' }) }),
+      ).rejects.toMatchObject(error)
+    })
+  })
+
+  describe('forgotPassword', () => {
+    it('should delegate to forgotPasswordRequest', async () => {
+      mockAuthService.forgotPasswordRequest.mockResolvedValueOnce(undefined)
+      const { result } = renderHook(() => useAuth())
+      await act(async () => {
+        await result.current.forgotPassword({ email: 'joao@example.com' })
+      })
+      expect(mockAuthService.forgotPasswordRequest).toHaveBeenCalledWith({
+        email: 'joao@example.com',
+      })
+    })
+
+    it('should propagate errors from forgotPasswordRequest', async () => {
+      const error = { code: 'SERVER_ERROR', message: 'Erro.' }
+      mockAuthService.forgotPasswordRequest.mockRejectedValueOnce(error)
+      const { result } = renderHook(() => useAuth())
+      await expect(
+        act(async () => { await result.current.forgotPassword({ email: 'x@x.com' }) }),
+      ).rejects.toMatchObject(error)
+    })
+  })
+
+  describe('resetPassword', () => {
+    it('should delegate to resetPasswordRequest', async () => {
+      mockAuthService.resetPasswordRequest.mockResolvedValueOnce(undefined)
+      const { result } = renderHook(() => useAuth())
+      await act(async () => {
+        await result.current.resetPassword({ token: 'tok', newPassword: 'nova@123' })
+      })
+      expect(mockAuthService.resetPasswordRequest).toHaveBeenCalledWith({
+        token: 'tok',
+        newPassword: 'nova@123',
+      })
+    })
+
+    it('should propagate errors from resetPasswordRequest', async () => {
+      const error = { code: 'RESET_TOKEN_EXPIRED', message: 'Link expirado.' }
+      mockAuthService.resetPasswordRequest.mockRejectedValueOnce(error)
+      const { result } = renderHook(() => useAuth())
+      await expect(
+        act(async () => {
+          await result.current.resetPassword({ token: 'expired', newPassword: 'any' })
+        }),
+      ).rejects.toMatchObject(error)
+    })
+  })
 })
