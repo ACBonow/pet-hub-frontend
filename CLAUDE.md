@@ -39,9 +39,14 @@ PetHUB é um sistema web brasileiro de gerenciamento de vida do pet (petcare / s
 5. **Toda validação de CPF/CNPJ deve usar** `shared/validators/` — nunca implemente inline.
 6. **Texto voltado ao usuário deve ser em português brasileiro.** Identificadores de código são inglês.
 7. **Mobile-first:** Escreva os estilos Tailwind sem prefixo de breakpoint primeiro (mobile), depois adicione `sm:`, `md:`, `lg:` para telas maiores.
-8. **Navegação mobile é sempre BottomNav** (`shared/components/layout/BottomNav.tsx`), não menu hambúrguer.
+8. **Navegação usa dois layouts distintos — nunca misture:**
+   - `PublicLayout` (páginas públicas): `TopNav` no desktop + `BottomNav` no mobile.
+   - `AppShell` (páginas autenticadas): `Header` de página + `BottomNav` no mobile.
+   - `BottomNav` é **auth-aware**: tabs diferentes para usuários logados e não-logados.
+   - Nunca use menu hambúrguer ou sidebar — mobile é sempre `BottomNav`.
 9. **Inputs de CPF e CNPJ** devem usar os componentes compartilhados (`CpfInput.tsx`, `CnpjInput.tsx`) com `inputMode="numeric"`.
 10. **Erros de validação são exibidos inline** no campo, em português, nunca como alert/toast para erros de formulário.
+11. **Contato (email/telefone) em páginas públicas** deve sempre usar `ContactGate` (`shared/components/ui/ContactGate.tsx`) — nunca exibir dados de contato diretamente sem gate de autenticação.
 
 ---
 
@@ -133,8 +138,11 @@ Nunca hardcode URLs de API. Sempre use `import.meta.env.VITE_API_BASE_URL`.
 - Não use `fetch` ou `axios` diretamente em componentes ou hooks — use o api.client.
 - Não crie um novo componente de input para CPF/CNPJ — use os compartilhados em `shared/components/forms/`.
 - Não use `getByTestId` como primeira escolha em testes — prefira queries semânticas.
-- Não implemente navegação com sidebar no mobile — use sempre BottomNav.
+- Não implemente navegação com sidebar ou hambúrguer no mobile — use sempre BottomNav.
 - Não adicione breakpoints antes de escrever o estilo mobile base.
+- Não exiba dados de contato (email, telefone) em páginas públicas sem usar `ContactGate`.
+- Não use `AppShell` em páginas públicas — use `PublicLayout`.
+- Não use `PublicLayout` em páginas autenticadas — use `AppShell`.
 
 ---
 

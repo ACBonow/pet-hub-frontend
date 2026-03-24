@@ -7,8 +7,7 @@
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { ROUTES } from '@/routes/routes.config'
-import AppShell from '@/shared/components/layout/AppShell'
-import Header from '@/shared/components/layout/Header'
+import PublicLayout from '@/shared/components/layout/PublicLayout'
 import PageWrapper from '@/shared/components/layout/PageWrapper'
 import { useLostFound } from '@/modules/lost-found/hooks/useLostFound'
 import LostFoundCard from '@/modules/lost-found/components/LostFoundCard'
@@ -29,8 +28,10 @@ export default function LostFoundListPage() {
   }
 
   return (
-    <AppShell>
-      <Header title="Achados e Perdidos" />
+    <PublicLayout>
+      <header className="sticky top-0 z-30 bg-white border-b border-gray-200 px-4 py-4">
+        <h1 className="text-xl font-bold text-gray-900">🔍 Achados e Perdidos</h1>
+      </header>
       <PageWrapper>
         <div className="flex justify-end mb-4">
           <Link
@@ -56,6 +57,6 @@ export default function LostFoundListPage() {
           ))}
         </ul>
       </PageWrapper>
-    </AppShell>
+    </PublicLayout>
   )
 }

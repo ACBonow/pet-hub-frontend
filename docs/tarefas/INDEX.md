@@ -22,20 +22,27 @@ TASK-FE-001 → TASK-FE-002 → TASK-FE-003
                (adoption)  (lost-found) (pet-health)
                                        ↓
                               TASK-FE-011 (services-directory)
+                                       ↓
+                              TASK-FE-017 (auth service layer)
+                              ↙                  ↘
+               TASK-FE-018 (email verification)  TASK-FE-019 (password recovery)
 ```
 
 ## Tabela de Tarefas
 
-| ID           | Tarefa                             | Prioridade | Dependências                      | Status   |
-|--------------|------------------------------------|------------|-----------------------------------|----------|
-| TASK-FE-001  | Inicialização do Projeto           | Alta       | Nenhuma                           | Pendente |
-| TASK-FE-002  | Shared Layer (API Client, Layout)  | Alta       | FE-001                            | Pendente |
-| TASK-FE-003  | Validators CPF e CNPJ              | Alta       | FE-001                            | Pendente |
-| TASK-FE-004  | Módulo Auth                        | Alta       | FE-002, FE-003, BE-006            | Pendente |
-| TASK-FE-005  | Módulo Person                      | Alta       | FE-004, BE-007                    | Pendente |
-| TASK-FE-006  | Módulo Organization                | Alta       | FE-005, BE-008                    | Pendente |
-| TASK-FE-007  | Módulo Pet                         | Alta       | FE-006, BE-009                    | Pendente |
-| TASK-FE-008  | Módulo Adoption                    | Média      | FE-007, BE-010                    | Pendente |
-| TASK-FE-009  | Módulo Lost & Found                | Média      | FE-004, BE-011                    | Pendente |
-| TASK-FE-010  | Módulo Pet Health                  | Média      | FE-007, BE-012                    | Pendente |
-| TASK-FE-011  | Módulo Services Directory          | Baixa      | FE-002, BE-013                    | Pendente |
+| ID           | Tarefa                                      | Prioridade | Dependências           | Status    |
+|--------------|---------------------------------------------|------------|------------------------|-----------|
+| TASK-FE-001  | Inicialização do Projeto                    | Alta       | Nenhuma                | Concluída |
+| TASK-FE-002  | Shared Layer (API Client, Layout)           | Alta       | FE-001                 | Concluída |
+| TASK-FE-003  | Validators CPF e CNPJ                       | Alta       | FE-001                 | Concluída |
+| TASK-FE-004  | Módulo Auth                                 | Alta       | FE-002, FE-003, BE-006 | Concluída |
+| TASK-FE-005  | Módulo Person                               | Alta       | FE-004, BE-007         | Concluída |
+| TASK-FE-006  | Módulo Organization                         | Alta       | FE-005, BE-008         | Concluída |
+| TASK-FE-007  | Módulo Pet                                  | Alta       | FE-006, BE-009         | Concluída |
+| TASK-FE-008  | Módulo Adoption                             | Média      | FE-007, BE-010         | Concluída |
+| TASK-FE-009  | Módulo Lost & Found                         | Média      | FE-004, BE-011         | Concluída |
+| TASK-FE-010  | Módulo Pet Health                           | Média      | FE-007, BE-012         | Concluída |
+| TASK-FE-011  | Módulo Services Directory                   | Baixa      | FE-002, BE-013         | Concluída |
+| TASK-FE-017  | Auth Service: verify email + reset password | Alta       | FE-016, BE-014         | Pendente  |
+| TASK-FE-018  | Fluxo de verificação de email               | Alta       | FE-017                 | Pendente  |
+| TASK-FE-019  | Fluxo de recuperação de senha               | Alta       | FE-017, FE-018         | Pendente  |
