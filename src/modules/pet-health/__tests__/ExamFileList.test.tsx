@@ -8,8 +8,9 @@ import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { MemoryRouter } from 'react-router-dom'
 import ExamFileList from '@/modules/pet-health/components/ExamFileList'
+import type { ExamFile } from '@/modules/pet-health/types'
 
-const mockExamFiles = [
+const mockExamFiles: ExamFile[] = [
   {
     id: 'exam-1',
     name: 'Hemograma Completo',

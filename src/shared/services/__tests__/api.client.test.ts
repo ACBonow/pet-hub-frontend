@@ -4,7 +4,7 @@
  * @description Tests for the Axios API client — interceptors, token injection, error normalization.
  */
 
-import type { InternalAxiosRequestConfig, AxiosResponse } from 'axios'
+import type { InternalAxiosRequestConfig } from 'axios'
 import { requestInterceptor, responseErrorInterceptor, setTokenGetter, setApiBaseUrl } from '@/shared/services/api.client'
 
 describe('api.client', () => {

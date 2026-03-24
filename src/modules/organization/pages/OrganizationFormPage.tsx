@@ -11,7 +11,7 @@ import Header from '@/shared/components/layout/Header'
 import PageWrapper from '@/shared/components/layout/PageWrapper'
 import OrganizationForm from '@/modules/organization/components/OrganizationForm'
 import { useOrganization } from '@/modules/organization/hooks/useOrganization'
-import type { CreateOrganizationData } from '@/modules/organization/types'
+
 
 export default function OrganizationFormPage() {
   const navigate = useNavigate()
