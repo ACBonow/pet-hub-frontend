@@ -5,8 +5,7 @@
  */
 
 import { useEffect, useState } from 'react'
-import AppShell from '@/shared/components/layout/AppShell'
-import Header from '@/shared/components/layout/Header'
+import PublicLayout from '@/shared/components/layout/PublicLayout'
 import PageWrapper from '@/shared/components/layout/PageWrapper'
 import { useAdoption } from '@/modules/adoption/hooks/useAdoption'
 import AdoptionCard from '@/modules/adoption/components/AdoptionCard'
@@ -27,8 +26,10 @@ export default function AdoptionListPage() {
   }
 
   return (
-    <AppShell>
-      <Header title="Adoção" />
+    <PublicLayout>
+      <header className="sticky top-0 z-30 bg-white border-b border-gray-200 px-4 py-4">
+        <h1 className="text-xl font-bold text-gray-900">❤️ Adoção</h1>
+      </header>
       <PageWrapper>
         <AdoptionFiltersBar filters={filters} onChange={handleFiltersChange} />
 
@@ -45,6 +46,6 @@ export default function AdoptionListPage() {
           ))}
         </ul>
       </PageWrapper>
-    </AppShell>
+    </PublicLayout>
   )
 }

@@ -5,8 +5,24 @@
  */
 
 import { useAuthStore } from '@/modules/auth/store/authSlice'
-import { loginRequest, registerRequest, logoutRequest } from '@/modules/auth/services/auth.service'
-import type { LoginCredentials, RegisterData, AuthUser } from '@/modules/auth/types'
+import {
+  loginRequest,
+  registerRequest,
+  logoutRequest,
+  verifyEmailRequest,
+  resendVerificationRequest,
+  forgotPasswordRequest,
+  resetPasswordRequest,
+} from '@/modules/auth/services/auth.service'
+import type {
+  LoginCredentials,
+  RegisterData,
+  AuthUser,
+  VerifyEmailData,
+  ResendVerificationData,
+  ForgotPasswordData,
+  ResetPasswordData,
+} from '@/modules/auth/types'
 
 export function useAuth() {
   const { accessToken, user, isAuthenticated, setAuth, clearAuth } = useAuthStore()
@@ -29,6 +45,22 @@ export function useAuth() {
     }
   }
 
+  async function verifyEmail(data: VerifyEmailData): Promise<void> {
+    await verifyEmailRequest(data)
+  }
+
+  async function resendVerification(data: ResendVerificationData): Promise<void> {
+    await resendVerificationRequest(data)
+  }
+
+  async function forgotPassword(data: ForgotPasswordData): Promise<void> {
+    await forgotPasswordRequest(data)
+  }
+
+  async function resetPassword(data: ResetPasswordData): Promise<void> {
+    await resetPasswordRequest(data)
+  }
+
   return {
     accessToken,
     user: user as AuthUser | null,
@@ -36,5 +68,9 @@ export function useAuth() {
     login,
     register,
     logout,
+    verifyEmail,
+    resendVerification,
+    forgotPassword,
+    resetPassword,
   }
 }

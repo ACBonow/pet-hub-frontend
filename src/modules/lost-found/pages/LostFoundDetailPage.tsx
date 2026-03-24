@@ -9,6 +9,7 @@ import { useParams } from 'react-router-dom'
 import AppShell from '@/shared/components/layout/AppShell'
 import Header from '@/shared/components/layout/Header'
 import PageWrapper from '@/shared/components/layout/PageWrapper'
+import ContactGate from '@/shared/components/ui/ContactGate'
 import { useLostFound } from '@/modules/lost-found/hooks/useLostFound'
 
 export default function LostFoundDetailPage() {
@@ -63,21 +64,19 @@ export default function LostFoundDetailPage() {
               )}
             </div>
 
-            {(report.contactEmail || report.contactPhone) && (
-              <div className="bg-white rounded-[--radius-lg] border border-gray-200 p-4">
-                <p className="text-sm font-semibold text-gray-700 mb-2">Contato</p>
-                {report.contactEmail && (
-                  <p className="text-sm">
-                    <a href={`mailto:${report.contactEmail}`} className="text-[--color-primary]">
-                      {report.contactEmail}
-                    </a>
-                  </p>
-                )}
-                {report.contactPhone && (
-                  <p className="text-sm text-gray-600">{report.contactPhone}</p>
-                )}
+            <div className="bg-white rounded-[--radius-lg] border border-gray-200 p-4">
+              <p className="text-sm font-semibold text-gray-700 mb-2">Contato</p>
+              <div className="flex flex-col gap-1">
+                <ContactGate
+                  value={report.contactEmail}
+                  href={report.contactEmail ? `mailto:${report.contactEmail}` : undefined}
+                />
+                <ContactGate
+                  value={report.contactPhone}
+                  href={report.contactPhone ? `tel:${report.contactPhone}` : undefined}
+                />
               </div>
-            )}
+            </div>
           </div>
         )}
       </PageWrapper>

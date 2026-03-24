@@ -16,11 +16,15 @@ import type {
 export async function listServicesRequest(
   filters?: ServiceFilters,
 ): Promise<PaginatedServiceListings> {
-  const response = await api.get<{ success: true; data: PaginatedServiceListings }>(
-    '/api/v1/services-directory',
-    { params: filters },
-  )
-  return response.data.data
+  const response = await api.get<{
+    success: true
+    data: ServiceListing[]
+    meta: { total: number; page: number; pageSize: number }
+  }>('/api/v1/services-directory', { params: filters })
+  return {
+    data: response.data.data,
+    ...response.data.meta,
+  }
 }
 
 export async function getServiceRequest(id: string): Promise<ServiceListing> {

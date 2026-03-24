@@ -32,3 +32,8 @@ export interface AuthState {
   user: AuthUser | null
   isAuthenticated: boolean
 }
+
+export interface VerifyEmailData { token: string }
+export interface ResendVerificationData { email: string }
+export interface ForgotPasswordData { email: string }
+export interface ResetPasswordData { token: string; newPassword: string }

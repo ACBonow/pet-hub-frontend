@@ -5,6 +5,7 @@
  */
 
 import { useEffect, useRef, useState } from 'react'
+import PublicLayout from '@/shared/components/layout/PublicLayout'
 import { useServicesDirectory } from '@/modules/services-directory/hooks/useServicesDirectory'
 import ServiceCard from '@/modules/services-directory/components/ServiceCard'
 import ServiceFiltersBar from '@/modules/services-directory/components/ServiceFilters'
@@ -41,9 +42,9 @@ export default function ServicesListPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 pb-20">
+    <PublicLayout>
       <header className="bg-white border-b border-gray-200 px-4 py-4">
-        <h1 className="text-xl font-bold text-gray-900 mb-3">Serviços</h1>
+        <h1 className="text-xl font-bold text-gray-900 mb-3">🏥 Serviços</h1>
         <ServiceFiltersBar
           filters={filters}
           onNameChange={handleNameChange}
@@ -51,7 +52,7 @@ export default function ServicesListPage() {
         />
       </header>
 
-      <main className="px-4 py-4">
+      <main className="px-4 py-4 pb-24 max-w-2xl mx-auto">
         {isLoading && (
           <div className="flex justify-center py-12">
             <div
@@ -79,6 +80,6 @@ export default function ServicesListPage() {
           </ul>
         )}
       </main>
-    </div>
+    </PublicLayout>
   )
 }

@@ -9,6 +9,7 @@ import { useParams } from 'react-router-dom'
 import AppShell from '@/shared/components/layout/AppShell'
 import Header from '@/shared/components/layout/Header'
 import PageWrapper from '@/shared/components/layout/PageWrapper'
+import ContactGate from '@/shared/components/ui/ContactGate'
 import { useAdoption } from '@/modules/adoption/hooks/useAdoption'
 
 const SPECIES_LABELS: Record<string, string> = {
@@ -58,11 +59,16 @@ export default function AdoptionDetailPage() {
               {listing.description && (
                 <p className="text-sm text-gray-700 mt-2">{listing.description}</p>
               )}
-              {listing.contactEmail && (
-                <p className="text-sm text-[--color-primary] mt-2">
-                  <a href={`mailto:${listing.contactEmail}`}>{listing.contactEmail}</a>
-                </p>
-              )}
+              <div className="mt-2 flex flex-col gap-1">
+                <ContactGate
+                  value={listing.contactEmail}
+                  href={listing.contactEmail ? `mailto:${listing.contactEmail}` : undefined}
+                />
+                <ContactGate
+                  value={listing.contactPhone}
+                  href={listing.contactPhone ? `tel:${listing.contactPhone}` : undefined}
+                />
+              </div>
             </div>
           </div>
         )}

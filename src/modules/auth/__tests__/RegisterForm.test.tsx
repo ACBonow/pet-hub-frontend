@@ -10,6 +10,7 @@ import { MemoryRouter } from 'react-router-dom'
 import RegisterForm from '@/modules/auth/components/RegisterForm'
 
 const mockRegister = jest.fn()
+const mockNavigate = jest.fn()
 
 jest.mock('@/modules/auth/hooks/useAuth', () => ({
   useAuth: () => ({
@@ -19,6 +20,11 @@ jest.mock('@/modules/auth/hooks/useAuth', () => ({
   }),
 }))
 
+jest.mock('react-router-dom', () => ({
+  ...jest.requireActual('react-router-dom'),
+  useNavigate: () => mockNavigate,
+}))
+
 const renderWithRouter = (ui: React.ReactElement) =>
   render(<MemoryRouter>{ui}</MemoryRouter>)
 
@@ -26,6 +32,7 @@ describe('RegisterForm', () => {
   beforeEach(() => {
     jest.clearAllMocks()
     mockRegister.mockResolvedValue(undefined)
+    mockNavigate.mockReset()
   })
 
   it('should display name, email, password, and CPF fields', () => {
@@ -99,5 +106,21 @@ describe('RegisterForm', () => {
   it('should have a link to the login page', () => {
     renderWithRouter(<RegisterForm />)
     expect(screen.getByRole('link', { name: /entrar/i })).toBeInTheDocument()
+  })
+
+  it('should redirect to /verificar-email/enviado?email=... after successful register', async () => {
+    renderWithRouter(<RegisterForm />)
+
+    await userEvent.type(screen.getByLabelText(/nome/i), 'João Silva')
+    await userEvent.type(screen.getByLabelText(/e-?mail/i), 'joao@example.com')
+    await userEvent.type(screen.getByLabelText(/senha/i), 'senhasegura123')
+    await userEvent.type(screen.getByLabelText('CPF'), '52998224725')
+    await userEvent.click(screen.getByRole('button', { name: /cadastrar/i }))
+
+    await waitFor(() => {
+      expect(mockNavigate).toHaveBeenCalledWith(
+        '/verificar-email/enviado?email=joao%40example.com',
+      )
+    })
   })
 })

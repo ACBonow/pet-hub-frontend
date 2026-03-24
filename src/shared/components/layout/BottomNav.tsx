@@ -2,9 +2,11 @@
  * @module shared
  * @file BottomNav.tsx
  * @description Mobile-only bottom navigation bar. Hidden on lg screens and above.
+ * Auth-aware: shows public tabs when unauthenticated, private tabs when authenticated.
  */
 
 import { NavLink } from 'react-router-dom'
+import { useAuthStore } from '@/modules/auth/store/authSlice'
 import { ROUTES } from '@/routes/routes.config'
 
 interface NavItem {
@@ -57,22 +59,41 @@ function PersonIcon() {
   )
 }
 
-const navItems: NavItem[] = [
+function FlagIcon() {
+  return (
+    <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 3v18M3 5l9 4-9 4" />
+    </svg>
+  )
+}
+
+const publicTabs: NavItem[] = [
+  { label: 'Início', to: ROUTES.HOME, icon: <HomeIcon /> },
+  { label: 'Adoção', to: ROUTES.ADOPTION.LIST, icon: <HeartIcon /> },
+  { label: 'Achados', to: ROUTES.LOST_FOUND.LIST, icon: <FlagIcon /> },
+  { label: 'Serviços', to: ROUTES.SERVICES.LIST, icon: <SearchIcon /> },
+  { label: 'Entrar', to: ROUTES.LOGIN, icon: <PersonIcon /> },
+]
+
+const privateTabs: NavItem[] = [
   { label: 'Início', to: ROUTES.HOME, icon: <HomeIcon /> },
   { label: 'Pets', to: ROUTES.PET.LIST, icon: <PawIcon /> },
   { label: 'Adoção', to: ROUTES.ADOPTION.LIST, icon: <HeartIcon /> },
-  { label: 'Serviços', to: ROUTES.SERVICES.LIST, icon: <SearchIcon /> },
+  { label: 'Achados', to: ROUTES.LOST_FOUND.LIST, icon: <FlagIcon /> },
   { label: 'Perfil', to: ROUTES.PROFILE, icon: <PersonIcon /> },
 ]
 
 export default function BottomNav() {
+  const { isAuthenticated } = useAuthStore()
+  const tabs = isAuthenticated ? privateTabs : publicTabs
+
   return (
     <nav
       className="lg:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 z-40"
       aria-label="Navegação principal"
     >
       <ul className="flex items-stretch h-16">
-        {navItems.map((item) => (
+        {tabs.map((item) => (
           <li key={item.to} className="flex-1">
             <NavLink
               to={item.to}
