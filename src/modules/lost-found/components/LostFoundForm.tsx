@@ -79,6 +79,36 @@ export default function LostFoundForm({ onSubmit, isLoading }: LostFoundFormProp
         </div>
 
         <div className="flex flex-col gap-1">
+          <label htmlFor="petName" className="text-sm font-medium text-gray-700">
+            Nome do animal (opcional)
+          </label>
+          <input
+            id="petName"
+            type="text"
+            {...register('petName')}
+            className="w-full min-h-[44px] px-3 py-2 border border-gray-300 rounded-[--radius-md] text-sm focus:outline-none focus:ring-2 focus:ring-[--color-primary]"
+          />
+        </div>
+
+        <div className="flex flex-col gap-1">
+          <label htmlFor="species" className="text-sm font-medium text-gray-700">
+            Espécie (opcional)
+          </label>
+          <select
+            id="species"
+            {...register('species')}
+            className="w-full min-h-[44px] px-3 py-2 border border-gray-300 rounded-[--radius-md] text-sm focus:outline-none focus:ring-2 focus:ring-[--color-primary]"
+          >
+            <option value="">Selecione...</option>
+            <option value="dog">Cão</option>
+            <option value="cat">Gato</option>
+            <option value="bird">Ave</option>
+            <option value="rabbit">Coelho</option>
+            <option value="other">Outro</option>
+          </select>
+        </div>
+
+        <div className="flex flex-col gap-1">
           <label htmlFor="description" className="text-sm font-medium text-gray-700">
             Descrição
           </label>

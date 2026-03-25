@@ -22,7 +22,7 @@ export default function OrganizationFormPage() {
     await createOrganization({
       ...data,
       cnpj: data.cnpj || null,
-      responsiblePersonIds: [],
+      responsiblePersonIds: [data.responsiblePersonId],
     })
     navigate(ROUTES.ORGANIZATION.LIST)
   }

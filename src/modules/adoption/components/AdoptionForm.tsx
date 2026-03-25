@@ -93,6 +93,18 @@ export default function AdoptionForm({ onSubmit, isLoading }: AdoptionFormProps)
           />
         </div>
 
+        <div className="flex flex-col gap-1">
+          <label htmlFor="contactPhone" className="text-sm font-medium text-gray-700">
+            Telefone de contato (opcional)
+          </label>
+          <input
+            id="contactPhone"
+            type="tel"
+            {...register('contactPhone')}
+            className="w-full min-h-[44px] px-3 py-2 border border-gray-300 rounded-[--radius-md] text-sm focus:outline-none focus:ring-2 focus:ring-[--color-primary]"
+          />
+        </div>
+
         {apiError && (
           <p role="alert" className="text-sm text-[--color-danger]">{apiError}</p>
         )}

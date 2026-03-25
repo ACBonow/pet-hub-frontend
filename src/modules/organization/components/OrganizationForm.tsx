@@ -14,6 +14,7 @@ interface OrganizationFormValues {
   name: string
   type: OrganizationType
   cnpj: string
+  responsiblePersonId: string
 }
 
 interface OrganizationFormProps {
@@ -41,6 +42,7 @@ export default function OrganizationForm({ onSubmit, initialData, isLoading }: O
       name: initialData?.name ?? '',
       type: initialData?.type ?? 'COMPANY',
       cnpj: initialData?.cnpj ?? '',
+      responsiblePersonId: '',
     },
   })
 
@@ -102,6 +104,29 @@ export default function OrganizationForm({ onSubmit, initialData, isLoading }: O
           label="CNPJ"
           required={selectedType === 'COMPANY'}
         />
+
+        <div className="flex flex-col gap-1">
+          <label htmlFor="responsiblePersonId" className="text-sm font-medium text-gray-700">
+            ID da pessoa responsável
+          </label>
+          <input
+            id="responsiblePersonId"
+            type="text"
+            {...register('responsiblePersonId', { required: 'Pessoa responsável é obrigatória' })}
+            className={[
+              'w-full min-h-[44px] px-3 py-2',
+              'border rounded-[--radius-md] text-sm',
+              'focus:outline-none focus:ring-2 focus:ring-[--color-primary]',
+              errors.responsiblePersonId ? 'border-[--color-danger]' : 'border-gray-300',
+            ].join(' ')}
+            aria-invalid={!!errors.responsiblePersonId}
+          />
+          {errors.responsiblePersonId && (
+            <p role="alert" className="text-xs text-[--color-danger]">
+              {errors.responsiblePersonId.message}
+            </p>
+          )}
+        </div>
 
         {apiError && (
           <p role="alert" className="text-sm text-[--color-danger]">
