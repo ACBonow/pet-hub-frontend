@@ -6,8 +6,7 @@
 
 import { useEffect } from 'react'
 import { useParams } from 'react-router-dom'
-import AppShell from '@/shared/components/layout/AppShell'
-import Header from '@/shared/components/layout/Header'
+import PublicLayout from '@/shared/components/layout/PublicLayout'
 import PageWrapper from '@/shared/components/layout/PageWrapper'
 import ContactGate from '@/shared/components/ui/ContactGate'
 import { useAdoption } from '@/modules/adoption/hooks/useAdoption'
@@ -29,8 +28,10 @@ export default function AdoptionDetailPage() {
   }, [id])
 
   return (
-    <AppShell>
-      <Header title="Adoção" />
+    <PublicLayout>
+      <header className="sticky top-0 z-30 bg-white border-b border-gray-200 px-4 py-4">
+        <h1 className="text-xl font-bold text-gray-900">❤️ Adoção</h1>
+      </header>
       <PageWrapper>
         {isLoading && <p className="text-sm text-gray-500">Carregando...</p>}
         {error && <p role="alert" className="text-sm text-[--color-danger]">{error}</p>}
@@ -73,6 +74,6 @@ export default function AdoptionDetailPage() {
           </div>
         )}
       </PageWrapper>
-    </AppShell>
+    </PublicLayout>
   )
 }

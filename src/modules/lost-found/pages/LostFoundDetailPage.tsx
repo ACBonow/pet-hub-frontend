@@ -6,8 +6,7 @@
 
 import { useEffect } from 'react'
 import { useParams } from 'react-router-dom'
-import AppShell from '@/shared/components/layout/AppShell'
-import Header from '@/shared/components/layout/Header'
+import PublicLayout from '@/shared/components/layout/PublicLayout'
 import PageWrapper from '@/shared/components/layout/PageWrapper'
 import ContactGate from '@/shared/components/ui/ContactGate'
 import { useLostFound } from '@/modules/lost-found/hooks/useLostFound'
@@ -23,8 +22,10 @@ export default function LostFoundDetailPage() {
   const isLost = report?.type === 'LOST'
 
   return (
-    <AppShell>
-      <Header title={isLost ? 'Animal Perdido' : 'Animal Achado'} />
+    <PublicLayout>
+      <header className="sticky top-0 z-30 bg-white border-b border-gray-200 px-4 py-4">
+        <h1 className="text-xl font-bold text-gray-900">🔍 Achados e Perdidos</h1>
+      </header>
       <PageWrapper>
         {isLoading && <p className="text-sm text-gray-500">Carregando...</p>}
         {error && <p role="alert" className="text-sm text-[--color-danger]">{error}</p>}
@@ -80,6 +81,6 @@ export default function LostFoundDetailPage() {
           </div>
         )}
       </PageWrapper>
-    </AppShell>
+    </PublicLayout>
   )
 }
