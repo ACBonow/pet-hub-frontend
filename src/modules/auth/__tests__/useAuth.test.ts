@@ -35,6 +35,7 @@ describe('useAuth', () => {
     it('should store accessToken and user after successful login', async () => {
       mockAuthService.loginRequest.mockResolvedValueOnce({
         accessToken: 'jwt-access-token-123',
+        refreshToken: 'jwt-refresh-token-123',
         user: { id: 'user-1', name: 'João Silva', email: 'joao@example.com' },
       })
 
@@ -52,6 +53,7 @@ describe('useAuth', () => {
     it('should NOT store token in localStorage', async () => {
       mockAuthService.loginRequest.mockResolvedValueOnce({
         accessToken: 'jwt-token',
+        refreshToken: 'jwt-refresh-token',
         user: { id: 'u1', name: 'Test', email: 'test@example.com' },
       })
 
@@ -86,6 +88,7 @@ describe('useAuth', () => {
     it('should clear store after logout', async () => {
       mockAuthService.loginRequest.mockResolvedValueOnce({
         accessToken: 'token',
+        refreshToken: 'refresh-token',
         user: { id: 'u1', name: 'Test', email: 'test@example.com' },
       })
 
@@ -109,6 +112,7 @@ describe('useAuth', () => {
     it('should be true when accessToken is set', async () => {
       mockAuthService.loginRequest.mockResolvedValueOnce({
         accessToken: 'any-token',
+        refreshToken: 'any-refresh-token',
         user: { id: 'u1', name: 'Test', email: 'test@example.com' },
       })
 
