@@ -51,6 +51,27 @@ export default function TopNav() {
         ))}
       </nav>
 
+      {isAuthenticated && (
+        <nav className="flex items-center gap-6" aria-label="Navegação autenticada">
+          <NavLink
+            to={ROUTES.PET.LIST}
+            className={({ isActive }) =>
+              `text-sm font-medium transition-colors ${isActive ? 'text-[--color-primary]' : 'text-gray-600 hover:text-gray-900'}`
+            }
+          >
+            Meus Pets
+          </NavLink>
+          <NavLink
+            to={ROUTES.ORGANIZATION.LIST}
+            className={({ isActive }) =>
+              `text-sm font-medium transition-colors ${isActive ? 'text-[--color-primary]' : 'text-gray-600 hover:text-gray-900'}`
+            }
+          >
+            Organizações
+          </NavLink>
+        </nav>
+      )}
+
       <div className="shrink-0 flex items-center gap-4">
         {isAuthenticated && user ? (
           <>

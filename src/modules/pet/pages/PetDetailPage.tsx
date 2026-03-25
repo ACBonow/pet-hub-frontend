@@ -5,10 +5,11 @@
  */
 
 import { useEffect } from 'react'
-import { useParams } from 'react-router-dom'
+import { useParams, Link } from 'react-router-dom'
 import AppShell from '@/shared/components/layout/AppShell'
 import Header from '@/shared/components/layout/Header'
 import PageWrapper from '@/shared/components/layout/PageWrapper'
+import { ROUTES } from '@/routes/routes.config'
 import { usePet } from '@/modules/pet/hooks/usePet'
 import TutorshipInfo from '@/modules/pet/components/TutorshipInfo'
 import TutorshipTransfer from '@/modules/pet/components/TutorshipTransfer'
@@ -39,9 +40,17 @@ export default function PetDetailPage() {
 
         {pet && (
           <div className="flex flex-col gap-6">
-            <div className="bg-white rounded-[--radius-lg] border border-gray-200 p-4">
-              <p className="text-xl font-bold text-gray-900">{pet.name}</p>
-              {pet.breed && <p className="text-sm text-gray-500">{pet.breed}</p>}
+            <div className="bg-white rounded-[--radius-lg] border border-gray-200 p-4 flex items-start justify-between gap-2">
+              <div>
+                <p className="text-xl font-bold text-gray-900">{pet.name}</p>
+                {pet.breed && <p className="text-sm text-gray-500">{pet.breed}</p>}
+              </div>
+              <Link
+                to={ROUTES.PET.HEALTH(pet.id)}
+                className="text-sm font-medium text-[--color-primary] hover:underline shrink-0"
+              >
+                Saúde
+              </Link>
             </div>
 
             <TutorshipInfo

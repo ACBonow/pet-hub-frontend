@@ -12,10 +12,12 @@ import PageWrapper from '@/shared/components/layout/PageWrapper'
 import { useLostFound } from '@/modules/lost-found/hooks/useLostFound'
 import LostFoundCard from '@/modules/lost-found/components/LostFoundCard'
 import LostFoundFiltersBar from '@/modules/lost-found/components/LostFoundFilters'
+import { useAuthStore } from '@/modules/auth/store/authSlice'
 import type { LostFoundFilters } from '@/modules/lost-found/types'
 
 export default function LostFoundListPage() {
   const { reports, isLoading, error, listReports } = useLostFound()
+  const { isAuthenticated } = useAuthStore()
   const [filters, setFilters] = useState<LostFoundFilters>({})
 
   useEffect(() => {
@@ -33,14 +35,16 @@ export default function LostFoundListPage() {
         <h1 className="text-xl font-bold text-gray-900">🔍 Achados e Perdidos</h1>
       </header>
       <PageWrapper>
-        <div className="flex justify-end mb-4">
-          <Link
-            to={ROUTES.LOST_FOUND.CREATE}
-            className="text-sm font-medium text-[--color-primary] hover:underline"
-          >
-            + Novo relatório
-          </Link>
-        </div>
+        {isAuthenticated && (
+          <div className="flex justify-end mb-4">
+            <Link
+              to={ROUTES.LOST_FOUND.CREATE}
+              className="text-sm font-medium text-[--color-primary] hover:underline"
+            >
+              + Novo relatório
+            </Link>
+          </div>
+        )}
 
         <LostFoundFiltersBar filters={filters} onChange={handleFiltersChange} />
 
