@@ -14,6 +14,12 @@ export interface Person {
   updatedAt: string
 }
 
+export interface CreatePersonData {
+  name: string
+  cpf: string
+  phone?: string
+}
+
 export interface UpdatePersonData {
   name?: string
   phone?: string | null

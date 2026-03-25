@@ -80,6 +80,65 @@ describe('usePerson', () => {
     })
   })
 
+  describe('getMe', () => {
+    it('should fetch the current user profile', async () => {
+      mockPersonService.getMeRequest.mockResolvedValueOnce(mockPerson)
+
+      const { result } = renderHook(() => usePerson())
+
+      await act(async () => {
+        await result.current.getMe()
+      })
+
+      expect(result.current.person).toEqual(mockPerson)
+      expect(result.current.isLoading).toBe(false)
+    })
+
+    it('should set person to null and set error on 404', async () => {
+      mockPersonService.getMeRequest.mockRejectedValueOnce({
+        code: 'NOT_FOUND',
+        message: 'Perfil não encontrado.',
+      })
+
+      const { result } = renderHook(() => usePerson())
+
+      await act(async () => {
+        await result.current.getMe().catch(() => {})
+      })
+
+      expect(result.current.person).toBeNull()
+    })
+  })
+
+  describe('createPerson', () => {
+    it('should create person and set it in state', async () => {
+      mockPersonService.createPersonRequest.mockResolvedValueOnce(mockPerson)
+
+      const { result } = renderHook(() => usePerson())
+
+      await act(async () => {
+        await result.current.createPerson({ name: 'João Silva', cpf: '52998224725' })
+      })
+
+      expect(result.current.person).toEqual(mockPerson)
+    })
+
+    it('should throw when creation fails', async () => {
+      mockPersonService.createPersonRequest.mockRejectedValueOnce({
+        code: 'INVALID_CPF',
+        message: 'CPF inválido.',
+      })
+
+      const { result } = renderHook(() => usePerson())
+
+      await expect(
+        act(async () => {
+          await result.current.createPerson({ name: 'João', cpf: '11111111111' })
+        }),
+      ).rejects.toMatchObject({ code: 'INVALID_CPF' })
+    })
+  })
+
   describe('updatePerson', () => {
     it('should update person and reflect in state', async () => {
       const updated = { ...mockPerson, name: 'João da Silva' }

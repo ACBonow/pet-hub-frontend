@@ -30,7 +30,7 @@ export default function ProfilePage() {
     <AppShell>
       <Header title="Meu Perfil" showBack />
       <PageWrapper>
-        <PersonProfile personId={user.id} />
+        <PersonProfile />
         <div className="mt-8 pt-6 border-t border-gray-200">
           <Button variant="ghost" onClick={handleLogout} className="w-full text-red-500 hover:text-red-600">
             Sair da conta

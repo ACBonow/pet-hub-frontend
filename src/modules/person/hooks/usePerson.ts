@@ -5,14 +5,21 @@
  */
 
 import { useState } from 'react'
-import { getPersonRequest, updatePersonRequest } from '@/modules/person/services/person.service'
-import type { Person, UpdatePersonData } from '@/modules/person/types'
+import {
+  getMeRequest,
+  createPersonRequest,
+  getPersonRequest,
+  updatePersonRequest,
+} from '@/modules/person/services/person.service'
+import type { Person, CreatePersonData, UpdatePersonData } from '@/modules/person/types'
 import type { ApiError } from '@/shared/types'
 
 interface UsePersonResult {
   person: Person | null
   isLoading: boolean
   error: string | null
+  getMe: () => Promise<void>
+  createPerson: (data: CreatePersonData) => Promise<void>
   getPerson: (id: string) => Promise<void>
   updatePerson: (id: string, data: UpdatePersonData) => Promise<void>
 }
@@ -21,6 +28,36 @@ export function usePerson(): UsePersonResult {
   const [person, setPerson] = useState<Person | null>(null)
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
+
+  async function getMe(): Promise<void> {
+    setIsLoading(true)
+    setError(null)
+    try {
+      const data = await getMeRequest()
+      setPerson(data)
+    } catch (err) {
+      const apiError = err as ApiError
+      setError(apiError.message ?? 'Erro ao carregar perfil.')
+      throw err
+    } finally {
+      setIsLoading(false)
+    }
+  }
+
+  async function createPerson(data: CreatePersonData): Promise<void> {
+    setIsLoading(true)
+    setError(null)
+    try {
+      const created = await createPersonRequest(data)
+      setPerson(created)
+    } catch (err) {
+      const apiError = err as ApiError
+      setError(apiError.message ?? 'Erro ao criar perfil.')
+      throw err
+    } finally {
+      setIsLoading(false)
+    }
+  }
 
   async function getPerson(id: string): Promise<void> {
     setIsLoading(true)
@@ -52,5 +89,5 @@ export function usePerson(): UsePersonResult {
     }
   }
 
-  return { person, isLoading, error, getPerson, updatePerson }
+  return { person, isLoading, error, getMe, createPerson, getPerson, updatePerson }
 }

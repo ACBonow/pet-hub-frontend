@@ -9,7 +9,8 @@ import userEvent from '@testing-library/user-event'
 import { MemoryRouter } from 'react-router-dom'
 import PersonProfile from '@/modules/person/components/PersonProfile'
 
-const mockGetPerson = jest.fn()
+const mockGetMe = jest.fn()
+const mockCreatePerson = jest.fn()
 const mockUpdatePerson = jest.fn()
 
 const mockPerson = {
@@ -22,65 +23,131 @@ const mockPerson = {
   updatedAt: '2026-03-01T00:00:00.000Z',
 }
 
+const mockUsePerson = jest.fn()
 jest.mock('@/modules/person/hooks/usePerson', () => ({
-  usePerson: () => ({
-    person: mockPerson,
-    isLoading: false,
-    error: null,
-    getPerson: mockGetPerson,
-    updatePerson: mockUpdatePerson,
-  }),
+  usePerson: (...args: unknown[]) => mockUsePerson(...args),
 }))
 
-const renderWithRouter = (ui: React.ReactElement) =>
-  render(<MemoryRouter>{ui}</MemoryRouter>)
+const renderComponent = () => render(<MemoryRouter><PersonProfile /></MemoryRouter>)
 
 describe('PersonProfile', () => {
   beforeEach(() => {
     jest.clearAllMocks()
-    mockGetPerson.mockResolvedValue(undefined)
+    mockGetMe.mockResolvedValue(undefined)
+    mockCreatePerson.mockResolvedValue(undefined)
     mockUpdatePerson.mockResolvedValue(undefined)
   })
 
-  it('should display person name', () => {
-    renderWithRouter(<PersonProfile personId="person-1" />)
-    expect(screen.getByText('João Silva')).toBeInTheDocument()
-  })
+  describe('when person profile exists', () => {
+    beforeEach(() => {
+      mockUsePerson.mockReturnValue({
+        person: mockPerson,
+        isLoading: false,
+        error: null,
+        getMe: mockGetMe,
+        createPerson: mockCreatePerson,
+        updatePerson: mockUpdatePerson,
+      })
+    })
 
-  it('should display CPF formatted', () => {
-    renderWithRouter(<PersonProfile personId="person-1" />)
-    expect(screen.getByText(/529\.982\.247-25/)).toBeInTheDocument()
-  })
+    it('should display person name', () => {
+      renderComponent()
+      expect(screen.getByText('João Silva')).toBeInTheDocument()
+    })
 
-  it('should have CPF field as read-only', () => {
-    renderWithRouter(<PersonProfile personId="person-1" />)
-    const cpfField = screen.getByDisplayValue('529.982.247-25')
-    expect(cpfField).toHaveAttribute('readonly')
-  })
+    it('should display CPF formatted', () => {
+      renderComponent()
+      expect(screen.getByText(/529\.982\.247-25/)).toBeInTheDocument()
+    })
 
-  it('should call updatePerson on save with changed name', async () => {
-    renderWithRouter(<PersonProfile personId="person-1" />)
+    it('should have CPF field as read-only', () => {
+      renderComponent()
+      const cpfField = screen.getByDisplayValue('529.982.247-25')
+      expect(cpfField).toHaveAttribute('readonly')
+    })
 
-    const nameInput = screen.getByDisplayValue('João Silva')
-    await userEvent.clear(nameInput)
-    await userEvent.type(nameInput, 'João da Silva')
-    await userEvent.click(screen.getByRole('button', { name: /salvar/i }))
+    it('should call updatePerson on save with changed name', async () => {
+      renderComponent()
 
-    await waitFor(() => {
-      expect(mockUpdatePerson).toHaveBeenCalledWith('person-1', expect.objectContaining({
-        name: 'João da Silva',
-      }))
+      const nameInput = screen.getByDisplayValue('João Silva')
+      await userEvent.clear(nameInput)
+      await userEvent.type(nameInput, 'João da Silva')
+      await userEvent.click(screen.getByRole('button', { name: /salvar/i }))
+
+      await waitFor(() => {
+        expect(mockUpdatePerson).toHaveBeenCalledWith('person-1', expect.objectContaining({
+          name: 'João da Silva',
+        }))
+      })
+    })
+
+    it('should display success message after save', async () => {
+      renderComponent()
+
+      const nameInput = screen.getByDisplayValue('João Silva')
+      await userEvent.clear(nameInput)
+      await userEvent.type(nameInput, 'João da Silva')
+      await userEvent.click(screen.getByRole('button', { name: /salvar/i }))
+
+      expect(await screen.findByText(/salvo com sucesso/i)).toBeInTheDocument()
     })
   })
 
-  it('should display success message after save', async () => {
-    renderWithRouter(<PersonProfile personId="person-1" />)
+  describe('when no person profile (new user)', () => {
+    beforeEach(() => {
+      mockUsePerson.mockReturnValue({
+        person: null,
+        isLoading: false,
+        error: null,
+        getMe: mockGetMe,
+        createPerson: mockCreatePerson,
+        updatePerson: mockUpdatePerson,
+      })
+    })
 
-    const nameInput = screen.getByDisplayValue('João Silva')
-    await userEvent.clear(nameInput)
-    await userEvent.type(nameInput, 'João da Silva')
-    await userEvent.click(screen.getByRole('button', { name: /salvar/i }))
+    it('should show profile creation form', () => {
+      renderComponent()
+      expect(screen.getByLabelText(/nome/i)).toBeInTheDocument()
+      expect(screen.getByLabelText(/cpf/i)).toBeInTheDocument()
+    })
 
-    expect(await screen.findByText(/salvo com sucesso/i)).toBeInTheDocument()
+    it('should call createPerson with form data when submitted', async () => {
+      renderComponent()
+
+      await userEvent.type(screen.getByLabelText(/nome/i), 'Arthur')
+      await userEvent.type(screen.getByLabelText(/cpf/i), '52998224725')
+      await userEvent.click(screen.getByRole('button', { name: /completar perfil/i }))
+
+      await waitFor(() => {
+        expect(mockCreatePerson).toHaveBeenCalledWith(
+          expect.objectContaining({ name: 'Arthur', cpf: '52998224725' }),
+        )
+      })
+    })
+
+    it('should not call createPerson when name is empty', async () => {
+      renderComponent()
+      await userEvent.click(screen.getByRole('button', { name: /completar perfil/i }))
+
+      await waitFor(() => {
+        expect(mockCreatePerson).not.toHaveBeenCalled()
+      })
+    })
+  })
+
+  describe('when loading', () => {
+    it('should show loading state', () => {
+      mockUsePerson.mockReturnValue({
+        person: null,
+        isLoading: true,
+        error: null,
+        getMe: mockGetMe,
+        createPerson: mockCreatePerson,
+        updatePerson: mockUpdatePerson,
+      })
+
+      renderComponent()
+      expect(screen.getByText(/carregando/i)).toBeInTheDocument()
+    })
   })
 })
