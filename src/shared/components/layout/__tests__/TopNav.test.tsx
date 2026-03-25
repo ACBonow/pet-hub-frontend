@@ -5,11 +5,23 @@
  */
 
 import { render, screen } from '@testing-library/react'
+import userEvent from '@testing-library/user-event'
 import { MemoryRouter } from 'react-router-dom'
 import TopNav from '@/shared/components/layout/TopNav'
 
+const mockNavigate = jest.fn()
+jest.mock('react-router-dom', () => ({
+  ...jest.requireActual('react-router-dom'),
+  useNavigate: () => mockNavigate,
+}))
+
 jest.mock('@/modules/auth/store/authSlice', () => ({
   useAuthStore: jest.fn(),
+}))
+
+const mockLogout = jest.fn()
+jest.mock('@/modules/auth/hooks/useAuth', () => ({
+  useAuth: () => ({ logout: mockLogout }),
 }))
 
 import { useAuthStore } from '@/modules/auth/store/authSlice'
@@ -51,6 +63,8 @@ describe('TopNav', () => {
 
   describe('when authenticated', () => {
     beforeEach(() => {
+      mockLogout.mockReset()
+      mockNavigate.mockReset()
       mockUseAuthStore.mockReturnValue({
         isAuthenticated: true,
         user: { id: '1', name: 'Arthur', email: 'arthur@email.com' },
@@ -65,6 +79,19 @@ describe('TopNav', () => {
     it('should not render Entrar link', () => {
       renderWithRouter(<TopNav />)
       expect(screen.queryByRole('link', { name: /entrar/i })).not.toBeInTheDocument()
+    })
+
+    it('should render a Sair button', () => {
+      renderWithRouter(<TopNav />)
+      expect(screen.getByRole('button', { name: /sair/i })).toBeInTheDocument()
+    })
+
+    it('should call logout and navigate to home when Sair is clicked', async () => {
+      mockLogout.mockResolvedValue(undefined)
+      renderWithRouter(<TopNav />)
+      await userEvent.click(screen.getByRole('button', { name: /sair/i }))
+      expect(mockLogout).toHaveBeenCalledTimes(1)
+      expect(mockNavigate).toHaveBeenCalledWith('/')
     })
   })
 
