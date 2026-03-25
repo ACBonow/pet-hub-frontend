@@ -24,7 +24,7 @@ export default function AdoptionFormPage() {
 
   return (
     <AppShell>
-      <Header title="Novo Anúncio" />
+      <Header title="Novo Anúncio" showBack />
       <PageWrapper>
         <AdoptionForm onSubmit={handleSubmit} isLoading={isLoading} />
       </PageWrapper>

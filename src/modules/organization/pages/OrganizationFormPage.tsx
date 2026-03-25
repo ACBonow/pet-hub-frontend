@@ -29,7 +29,7 @@ export default function OrganizationFormPage() {
 
   return (
     <AppShell>
-      <Header title="Nova Organização" />
+      <Header title="Nova Organização" showBack />
       <PageWrapper>
         <OrganizationForm onSubmit={handleSubmit} isLoading={isLoading} />
       </PageWrapper>

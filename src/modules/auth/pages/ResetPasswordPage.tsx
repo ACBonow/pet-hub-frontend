@@ -68,6 +68,11 @@ export default function ResetPasswordPage() {
   return (
     <div className="min-h-screen bg-gray-50 flex items-center justify-center px-4">
       <div className="w-full max-w-sm bg-white rounded-[--radius-lg] shadow-sm border border-gray-100 p-6">
+        <div className="mb-4 text-center">
+          <Link to={ROUTES.HOME} className="text-base font-bold text-[--color-primary] hover:opacity-80 transition-opacity">
+            PetHUB
+          </Link>
+        </div>
         <div className="mb-6 text-center">
           <h1 className="text-2xl font-bold text-gray-900">Redefinir senha</h1>
           <p className="text-sm text-gray-600 mt-1">Escolha uma nova senha para sua conta.</p>
@@ -139,6 +144,12 @@ export default function ResetPasswordPage() {
           <Button type="submit" loading={isSubmitting} className="w-full mt-2">
             Redefinir senha
           </Button>
+
+          <p className="text-sm text-center mt-2">
+            <Link to={ROUTES.LOGIN} className="text-gray-500 hover:underline">
+              Voltar ao login
+            </Link>
+          </p>
         </form>
       </div>
     </div>

@@ -31,7 +31,7 @@ export default function PetFormPage() {
 
   return (
     <AppShell>
-      <Header title="Novo Pet" />
+      <Header title="Novo Pet" showBack />
       <PageWrapper>
         <PetForm onSubmit={handleSubmit} isLoading={isLoading} />
       </PageWrapper>

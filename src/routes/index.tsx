@@ -27,9 +27,11 @@ const AdoptionDetailPage = lazy(() => import('@/modules/adoption/pages/AdoptionD
 const LostFoundListPage = lazy(() => import('@/modules/lost-found/pages/LostFoundListPage'))
 const LostFoundDetailPage = lazy(() => import('@/modules/lost-found/pages/LostFoundDetailPage'))
 const ServicesListPage = lazy(() => import('@/modules/services-directory/pages/ServicesListPage'))
+const ServiceDetailPage = lazy(() => import('@/modules/services-directory/pages/ServiceDetailPage'))
 
 // ── PRIVATE ───────────────────────────────────────────────────────────────────
 const DashboardPage = lazy(() => import('@/pages/DashboardPage'))
+const ServiceFormPage = lazy(() => import('@/modules/services-directory/pages/ServiceFormPage'))
 const AdoptionFormPage = lazy(() => import('@/modules/adoption/pages/AdoptionFormPage'))
 const LostFoundFormPage = lazy(() => import('@/modules/lost-found/pages/LostFoundFormPage'))
 const PetListPage = lazy(() => import('@/modules/pet/pages/PetListPage'))
@@ -70,6 +72,7 @@ export const router = createBrowserRouter([
   { path: ROUTES.LOST_FOUND.LIST,    element: <S><LostFoundListPage /></S> },
   { path: ROUTES.LOST_FOUND.DETAIL(':id'), element: <S><LostFoundDetailPage /></S> },
   { path: ROUTES.SERVICES.LIST,      element: <S><ServicesListPage /></S> },
+  { path: ROUTES.SERVICES.DETAIL(':id'), element: <S><ServiceDetailPage /></S> },
 
   // ── PRIVATE ────────────────────────────────────────────────────────────────
   {
@@ -86,6 +89,7 @@ export const router = createBrowserRouter([
       { path: ROUTES.ORGANIZATION.CREATE,      element: <S><OrganizationFormPage /></S> },
       { path: ROUTES.ORGANIZATION.DETAIL(':id'), element: <S><OrganizationDetailPage /></S> },
       { path: ROUTES.ORGANIZATION.EDIT(':id'), element: <S><OrganizationFormPage /></S> },
+      { path: ROUTES.SERVICES.CREATE,          element: <S><ServiceFormPage /></S> },
       { path: ROUTES.PROFILE,                  element: <S><ProfilePage /></S> },
     ],
   },

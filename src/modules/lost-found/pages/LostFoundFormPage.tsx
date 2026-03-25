@@ -24,7 +24,7 @@ export default function LostFoundFormPage() {
 
   return (
     <AppShell>
-      <Header title="Novo Relatório" />
+      <Header title="Novo Relatório" showBack />
       <PageWrapper>
         <LostFoundForm onSubmit={handleSubmit} isLoading={isLoading} />
       </PageWrapper>

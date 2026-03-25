@@ -5,16 +5,20 @@
  */
 
 import { useEffect, useRef, useState } from 'react'
+import { Link } from 'react-router-dom'
 import PublicLayout from '@/shared/components/layout/PublicLayout'
 import { useServicesDirectory } from '@/modules/services-directory/hooks/useServicesDirectory'
+import { useAuthStore } from '@/modules/auth/store/authSlice'
 import ServiceCard from '@/modules/services-directory/components/ServiceCard'
 import ServiceFiltersBar from '@/modules/services-directory/components/ServiceFilters'
+import { ROUTES } from '@/routes/routes.config'
 import type { ServiceType, ServiceFilters } from '@/modules/services-directory/types'
 
 const DEBOUNCE_MS = 400
 
 export default function ServicesListPage() {
   const { services, isLoading, error, listServices } = useServicesDirectory()
+  const { isAuthenticated } = useAuthStore()
   const [filters, setFilters] = useState<ServiceFilters>({})
   const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null)
 
@@ -44,7 +48,17 @@ export default function ServicesListPage() {
   return (
     <PublicLayout>
       <header className="bg-white border-b border-gray-200 px-4 py-4">
-        <h1 className="text-xl font-bold text-gray-900 mb-3">🏥 Serviços</h1>
+        <div className="flex items-center justify-between mb-3">
+          <h1 className="text-xl font-bold text-gray-900">🏥 Serviços</h1>
+          {isAuthenticated && (
+            <Link
+              to={ROUTES.SERVICES.CREATE}
+              className="text-sm font-medium text-[--color-primary] hover:underline"
+            >
+              + Cadastrar
+            </Link>
+          )}
+        </div>
         <ServiceFiltersBar
           filters={filters}
           onNameChange={handleNameChange}
