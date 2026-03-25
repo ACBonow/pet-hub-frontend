@@ -76,7 +76,7 @@ const publicTabs: NavItem[] = [
 ]
 
 const privateTabs: NavItem[] = [
-  { label: 'Início', to: ROUTES.HOME, icon: <HomeIcon /> },
+  { label: 'Início', to: ROUTES.DASHBOARD, icon: <HomeIcon /> },
   { label: 'Pets', to: ROUTES.PET.LIST, icon: <PawIcon /> },
   { label: 'Adoção', to: ROUTES.ADOPTION.LIST, icon: <HeartIcon /> },
   { label: 'Achados', to: ROUTES.LOST_FOUND.LIST, icon: <FlagIcon /> },

@@ -98,7 +98,7 @@ export default function LandingPage() {
               ❤️ Ver pets para adoção
             </Link>
             <Link
-              to={isAuthenticated ? ROUTES.PET.CREATE : ROUTES.LOGIN}
+              to={isAuthenticated ? ROUTES.DASHBOARD : ROUTES.LOGIN}
               className="border-2 border-white/60 text-white font-bold px-6 py-3 rounded-full hover:bg-white/10 transition-colors text-sm"
             >
               Cadastrar meu pet

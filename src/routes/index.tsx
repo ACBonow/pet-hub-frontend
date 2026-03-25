@@ -29,6 +29,7 @@ const LostFoundDetailPage = lazy(() => import('@/modules/lost-found/pages/LostFo
 const ServicesListPage = lazy(() => import('@/modules/services-directory/pages/ServicesListPage'))
 
 // ── PRIVATE ───────────────────────────────────────────────────────────────────
+const DashboardPage = lazy(() => import('@/pages/DashboardPage'))
 const AdoptionFormPage = lazy(() => import('@/modules/adoption/pages/AdoptionFormPage'))
 const LostFoundFormPage = lazy(() => import('@/modules/lost-found/pages/LostFoundFormPage'))
 const PetListPage = lazy(() => import('@/modules/pet/pages/PetListPage'))
@@ -74,6 +75,7 @@ export const router = createBrowserRouter([
   {
     element: <PrivateRoute />,
     children: [
+      { path: ROUTES.DASHBOARD,                element: <S><DashboardPage /></S> },
       { path: ROUTES.ADOPTION.CREATE,          element: <S><AdoptionFormPage /></S> },
       { path: ROUTES.LOST_FOUND.CREATE,        element: <S><LostFoundFormPage /></S> },
       { path: ROUTES.PET.LIST,                 element: <S><PetListPage /></S> },

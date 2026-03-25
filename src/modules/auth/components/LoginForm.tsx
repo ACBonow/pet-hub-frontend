@@ -41,7 +41,7 @@ export default function LoginForm() {
     try {
       await login(data)
       const returnTo = searchParams.get('returnTo')
-      navigate(returnTo ?? ROUTES.HOME)
+      navigate(returnTo ?? ROUTES.DASHBOARD)
     } catch (err) {
       const error = err as ApiError
       if (error.code === 'EMAIL_NOT_VERIFIED') {

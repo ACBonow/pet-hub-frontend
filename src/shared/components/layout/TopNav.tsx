@@ -29,7 +29,7 @@ export default function TopNav() {
   return (
     <header className="hidden lg:flex items-center h-16 px-8 bg-white border-b border-gray-200 gap-8 sticky top-0 z-30">
       <Link
-        to={ROUTES.HOME}
+        to={isAuthenticated ? ROUTES.DASHBOARD : ROUTES.HOME}
         className="text-xl font-bold text-[--color-primary] shrink-0"
       >
         PetHUB
