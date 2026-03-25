@@ -14,6 +14,9 @@ import {
   forgotPasswordRequest,
   resetPasswordRequest,
 } from '@/modules/auth/services/auth.service'
+
+export const STORAGE_REFRESH_KEY = 'pethub_refresh_token'
+export const STORAGE_USER_KEY = 'pethub_user'
 import type {
   LoginCredentials,
   RegisterData,
@@ -28,7 +31,9 @@ export function useAuth() {
   const { accessToken, user, isAuthenticated, setAuth, clearAuth } = useAuthStore()
 
   async function login(credentials: LoginCredentials): Promise<void> {
-    const { accessToken: token, user: authUser } = await loginRequest(credentials)
+    const { accessToken: token, refreshToken, user: authUser } = await loginRequest(credentials)
+    localStorage.setItem(STORAGE_REFRESH_KEY, refreshToken)
+    localStorage.setItem(STORAGE_USER_KEY, JSON.stringify(authUser))
     setAuth(token, authUser)
   }
 
@@ -41,6 +46,8 @@ export function useAuth() {
     try {
       await logoutRequest()
     } finally {
+      localStorage.removeItem(STORAGE_REFRESH_KEY)
+      localStorage.removeItem(STORAGE_USER_KEY)
       clearAuth()
     }
   }

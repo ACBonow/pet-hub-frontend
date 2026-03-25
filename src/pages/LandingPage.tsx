@@ -7,6 +7,7 @@
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import PublicLayout from '@/shared/components/layout/PublicLayout'
+import { useAuthStore } from '@/modules/auth/store/authSlice'
 import AdoptionCard from '@/modules/adoption/components/AdoptionCard'
 import LostFoundCard from '@/modules/lost-found/components/LostFoundCard'
 import ServiceCard from '@/modules/services-directory/components/ServiceCard'
@@ -60,6 +61,7 @@ function CarouselSection({ title, emoji, viewAllTo, accentClass, children, isEmp
 }
 
 export default function LandingPage() {
+  const { isAuthenticated } = useAuthStore()
   const [adoptions, setAdoptions] = useState<AdoptionListing[]>([])
   const [reports, setReports] = useState<LostFoundReport[]>([])
   const [services, setServices] = useState<ServiceListing[]>([])
@@ -96,7 +98,7 @@ export default function LandingPage() {
               ❤️ Ver pets para adoção
             </Link>
             <Link
-              to={ROUTES.LOGIN}
+              to={isAuthenticated ? ROUTES.PET.CREATE : ROUTES.LOGIN}
               className="border-2 border-white/60 text-white font-bold px-6 py-3 rounded-full hover:bg-white/10 transition-colors text-sm"
             >
               Cadastrar meu pet

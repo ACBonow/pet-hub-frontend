@@ -25,8 +25,8 @@ export async function registerRequest(data: RegisterData): Promise<AuthResponse>
   return response.data.data
 }
 
-export async function refreshTokenRequest(): Promise<{ accessToken: string }> {
-  const response = await api.post<{ success: true; data: { accessToken: string } }>('/api/v1/auth/refresh')
+export async function refreshTokenRequest(data: { refreshToken: string }): Promise<{ accessToken: string; refreshToken: string }> {
+  const response = await api.post<{ success: true; data: { accessToken: string; refreshToken: string } }>('/api/v1/auth/refresh', data)
   return response.data.data
 }
 
