@@ -28,7 +28,11 @@ export async function updatePetRequest(id: string, data: UpdatePetData): Promise
 }
 
 export async function transferTutorshipRequest(petId: string, data: TransferTutorshipData): Promise<Pet> {
-  const response = await api.post<{ success: true; data: Pet }>(`/api/v1/pets/${petId}/transfer`, data)
+  const response = await api.post<{ success: true; data: Pet }>(`/api/v1/pets/${petId}/transfer-tutorship`, {
+    tutorType: 'PERSON',
+    personCpf: data.newTutorCpf,
+    tutorshipType: data.tutorshipType,
+  })
   return response.data.data
 }
 

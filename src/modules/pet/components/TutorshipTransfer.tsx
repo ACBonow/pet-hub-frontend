@@ -7,6 +7,7 @@
 import { useState } from 'react'
 import { useForm } from 'react-hook-form'
 import Button from '@/shared/components/ui/Button'
+import CpfInput from '@/shared/components/forms/CpfInput'
 import type { TutorshipType, TransferTutorshipData } from '@/modules/pet/types'
 
 interface TutorshipTransferProps {
@@ -15,7 +16,7 @@ interface TutorshipTransferProps {
 }
 
 interface TransferFormValues {
-  newTutorId: string
+  newTutorCpf: string
   tutorshipType: TutorshipType
 }
 
@@ -25,12 +26,12 @@ export default function TutorshipTransfer({ onTransfer }: TutorshipTransferProps
   const [transferError, setTransferError] = useState<string | null>(null)
 
   const {
+    control,
     register,
     handleSubmit,
     reset,
-    formState: { errors },
   } = useForm<TransferFormValues>({
-    defaultValues: { newTutorId: '', tutorshipType: 'TUTOR' },
+    defaultValues: { newTutorCpf: '', tutorshipType: 'TUTOR' },
   })
 
   const openModal = () => {
@@ -78,27 +79,12 @@ export default function TutorshipTransfer({ onTransfer }: TutorshipTransferProps
 
             <form onSubmit={handleSubmit(handleConfirm)} noValidate>
               <div className="flex flex-col gap-4">
-                <div className="flex flex-col gap-1">
-                  <label htmlFor="newTutorId" className="text-sm font-medium text-gray-700">
-                    ID do Novo Tutor
-                  </label>
-                  <input
-                    id="newTutorId"
-                    type="text"
-                    {...register('newTutorId', { required: 'ID do novo tutor é obrigatório' })}
-                    className={[
-                      'w-full min-h-[44px] px-3 py-2',
-                      'border rounded-[--radius-md] text-sm',
-                      'focus:outline-none focus:ring-2 focus:ring-[--color-primary]',
-                      errors.newTutorId ? 'border-[--color-danger]' : 'border-gray-300',
-                    ].join(' ')}
-                  />
-                  {errors.newTutorId && (
-                    <p role="alert" className="text-xs text-[--color-danger]">
-                      {errors.newTutorId.message}
-                    </p>
-                  )}
-                </div>
+                <CpfInput
+                  name="newTutorCpf"
+                  control={control}
+                  label="CPF do Novo Tutor"
+                  required
+                />
 
                 <div className="flex flex-col gap-1">
                   <label htmlFor="tutorshipType" className="text-sm font-medium text-gray-700">

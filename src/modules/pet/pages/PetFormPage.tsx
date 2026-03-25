@@ -23,8 +23,7 @@ export default function PetFormPage() {
       species: data.species,
       breed: data.breed || null,
       birthDate: data.birthDate || null,
-      primaryTutorId: data.primaryTutorId,
-      primaryTutorshipType: data.primaryTutorshipType,
+      tutorshipType: data.tutorshipType,
     })
     navigate(ROUTES.PET.LIST)
   }

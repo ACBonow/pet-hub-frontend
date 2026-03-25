@@ -44,19 +44,19 @@ describe('TutorshipTransfer', () => {
     expect(mockOnTransfer).not.toHaveBeenCalled()
   })
 
-  it('should call onTransfer with new tutor data when confirmed', async () => {
+  it('should call onTransfer with CPF when confirmed', async () => {
     renderWithRouter(<TutorshipTransfer petId="pet-1" onTransfer={mockOnTransfer} />)
 
     await userEvent.click(screen.getByRole('button', { name: /transferir tutoria/i }))
 
-    await userEvent.type(screen.getByLabelText(/id do novo tutor/i), 'person-2')
+    await userEvent.type(screen.getByLabelText(/cpf do novo tutor/i), '52998224725')
     await userEvent.selectOptions(screen.getByLabelText(/tipo de tutoria/i), 'TUTOR')
 
     await userEvent.click(screen.getByRole('button', { name: /^confirmar$/i }))
 
     await waitFor(() => {
       expect(mockOnTransfer).toHaveBeenCalledWith({
-        newTutorId: 'person-2',
+        newTutorCpf: '52998224725',
         tutorshipType: 'TUTOR',
       })
     })
@@ -66,7 +66,7 @@ describe('TutorshipTransfer', () => {
     renderWithRouter(<TutorshipTransfer petId="pet-1" onTransfer={mockOnTransfer} />)
 
     await userEvent.click(screen.getByRole('button', { name: /transferir tutoria/i }))
-    await userEvent.type(screen.getByLabelText(/id do novo tutor/i), 'person-2')
+    await userEvent.type(screen.getByLabelText(/cpf do novo tutor/i), '52998224725')
     await userEvent.click(screen.getByRole('button', { name: /^confirmar$/i }))
 
     await waitFor(() => {
@@ -79,7 +79,7 @@ describe('TutorshipTransfer', () => {
     renderWithRouter(<TutorshipTransfer petId="pet-1" onTransfer={mockOnTransfer} />)
 
     await userEvent.click(screen.getByRole('button', { name: /transferir tutoria/i }))
-    await userEvent.type(screen.getByLabelText(/id do novo tutor/i), 'invalid')
+    await userEvent.type(screen.getByLabelText(/cpf do novo tutor/i), '52998224725')
     await userEvent.click(screen.getByRole('button', { name: /^confirmar$/i }))
 
     await waitFor(() => {

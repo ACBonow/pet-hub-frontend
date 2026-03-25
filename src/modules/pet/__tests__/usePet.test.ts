@@ -133,12 +133,7 @@ describe('usePet', () => {
       const { result } = renderHook(() => usePet())
 
       await act(async () => {
-        await result.current.createPet({
-          name: 'Rex',
-          species: 'dog',
-          primaryTutorId: 'person-1',
-          primaryTutorshipType: 'OWNER',
-        })
+        await result.current.createPet({ name: 'Rex', species: 'dog' })
       })
 
       expect(result.current.pet).toEqual(mockPet)
@@ -146,35 +141,30 @@ describe('usePet', () => {
 
     it('should throw when creation fails', async () => {
       mockPetService.createPetRequest.mockRejectedValueOnce({
-        code: 'VALIDATION_ERROR',
-        message: 'Tutor primário inválido.',
+        code: 'NOT_FOUND',
+        message: 'Perfil de pessoa do usuário não encontrado.',
       })
 
       const { result } = renderHook(() => usePet())
 
       await expect(
         act(async () => {
-          await result.current.createPet({
-            name: 'Rex',
-            species: 'dog',
-            primaryTutorId: 'invalid-id',
-            primaryTutorshipType: 'OWNER',
-          })
+          await result.current.createPet({ name: 'Rex', species: 'dog' })
         }),
-      ).rejects.toMatchObject({ code: 'VALIDATION_ERROR' })
+      ).rejects.toMatchObject({ code: 'NOT_FOUND' })
     })
   })
 
   describe('transferTutorship', () => {
     it('should transfer tutorship and update pet state', async () => {
-      const updated = { ...mockPet, primaryTutorId: 'person-2' }
+      const updated = { ...mockPet }
       mockPetService.transferTutorshipRequest.mockResolvedValueOnce(updated)
 
       const { result } = renderHook(() => usePet())
 
       await act(async () => {
         await result.current.transferTutorship('pet-1', {
-          newTutorId: 'person-2',
+          newTutorCpf: '52998224725',
           tutorshipType: 'TUTOR',
         })
       })

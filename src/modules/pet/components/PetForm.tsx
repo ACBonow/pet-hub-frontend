@@ -14,8 +14,7 @@ interface PetFormValues {
   species: string
   breed: string
   birthDate: string
-  primaryTutorId: string
-  primaryTutorshipType: TutorshipType
+  tutorshipType: TutorshipType
 }
 
 interface PetFormProps {
@@ -37,8 +36,7 @@ export default function PetForm({ onSubmit, initialData, isLoading }: PetFormPro
       species: initialData?.species ?? '',
       breed: initialData?.breed ?? '',
       birthDate: initialData?.birthDate ?? '',
-      primaryTutorId: initialData?.primaryTutorId ?? '',
-      primaryTutorshipType: initialData?.primaryTutorshipType ?? 'OWNER',
+      tutorshipType: initialData?.tutorshipType ?? 'OWNER',
     },
   })
 
@@ -117,28 +115,6 @@ export default function PetForm({ onSubmit, initialData, isLoading }: PetFormPro
             {...register('birthDate')}
             className="w-full min-h-[44px] px-3 py-2 border border-gray-300 rounded-[--radius-md] text-sm focus:outline-none focus:ring-2 focus:ring-[--color-primary]"
           />
-        </div>
-
-        <div className="flex flex-col gap-1">
-          <label htmlFor="primaryTutorId" className="text-sm font-medium text-gray-700">
-            ID do Tutor Primário
-          </label>
-          <input
-            id="primaryTutorId"
-            type="text"
-            {...register('primaryTutorId', { required: 'Tutor primário é obrigatório' })}
-            className={[
-              'w-full min-h-[44px] px-3 py-2',
-              'border rounded-[--radius-md] text-sm',
-              'focus:outline-none focus:ring-2 focus:ring-[--color-primary]',
-              errors.primaryTutorId ? 'border-[--color-danger]' : 'border-gray-300',
-            ].join(' ')}
-          />
-          {errors.primaryTutorId && (
-            <p role="alert" className="text-xs text-[--color-danger]">
-              {errors.primaryTutorId.message}
-            </p>
-          )}
         </div>
 
         {apiError && (

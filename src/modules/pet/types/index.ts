@@ -25,8 +25,7 @@ export interface CreatePetData {
   species: string
   breed?: string | null
   birthDate?: string | null
-  primaryTutorId: string
-  primaryTutorshipType?: TutorshipType
+  tutorshipType?: TutorshipType
 }
 
 export interface UpdatePetData {
@@ -37,7 +36,7 @@ export interface UpdatePetData {
 }
 
 export interface TransferTutorshipData {
-  newTutorId: string
+  newTutorCpf: string
   tutorshipType: TutorshipType
 }
 

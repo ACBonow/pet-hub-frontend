@@ -28,60 +28,50 @@ describe('PetForm', () => {
     expect(screen.getByLabelText(/data de nascimento/i)).toBeInTheDocument()
   })
 
-  it('should require primary tutor ID', async () => {
-    renderWithRouter(<PetForm onSubmit={mockOnSubmit} />)
-
-    await userEvent.type(screen.getByLabelText(/nome/i), 'Rex')
-    await userEvent.click(screen.getByRole('button', { name: /salvar/i }))
-
-    await waitFor(() => {
-      expect(screen.getByText(/tutor primário é obrigatório/i)).toBeInTheDocument()
-    })
-    expect(mockOnSubmit).not.toHaveBeenCalled()
-  })
-
-  it('should submit valid pet data', async () => {
+  it('should submit valid pet data without tutor ID field', async () => {
     renderWithRouter(<PetForm onSubmit={mockOnSubmit} />)
 
     await userEvent.type(screen.getByLabelText(/nome/i), 'Rex')
     await userEvent.selectOptions(screen.getByLabelText(/espécie/i), 'dog')
     await userEvent.type(screen.getByLabelText(/raça/i), 'Labrador')
-    await userEvent.type(screen.getByLabelText(/id do tutor/i), 'person-1')
 
     await userEvent.click(screen.getByRole('button', { name: /salvar/i }))
 
     await waitFor(() => {
       expect(mockOnSubmit).toHaveBeenCalledWith(
-        expect.objectContaining({
-          name: 'Rex',
-          species: 'dog',
-          breed: 'Labrador',
-          primaryTutorId: 'person-1',
-        }),
+        expect.objectContaining({ name: 'Rex', species: 'dog', breed: 'Labrador' }),
       )
     })
+    expect(mockOnSubmit).toHaveBeenCalledWith(
+      expect.not.objectContaining({ primaryTutorId: expect.anything() }),
+    )
   })
 
-  it('should show API error inline after failed submit', async () => {
-    mockOnSubmit.mockRejectedValueOnce({ message: 'Tutor primário não encontrado.' })
+  it('should require name before submitting', async () => {
     renderWithRouter(<PetForm onSubmit={mockOnSubmit} />)
 
-    await userEvent.type(screen.getByLabelText(/nome/i), 'Rex')
-    await userEvent.type(screen.getByLabelText(/id do tutor/i), 'invalid-id')
     await userEvent.click(screen.getByRole('button', { name: /salvar/i }))
 
     await waitFor(() => {
-      expect(screen.getByText('Tutor primário não encontrado.')).toBeInTheDocument()
+      expect(screen.getByText(/nome é obrigatório/i)).toBeInTheDocument()
+    })
+    expect(mockOnSubmit).not.toHaveBeenCalled()
+  })
+
+  it('should show API error inline after failed submit', async () => {
+    mockOnSubmit.mockRejectedValueOnce({ message: 'Perfil de pessoa não encontrado.' })
+    renderWithRouter(<PetForm onSubmit={mockOnSubmit} />)
+
+    await userEvent.type(screen.getByLabelText(/nome/i), 'Rex')
+    await userEvent.click(screen.getByRole('button', { name: /salvar/i }))
+
+    await waitFor(() => {
+      expect(screen.getByText('Perfil de pessoa não encontrado.')).toBeInTheDocument()
     })
   })
 
   it('should pre-fill fields when initialData is provided', () => {
-    const initialData = {
-      name: 'Rex',
-      species: 'dog',
-      breed: 'Labrador',
-      primaryTutorId: 'person-1',
-    }
+    const initialData = { name: 'Rex', species: 'dog', breed: 'Labrador' }
     renderWithRouter(<PetForm onSubmit={mockOnSubmit} initialData={initialData} />)
 
     expect(screen.getByDisplayValue('Rex')).toBeInTheDocument()
