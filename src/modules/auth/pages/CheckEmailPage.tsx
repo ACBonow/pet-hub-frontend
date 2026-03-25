@@ -26,6 +26,11 @@ export default function CheckEmailPage() {
     setSending(true)
     setFeedback(null)
     try {
+      if (!email) {
+        setFeedback({ type: 'error', message: 'E-mail não encontrado na URL. Volte e tente novamente.' })
+        setSending(false)
+        return
+      }
       await resendVerification({ email })
       setFeedback({ type: 'success', message: 'E-mail reenviado! Verifique sua caixa de entrada.' })
       setCooldown(COOLDOWN_SECONDS)
