@@ -14,17 +14,20 @@ import { usePet } from '@/modules/pet/hooks/usePet'
 
 export default function PetFormPage() {
   const navigate = useNavigate()
-  const { isLoading, createPet } = usePet()
+  const { isLoading, createPet, uploadPhoto } = usePet()
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const handleSubmit = async (data: any) => {
-    await createPet({
+    const pet = await createPet({
       name: data.name,
       species: data.species,
       breed: data.breed || null,
       birthDate: data.birthDate || null,
       tutorshipType: data.tutorshipType,
     })
+    if (data.photoFile) {
+      await uploadPhoto(pet.id, data.photoFile)
+    }
     navigate(ROUTES.PET.LIST)
   }
 

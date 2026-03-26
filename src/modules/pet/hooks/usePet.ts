@@ -12,6 +12,7 @@ import {
   updatePetRequest,
   transferTutorshipRequest,
   getTutorshipHistoryRequest,
+  uploadPetPhotoRequest,
 } from '@/modules/pet/services/pet.service'
 import type { Pet, CreatePetData, UpdatePetData, TransferTutorshipData, TutorshipHistoryEntry } from '@/modules/pet/types'
 import type { ApiError } from '@/shared/types'
@@ -24,10 +25,11 @@ interface UsePetResult {
   error: string | null
   getPet: (id: string) => Promise<void>
   listPets: () => Promise<void>
-  createPet: (data: CreatePetData) => Promise<void>
+  createPet: (data: CreatePetData) => Promise<Pet>
   updatePet: (id: string, data: UpdatePetData) => Promise<void>
   transferTutorship: (petId: string, data: TransferTutorshipData) => Promise<void>
   getTutorshipHistory: (petId: string) => Promise<void>
+  uploadPhoto: (petId: string, file: File) => Promise<Pet>
 }
 
 export function usePet(): UsePetResult {
@@ -67,12 +69,13 @@ export function usePet(): UsePetResult {
     }
   }
 
-  async function createPet(data: CreatePetData): Promise<void> {
+  async function createPet(data: CreatePetData): Promise<Pet> {
     setIsLoading(true)
     setError(null)
     try {
       const created = await createPetRequest(data)
       setPet(created)
+      return created
     } catch (err) {
       const apiError = err as ApiError
       setError(apiError.message ?? 'Erro ao cadastrar pet.')
@@ -127,5 +130,21 @@ export function usePet(): UsePetResult {
     }
   }
 
-  return { pet, pets, tutorshipHistory, isLoading, error, getPet, listPets, createPet, updatePet, transferTutorship, getTutorshipHistory }
+  async function uploadPhoto(petId: string, file: File): Promise<Pet> {
+    setIsLoading(true)
+    setError(null)
+    try {
+      const updated = await uploadPetPhotoRequest(petId, file)
+      setPet(updated)
+      return updated
+    } catch (err) {
+      const apiError = err as ApiError
+      setError(apiError.message ?? 'Erro ao enviar foto.')
+      throw err
+    } finally {
+      setIsLoading(false)
+    }
+  }
+
+  return { pet, pets, tutorshipHistory, isLoading, error, getPet, listPets, createPet, updatePet, transferTutorship, getTutorshipHistory, uploadPhoto }
 }

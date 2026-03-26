@@ -1,5 +1,11 @@
 import '@testing-library/jest-dom'
 
+// Polyfill URL.createObjectURL / revokeObjectURL for jsdom (used by file input previews)
+if (typeof global.URL.createObjectURL === 'undefined') {
+  global.URL.createObjectURL = jest.fn((file: Blob) => `blob:mock/${(file as File).name ?? 'file'}`)
+  global.URL.revokeObjectURL = jest.fn()
+}
+
 // Polyfill TextEncoder/TextDecoder for jsdom
 import { TextEncoder, TextDecoder } from 'util'
 Object.assign(global, { TextDecoder, TextEncoder })

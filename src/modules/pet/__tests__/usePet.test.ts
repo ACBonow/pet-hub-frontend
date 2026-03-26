@@ -186,4 +186,36 @@ describe('usePet', () => {
       expect(result.current.tutorshipHistory).toEqual(mockTutorshipHistory)
     })
   })
+
+  describe('uploadPhoto', () => {
+    it('should upload photo and update pet state', async () => {
+      const petWithPhoto = { ...mockPet, photoUrl: 'https://storage.example.com/photo.jpg' }
+      mockPetService.uploadPetPhotoRequest.mockResolvedValueOnce(petWithPhoto)
+
+      const file = new File(['fake'], 'photo.jpg', { type: 'image/jpeg' })
+      const { result } = renderHook(() => usePet())
+
+      await act(async () => {
+        await result.current.uploadPhoto('pet-1', file)
+      })
+
+      expect(mockPetService.uploadPetPhotoRequest).toHaveBeenCalledWith('pet-1', file)
+      expect(result.current.pet?.photoUrl).toBe(petWithPhoto.photoUrl)
+    })
+
+    it('should return the updated pet', async () => {
+      const petWithPhoto = { ...mockPet, photoUrl: 'https://storage.example.com/photo.jpg' }
+      mockPetService.uploadPetPhotoRequest.mockResolvedValueOnce(petWithPhoto)
+
+      const file = new File(['fake'], 'photo.jpg', { type: 'image/jpeg' })
+      const { result } = renderHook(() => usePet())
+
+      let returned: typeof mockPet | undefined
+      await act(async () => {
+        returned = await result.current.uploadPhoto('pet-1', file)
+      })
+
+      expect(returned).toEqual(petWithPhoto)
+    })
+  })
 })

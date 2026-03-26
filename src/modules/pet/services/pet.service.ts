@@ -40,3 +40,14 @@ export async function getTutorshipHistoryRequest(petId: string): Promise<Tutorsh
   const response = await api.get<{ success: true; data: TutorshipHistoryEntry[] }>(`/api/v1/pets/${petId}/tutorship-history`)
   return response.data.data
 }
+
+export async function uploadPetPhotoRequest(petId: string, file: File): Promise<Pet> {
+  const formData = new FormData()
+  formData.append('file', file)
+  const response = await api.post<{ success: true; data: Pet }>(
+    `/api/v1/pets/${petId}/photo`,
+    formData,
+    { headers: { 'Content-Type': 'multipart/form-data' } },
+  )
+  return response.data.data
+}

@@ -77,4 +77,47 @@ describe('PetForm', () => {
     expect(screen.getByDisplayValue('Rex')).toBeInTheDocument()
     expect(screen.getByDisplayValue('Labrador')).toBeInTheDocument()
   })
+
+  it('should render the photo upload field', () => {
+    renderWithRouter(<PetForm onSubmit={mockOnSubmit} />)
+    expect(screen.getByLabelText(/foto do pet/i)).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: /adicionar foto/i })).toBeInTheDocument()
+  })
+
+  it('should show photo preview when a file is selected', async () => {
+    renderWithRouter(<PetForm onSubmit={mockOnSubmit} />)
+
+    const file = new File(['fake-jpeg'], 'photo.jpg', { type: 'image/jpeg' })
+    const fileInput = screen.getByLabelText(/foto do pet/i)
+    await userEvent.upload(fileInput, file)
+
+    expect(screen.getByAltText(/prévia da foto/i)).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: /alterar foto/i })).toBeInTheDocument()
+  })
+
+  it('should pass photoFile to onSubmit when file is selected', async () => {
+    renderWithRouter(<PetForm onSubmit={mockOnSubmit} />)
+
+    const file = new File(['fake-jpeg'], 'photo.jpg', { type: 'image/jpeg' })
+    const fileInput = screen.getByLabelText(/foto do pet/i)
+    await userEvent.upload(fileInput, file)
+
+    await userEvent.type(screen.getByLabelText(/nome/i), 'Rex')
+    await userEvent.click(screen.getByRole('button', { name: /salvar/i }))
+
+    await waitFor(() => {
+      expect(mockOnSubmit).toHaveBeenCalledWith(
+        expect.objectContaining({ photoFile: file }),
+      )
+    })
+  })
+
+  it('should show existing photo when photoUrl is in initialData', () => {
+    renderWithRouter(
+      <PetForm onSubmit={mockOnSubmit} initialData={{ photoUrl: 'https://example.com/photo.jpg' }} />,
+    )
+    const img = screen.getByAltText(/prévia da foto/i)
+    expect(img).toBeInTheDocument()
+    expect(img).toHaveAttribute('src', 'https://example.com/photo.jpg')
+  })
 })
