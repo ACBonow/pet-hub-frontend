@@ -210,7 +210,7 @@ describe('usePet', () => {
       const file = new File(['fake'], 'photo.jpg', { type: 'image/jpeg' })
       const { result } = renderHook(() => usePet())
 
-      let returned: typeof mockPet | undefined
+      let returned: import('@/modules/pet/types').Pet | undefined
       await act(async () => {
         returned = await result.current.uploadPhoto('pet-1', file)
       })

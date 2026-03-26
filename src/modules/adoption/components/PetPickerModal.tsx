@@ -139,7 +139,7 @@ export default function PetPickerModal({ isOpen, onClose, onSelect }: PetPickerM
               )}
               <Button
                 type="button"
-                variant="outline"
+                variant="secondary"
                 onClick={() => setShowNewForm(true)}
               >
                 Cadastrar novo pet
