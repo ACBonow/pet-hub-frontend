@@ -4,10 +4,11 @@
  * @description Form for creating adoption listings with an integrated pet picker.
  */
 
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import Button from '@/shared/components/ui/Button'
 import PetPickerModal from '@/modules/adoption/components/PetPickerModal'
+import { useOrganization } from '@/modules/organization/hooks/useOrganization'
 import type { CreateAdoptionData } from '@/modules/adoption/types'
 import type { Pet } from '@/modules/pet/types'
 
@@ -23,6 +24,8 @@ interface AdoptionFormValues {
   description: string
   contactEmail: string
   contactPhone: string
+  contactWhatsapp: string
+  organizationId: string // '' = person (me), otherwise org id
 }
 
 interface AdoptionFormProps {
@@ -36,12 +39,25 @@ export default function AdoptionForm({ onSubmit, isLoading }: AdoptionFormProps)
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [apiError, setApiError] = useState<string | null>(null)
 
+  const { organizations, listMyOrganizations } = useOrganization()
+
+  useEffect(() => {
+    listMyOrganizations()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
+
   const {
     register,
     handleSubmit,
     formState: { errors },
   } = useForm<AdoptionFormValues>({
-    defaultValues: { description: '', contactEmail: '', contactPhone: '' },
+    defaultValues: {
+      description: '',
+      contactEmail: '',
+      contactPhone: '',
+      contactWhatsapp: '',
+      organizationId: '',
+    },
   })
 
   const handleFormSubmit = async (data: AdoptionFormValues) => {
@@ -57,6 +73,8 @@ export default function AdoptionForm({ onSubmit, isLoading }: AdoptionFormProps)
         description: data.description || null,
         contactEmail: data.contactEmail || null,
         contactPhone: data.contactPhone || null,
+        contactWhatsapp: data.contactWhatsapp || null,
+        organizationId: data.organizationId || null,
       })
     } catch (err) {
       const error = err as { message?: string }
@@ -126,6 +144,27 @@ export default function AdoptionForm({ onSubmit, isLoading }: AdoptionFormProps)
             )}
           </div>
 
+          {/* Org picker — only shown when user belongs to organizations */}
+          {organizations.length > 0 && (
+            <div className="flex flex-col gap-1">
+              <label htmlFor="organizationId" className="text-sm font-medium text-gray-700">
+                Publicar como
+              </label>
+              <select
+                id="organizationId"
+                {...register('organizationId')}
+                className="w-full min-h-[44px] px-3 py-2 border border-gray-300 rounded-[--radius-md] text-sm focus:outline-none focus:ring-2 focus:ring-[--color-primary]"
+              >
+                <option value="">Eu mesmo (pessoa)</option>
+                {organizations.map((org) => (
+                  <option key={org.id} value={org.id}>
+                    {org.name}
+                  </option>
+                ))}
+              </select>
+            </div>
+          )}
+
           {/* Description */}
           <div className="flex flex-col gap-1">
             <label htmlFor="description" className="text-sm font-medium text-gray-700">
@@ -170,6 +209,19 @@ export default function AdoptionForm({ onSubmit, isLoading }: AdoptionFormProps)
               id="contactPhone"
               type="tel"
               {...register('contactPhone')}
+              className="w-full min-h-[44px] px-3 py-2 border border-gray-300 rounded-[--radius-md] text-sm focus:outline-none focus:ring-2 focus:ring-[--color-primary]"
+            />
+          </div>
+
+          {/* WhatsApp */}
+          <div className="flex flex-col gap-1">
+            <label htmlFor="contactWhatsapp" className="text-sm font-medium text-gray-700">
+              WhatsApp (opcional)
+            </label>
+            <input
+              id="contactWhatsapp"
+              type="tel"
+              {...register('contactWhatsapp')}
               className="w-full min-h-[44px] px-3 py-2 border border-gray-300 rounded-[--radius-md] text-sm focus:outline-none focus:ring-2 focus:ring-[--color-primary]"
             />
           </div>

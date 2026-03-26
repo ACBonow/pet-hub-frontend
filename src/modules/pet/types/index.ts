@@ -11,6 +11,8 @@ export interface Pet {
   name: string
   species: string
   breed: string | null
+  gender: string | null
+  castrated: boolean | null
   birthDate: string | null
   photoUrl: string | null
   primaryTutorId: string
@@ -24,6 +26,8 @@ export interface CreatePetData {
   name: string
   species: string
   breed?: string | null
+  gender?: string | null
+  castrated?: boolean | null
   birthDate?: string | null
   tutorshipType?: TutorshipType
 }
@@ -32,6 +36,8 @@ export interface UpdatePetData {
   name?: string
   species?: string
   breed?: string | null
+  gender?: string | null
+  castrated?: boolean | null
   birthDate?: string | null
 }
 

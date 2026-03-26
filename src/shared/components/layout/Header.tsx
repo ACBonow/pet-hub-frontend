@@ -24,8 +24,8 @@ export default function Header({ title, showBack = false, action }: HeaderProps)
   const navigate = useNavigate()
 
   return (
-    <header className="sticky top-0 z-30 bg-white border-b border-gray-200">
-      <div className="flex items-center h-14 px-4 gap-3">
+    <header className="sticky top-0 lg:top-16 z-30 bg-white border-b border-gray-200">
+      <div className="max-w-2xl mx-auto w-full flex items-center h-14 px-4 gap-3">
         {showBack && (
           <button
             type="button"

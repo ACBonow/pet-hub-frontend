@@ -20,12 +20,14 @@ describe('PetForm', () => {
     mockOnSubmit.mockResolvedValue(undefined)
   })
 
-  it('should render name, species, breed, and birth date fields', () => {
+  it('should render name, species, breed, birth date, gender, and castrated fields', () => {
     renderWithRouter(<PetForm onSubmit={mockOnSubmit} />)
     expect(screen.getByLabelText(/nome/i)).toBeInTheDocument()
     expect(screen.getByLabelText(/espécie/i)).toBeInTheDocument()
     expect(screen.getByLabelText(/raça/i)).toBeInTheDocument()
     expect(screen.getByLabelText(/data de nascimento/i)).toBeInTheDocument()
+    expect(screen.getByLabelText(/sexo/i)).toBeInTheDocument()
+    expect(screen.getByLabelText(/castrado/i)).toBeInTheDocument()
   })
 
   it('should submit valid pet data without tutor ID field', async () => {
@@ -76,6 +78,34 @@ describe('PetForm', () => {
 
     expect(screen.getByDisplayValue('Rex')).toBeInTheDocument()
     expect(screen.getByDisplayValue('Labrador')).toBeInTheDocument()
+  })
+
+  it('should submit with selected gender', async () => {
+    renderWithRouter(<PetForm onSubmit={mockOnSubmit} />)
+
+    await userEvent.type(screen.getByLabelText(/nome/i), 'Rex')
+    await userEvent.selectOptions(screen.getByLabelText(/sexo/i), 'M')
+    await userEvent.click(screen.getByRole('button', { name: /salvar/i }))
+
+    await waitFor(() => {
+      expect(mockOnSubmit).toHaveBeenCalledWith(
+        expect.objectContaining({ gender: 'M' }),
+      )
+    })
+  })
+
+  it('should submit castrated as true when checkbox is checked', async () => {
+    renderWithRouter(<PetForm onSubmit={mockOnSubmit} />)
+
+    await userEvent.type(screen.getByLabelText(/nome/i), 'Rex')
+    await userEvent.click(screen.getByLabelText(/castrado/i))
+    await userEvent.click(screen.getByRole('button', { name: /salvar/i }))
+
+    await waitFor(() => {
+      expect(mockOnSubmit).toHaveBeenCalledWith(
+        expect.objectContaining({ castrated: true }),
+      )
+    })
   })
 
   it('should render the photo upload field', () => {

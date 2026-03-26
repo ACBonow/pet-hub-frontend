@@ -22,6 +22,8 @@ export default function PetFormPage() {
       name: data.name,
       species: data.species,
       breed: data.breed || null,
+      gender: data.gender || null,
+      castrated: data.castrated ?? null,
       birthDate: data.birthDate || null,
       tutorshipType: data.tutorshipType,
     })

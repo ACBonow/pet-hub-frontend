@@ -13,6 +13,8 @@ export interface PetFormValues {
   name: string
   species: string
   breed: string
+  gender: string
+  castrated: boolean
   birthDate: string
   tutorshipType: TutorshipType
   photoFile?: File
@@ -20,7 +22,7 @@ export interface PetFormValues {
 
 interface PetFormProps {
   onSubmit: (data: PetFormValues) => Promise<void>
-  initialData?: Partial<PetFormValues> & { photoUrl?: string | null }
+  initialData?: Partial<PetFormValues> & { photoUrl?: string | null; gender?: string | null; castrated?: boolean | null }
   isLoading?: boolean
 }
 
@@ -39,6 +41,8 @@ export default function PetForm({ onSubmit, initialData, isLoading }: PetFormPro
       name: initialData?.name ?? '',
       species: initialData?.species ?? '',
       breed: initialData?.breed ?? '',
+      gender: initialData?.gender ?? '',
+      castrated: initialData?.castrated ?? false,
       birthDate: initialData?.birthDate ?? '',
       tutorshipType: initialData?.tutorshipType ?? 'OWNER',
     },
@@ -114,6 +118,33 @@ export default function PetForm({ onSubmit, initialData, isLoading }: PetFormPro
             {...register('breed')}
             className="w-full min-h-[44px] px-3 py-2 border border-gray-300 rounded-[--radius-md] text-sm focus:outline-none focus:ring-2 focus:ring-[--color-primary]"
           />
+        </div>
+
+        <div className="flex flex-col gap-1">
+          <label htmlFor="gender" className="text-sm font-medium text-gray-700">
+            Sexo
+          </label>
+          <select
+            id="gender"
+            {...register('gender')}
+            className="w-full min-h-[44px] px-3 py-2 border border-gray-300 rounded-[--radius-md] text-sm focus:outline-none focus:ring-2 focus:ring-[--color-primary]"
+          >
+            <option value="">Não informado</option>
+            <option value="M">Macho</option>
+            <option value="F">Fêmea</option>
+          </select>
+        </div>
+
+        <div className="flex items-center gap-3">
+          <input
+            id="castrated"
+            type="checkbox"
+            {...register('castrated')}
+            className="w-5 h-5 accent-[--color-primary]"
+          />
+          <label htmlFor="castrated" className="text-sm font-medium text-gray-700">
+            Castrado(a)
+          </label>
         </div>
 
         <div className="flex flex-col gap-1">

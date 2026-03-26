@@ -7,6 +7,7 @@
 import { useState } from 'react'
 import {
   listOrganizationsRequest,
+  listMyOrganizationsRequest,
   getOrganizationRequest,
   createOrganizationRequest,
   updateOrganizationRequest,
@@ -21,6 +22,7 @@ interface UseOrganizationResult {
   error: string | null
   getOrganization: (id: string) => Promise<void>
   listOrganizations: () => Promise<void>
+  listMyOrganizations: () => Promise<void>
   createOrganization: (data: CreateOrganizationData) => Promise<void>
   updateOrganization: (id: string, data: UpdateOrganizationData) => Promise<void>
 }
@@ -61,6 +63,21 @@ export function useOrganization(): UseOrganizationResult {
     }
   }
 
+  async function listMyOrganizations(): Promise<void> {
+    setIsLoading(true)
+    setError(null)
+    try {
+      const data = await listMyOrganizationsRequest()
+      setOrganizations(data)
+    } catch (err) {
+      const apiError = err as ApiError
+      setError(apiError.message ?? 'Erro ao carregar suas organizações.')
+      throw err
+    } finally {
+      setIsLoading(false)
+    }
+  }
+
   async function createOrganization(data: CreateOrganizationData): Promise<void> {
     setIsLoading(true)
     setError(null)
@@ -91,5 +108,5 @@ export function useOrganization(): UseOrganizationResult {
     }
   }
 
-  return { organization, organizations, isLoading, error, getOrganization, listOrganizations, createOrganization, updateOrganization }
+  return { organization, organizations, isLoading, error, getOrganization, listOrganizations, listMyOrganizations, createOrganization, updateOrganization }
 }

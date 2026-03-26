@@ -33,6 +33,7 @@ export interface CreateAdoptionData {
   description?: string | null
   contactEmail?: string | null
   contactPhone?: string | null
+  contactWhatsapp?: string | null
   organizationId?: string | null
 }
 

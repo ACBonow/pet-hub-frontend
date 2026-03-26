@@ -12,6 +12,11 @@ export async function listOrganizationsRequest(): Promise<Organization[]> {
   return response.data.data
 }
 
+export async function listMyOrganizationsRequest(): Promise<Organization[]> {
+  const response = await api.get<{ success: true; data: Organization[] }>('/api/v1/organizations/my')
+  return response.data.data
+}
+
 export async function getOrganizationRequest(id: string): Promise<Organization> {
   const response = await api.get<{ success: true; data: Organization }>(`/api/v1/organizations/${id}`)
   return response.data.data

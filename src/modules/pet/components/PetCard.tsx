@@ -41,6 +41,8 @@ export default function PetCard({ pet }: PetCardProps) {
             <p className="text-sm text-gray-500">
               {SPECIES_LABELS[pet.species] ?? pet.species}
               {pet.breed ? ` · ${pet.breed}` : ''}
+              {pet.gender === 'M' ? ' · Macho' : pet.gender === 'F' ? ' · Fêmea' : ''}
+              {pet.castrated === true ? ' · Castrado(a)' : ''}
             </p>
           </div>
         </div>

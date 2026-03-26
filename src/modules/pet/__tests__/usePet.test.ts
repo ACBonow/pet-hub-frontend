@@ -17,6 +17,8 @@ const mockPet = {
   name: 'Rex',
   species: 'dog',
   breed: 'Labrador',
+  gender: null,
+  castrated: null,
   birthDate: '2022-01-15',
   photoUrl: null,
   primaryTutorId: 'person-1',

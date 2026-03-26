@@ -81,6 +81,16 @@ export default function PetDetailPage() {
                 <div>
                   <p className="text-xl font-bold text-gray-900">{pet.name}</p>
                   {pet.breed && <p className="text-sm text-gray-500">{pet.breed}</p>}
+                  <div className="flex flex-wrap gap-2 mt-1">
+                    {pet.gender && (
+                      <span className="text-xs text-gray-500">
+                        {pet.gender === 'M' ? 'Macho' : pet.gender === 'F' ? 'Fêmea' : pet.gender}
+                      </span>
+                    )}
+                    {pet.castrated === true && (
+                      <span className="text-xs bg-gray-100 text-gray-600 px-2 py-0.5 rounded-full">Castrado(a)</span>
+                    )}
+                  </div>
                 </div>
               </div>
               <Link
