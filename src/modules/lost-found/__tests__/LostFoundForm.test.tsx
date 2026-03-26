@@ -87,4 +87,37 @@ describe('LostFoundForm', () => {
       expect(screen.getByText('Erro ao criar relatório.')).toBeInTheDocument()
     })
   })
+
+  it('should render photo upload field', () => {
+    renderWithRouter(<LostFoundForm onSubmit={mockOnSubmit} />)
+    expect(screen.getByLabelText(/foto do animal/i)).toBeInTheDocument()
+    expect(screen.getByText(/adicionar foto/i)).toBeInTheDocument()
+  })
+
+  it('should show photo preview when file selected', async () => {
+    global.URL.createObjectURL = jest.fn().mockReturnValue('blob:fake-url')
+    renderWithRouter(<LostFoundForm onSubmit={mockOnSubmit} />)
+
+    const file = new File(['fake'], 'photo.jpg', { type: 'image/jpeg' })
+    await userEvent.upload(screen.getByLabelText(/foto do animal/i), file)
+
+    expect(screen.getByAltText(/prévia da foto/i)).toBeInTheDocument()
+    expect(screen.getByText(/alterar foto/i)).toBeInTheDocument()
+  })
+
+  it('should pass photoFile to onSubmit when photo selected', async () => {
+    global.URL.createObjectURL = jest.fn().mockReturnValue('blob:fake-url')
+    renderWithRouter(<LostFoundForm onSubmit={mockOnSubmit} />)
+
+    const file = new File(['fake'], 'photo.jpg', { type: 'image/jpeg' })
+    await userEvent.upload(screen.getByLabelText(/foto do animal/i), file)
+    await userEvent.type(screen.getByLabelText(/email de contato/i), 'joao@example.com')
+    await userEvent.click(screen.getByRole('button', { name: /publicar/i }))
+
+    await waitFor(() => {
+      expect(mockOnSubmit).toHaveBeenCalledWith(
+        expect.objectContaining({ photoFile: file }),
+      )
+    })
+  })
 })

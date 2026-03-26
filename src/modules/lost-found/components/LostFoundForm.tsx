@@ -4,7 +4,7 @@
  * @description Form for creating lost or found reports.
  */
 
-import { useState } from 'react'
+import { useRef, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import Button from '@/shared/components/ui/Button'
 import type { CreateLostFoundData, LostFoundType } from '@/modules/lost-found/types'
@@ -19,13 +19,20 @@ interface LostFoundFormValues {
   contactPhone: string
 }
 
+export interface LostFoundFormSubmitData extends CreateLostFoundData {
+  photoFile?: File | null
+}
+
 interface LostFoundFormProps {
-  onSubmit: (data: CreateLostFoundData) => Promise<void>
+  onSubmit: (data: LostFoundFormSubmitData) => Promise<void>
   isLoading?: boolean
 }
 
 export default function LostFoundForm({ onSubmit, isLoading }: LostFoundFormProps) {
   const [apiError, setApiError] = useState<string | null>(null)
+  const [photoPreview, setPhotoPreview] = useState<string | null>(null)
+  const [photoFile, setPhotoFile] = useState<File | null>(null)
+  const fileInputRef = useRef<HTMLInputElement>(null)
 
   const {
     register,
@@ -43,6 +50,16 @@ export default function LostFoundForm({ onSubmit, isLoading }: LostFoundFormProp
     },
   })
 
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0] ?? null
+    setPhotoFile(file)
+    if (file) {
+      setPhotoPreview(URL.createObjectURL(file))
+    } else {
+      setPhotoPreview(null)
+    }
+  }
+
   const handleFormSubmit = async (data: LostFoundFormValues) => {
     setApiError(null)
     try {
@@ -54,6 +71,7 @@ export default function LostFoundForm({ onSubmit, isLoading }: LostFoundFormProp
         location: data.location || null,
         contactEmail: data.contactEmail,
         contactPhone: data.contactPhone || null,
+        photoFile,
       })
     } catch (err) {
       const error = err as { message?: string }
@@ -151,6 +169,38 @@ export default function LostFoundForm({ onSubmit, isLoading }: LostFoundFormProp
               {errors.contactEmail.message}
             </p>
           )}
+        </div>
+
+        <div className="flex flex-col gap-1">
+          <span className="text-sm font-medium text-gray-700">Foto (opcional)</span>
+          <div className="flex items-center gap-3">
+            {photoPreview ? (
+              <img
+                src={photoPreview}
+                alt="Prévia da foto"
+                className="w-16 h-16 rounded-lg object-cover shrink-0 border border-gray-200"
+              />
+            ) : (
+              <div className="w-16 h-16 rounded-lg bg-gray-100 flex items-center justify-center shrink-0 border border-gray-200">
+                <span className="text-2xl">📷</span>
+              </div>
+            )}
+            <button
+              type="button"
+              onClick={() => fileInputRef.current?.click()}
+              className="text-sm text-[--color-primary] hover:underline"
+            >
+              {photoPreview ? 'Alterar foto' : 'Adicionar foto'}
+            </button>
+          </div>
+          <input
+            ref={fileInputRef}
+            type="file"
+            accept="image/jpeg,image/png,image/webp"
+            aria-label="Foto do animal"
+            className="hidden"
+            onChange={handleFileChange}
+          />
         </div>
 
         {apiError && (

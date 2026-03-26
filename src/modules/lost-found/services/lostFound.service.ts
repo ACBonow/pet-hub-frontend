@@ -21,3 +21,14 @@ export async function createReportRequest(data: CreateLostFoundData): Promise<Lo
   const response = await api.post<{ success: true; data: LostFoundReport }>('/api/v1/lost-found', data)
   return response.data.data
 }
+
+export async function uploadLostFoundPhotoRequest(reportId: string, file: File): Promise<LostFoundReport> {
+  const formData = new FormData()
+  formData.append('file', file)
+  const response = await api.post<{ success: true; data: LostFoundReport }>(
+    `/api/v1/lost-found/${reportId}/photo`,
+    formData,
+    { headers: { 'Content-Type': 'multipart/form-data' } },
+  )
+  return response.data.data
+}

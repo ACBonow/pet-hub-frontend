@@ -11,14 +11,17 @@ import Header from '@/shared/components/layout/Header'
 import PageWrapper from '@/shared/components/layout/PageWrapper'
 import LostFoundForm from '@/modules/lost-found/components/LostFoundForm'
 import { useLostFound } from '@/modules/lost-found/hooks/useLostFound'
-import type { CreateLostFoundData } from '@/modules/lost-found/types'
+import type { LostFoundFormSubmitData } from '@/modules/lost-found/components/LostFoundForm'
 
 export default function LostFoundFormPage() {
   const navigate = useNavigate()
-  const { isLoading, createReport } = useLostFound()
+  const { isLoading, createReport, uploadPhoto } = useLostFound()
 
-  const handleSubmit = async (data: CreateLostFoundData) => {
-    await createReport(data)
+  const handleSubmit = async (data: LostFoundFormSubmitData) => {
+    const report = await createReport(data)
+    if (data.photoFile) {
+      await uploadPhoto(report.id, data.photoFile)
+    }
     navigate(ROUTES.LOST_FOUND.LIST)
   }
 

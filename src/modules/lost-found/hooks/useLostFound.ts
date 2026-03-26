@@ -9,6 +9,7 @@ import {
   listReportsRequest,
   getReportRequest,
   createReportRequest,
+  uploadLostFoundPhotoRequest,
 } from '@/modules/lost-found/services/lostFound.service'
 import type { LostFoundReport, LostFoundFilters, CreateLostFoundData } from '@/modules/lost-found/types'
 import type { ApiError } from '@/shared/types'
@@ -20,7 +21,8 @@ interface UseLostFoundResult {
   error: string | null
   listReports: (filters?: LostFoundFilters) => Promise<void>
   getReport: (id: string) => Promise<void>
-  createReport: (data: CreateLostFoundData) => Promise<void>
+  createReport: (data: CreateLostFoundData) => Promise<LostFoundReport>
+  uploadPhoto: (reportId: string, file: File) => Promise<void>
 }
 
 export function useLostFound(): UseLostFoundResult {
@@ -59,12 +61,13 @@ export function useLostFound(): UseLostFoundResult {
     }
   }
 
-  async function createReport(data: CreateLostFoundData): Promise<void> {
+  async function createReport(data: CreateLostFoundData): Promise<LostFoundReport> {
     setIsLoading(true)
     setError(null)
     try {
       const created = await createReportRequest(data)
       setReport(created)
+      return created
     } catch (err) {
       const apiError = err as ApiError
       setError(apiError.message ?? 'Erro ao criar relatório.')
@@ -74,5 +77,19 @@ export function useLostFound(): UseLostFoundResult {
     }
   }
 
-  return { report, reports, isLoading, error, listReports, getReport, createReport }
+  async function uploadPhoto(reportId: string, file: File): Promise<void> {
+    setIsLoading(true)
+    setError(null)
+    try {
+      await uploadLostFoundPhotoRequest(reportId, file)
+    } catch (err) {
+      const apiError = err as ApiError
+      setError(apiError.message ?? 'Erro ao enviar foto.')
+      throw err
+    } finally {
+      setIsLoading(false)
+    }
+  }
+
+  return { report, reports, isLoading, error, listReports, getReport, createReport, uploadPhoto }
 }
