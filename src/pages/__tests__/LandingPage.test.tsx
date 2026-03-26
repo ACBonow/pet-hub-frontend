@@ -26,8 +26,9 @@ const mockListServices = listServicesRequest as jest.MockedFunction<typeof listS
 const mockAdoptions = [
   {
     id: '1', petId: 'p1', petName: 'Rex', species: 'dog', breed: null,
-    photoUrl: null, description: 'Cãozinho amigável', status: 'AVAILABLE' as const,
-    contactEmail: null, contactPhone: null, organizationId: null,
+    photoUrl: null, gender: null, castrated: null,
+    description: 'Cãozinho amigável', status: 'AVAILABLE' as const,
+    contactEmail: null, contactPhone: null, contactWhatsapp: null, organizationId: null,
     createdAt: '2024-01-01', updatedAt: '2024-01-01',
   },
 ]
