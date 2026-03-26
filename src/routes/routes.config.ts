@@ -19,6 +19,7 @@ export const ROUTES = {
     LIST: '/pets',
     CREATE: '/pets/novo',
     DETAIL: (id: string) => `/pets/${id}`,
+    EDIT: (id: string) => `/pets/${id}/editar`,
     HEALTH: (id: string) => `/pets/${id}/health`,
   },
   ADOPTION: {

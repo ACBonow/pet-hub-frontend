@@ -16,6 +16,20 @@ import TutorshipTransfer from '@/modules/pet/components/TutorshipTransfer'
 import CoTutorsList from '@/modules/pet/components/CoTutorsList'
 import TutorshipHistory from '@/modules/pet/components/TutorshipHistory'
 
+function formatBirthDate(dateStr: string): string {
+  const birth = new Date(dateStr)
+  const formatted = birth.toLocaleDateString('pt-BR')
+  const now = new Date()
+  const totalMonths =
+    (now.getFullYear() - birth.getFullYear()) * 12 + (now.getMonth() - birth.getMonth())
+  if (totalMonths < 1) return `Nascimento: ${formatted}`
+  const age =
+    totalMonths < 12
+      ? `${totalMonths} ${totalMonths === 1 ? 'mês' : 'meses'}`
+      : `${Math.floor(totalMonths / 12)} ${Math.floor(totalMonths / 12) === 1 ? 'ano' : 'anos'}`
+  return `Nascimento: ${formatted} (${age})`
+}
+
 export default function PetDetailPage() {
   const { id } = useParams<{ id: string }>()
   const { pet, tutorshipHistory, isLoading, error, getPet, getTutorshipHistory, transferTutorship, uploadPhoto } = usePet()
@@ -90,15 +104,28 @@ export default function PetDetailPage() {
                     {pet.castrated === true && (
                       <span className="text-xs bg-gray-100 text-gray-600 px-2 py-0.5 rounded-full">Castrado(a)</span>
                     )}
+                    {pet.birthDate && (
+                      <span className="text-xs text-gray-500">
+                        {formatBirthDate(pet.birthDate)}
+                      </span>
+                    )}
                   </div>
                 </div>
               </div>
-              <Link
-                to={ROUTES.PET.HEALTH(pet.id)}
-                className="text-sm font-medium text-[--color-primary] hover:underline shrink-0"
-              >
-                Saúde
-              </Link>
+              <div className="flex flex-col items-end gap-2 shrink-0">
+                <Link
+                  to={ROUTES.PET.EDIT(pet.id)}
+                  className="text-sm font-medium text-[--color-primary] hover:underline"
+                >
+                  Editar
+                </Link>
+                <Link
+                  to={ROUTES.PET.HEALTH(pet.id)}
+                  className="text-sm font-medium text-[--color-primary] hover:underline"
+                >
+                  Saúde
+                </Link>
+              </div>
             </div>
 
             <TutorshipInfo

@@ -23,7 +23,7 @@ export async function createPetRequest(data: CreatePetData): Promise<Pet> {
 }
 
 export async function updatePetRequest(id: string, data: UpdatePetData): Promise<Pet> {
-  const response = await api.put<{ success: true; data: Pet }>(`/api/v1/pets/${id}`, data)
+  const response = await api.patch<{ success: true; data: Pet }>(`/api/v1/pets/${id}`, data)
   return response.data.data
 }
 

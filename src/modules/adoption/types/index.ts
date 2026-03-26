@@ -13,10 +13,13 @@ export interface AdoptionListing {
   species: string
   breed: string | null
   photoUrl: string | null
+  gender: string | null
+  castrated: boolean | null
   description: string | null
   status: AdoptionStatus
   contactEmail: string | null
   contactPhone: string | null
+  contactWhatsapp: string | null
   organizationId: string | null
   createdAt: string
   updatedAt: string

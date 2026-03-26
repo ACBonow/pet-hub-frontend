@@ -36,6 +36,7 @@ const AdoptionFormPage = lazy(() => import('@/modules/adoption/pages/AdoptionFor
 const LostFoundFormPage = lazy(() => import('@/modules/lost-found/pages/LostFoundFormPage'))
 const PetListPage = lazy(() => import('@/modules/pet/pages/PetListPage'))
 const PetFormPage = lazy(() => import('@/modules/pet/pages/PetFormPage'))
+const PetEditPage = lazy(() => import('@/modules/pet/pages/PetEditPage'))
 const PetDetailPage = lazy(() => import('@/modules/pet/pages/PetDetailPage'))
 const PetHealthPage = lazy(() => import('@/modules/pet-health/pages/PetHealthPage'))
 const OrganizationListPage = lazy(() => import('@/modules/organization/pages/OrganizationListPage'))
@@ -83,6 +84,7 @@ export const router = createBrowserRouter([
       { path: ROUTES.LOST_FOUND.CREATE,        element: <S><LostFoundFormPage /></S> },
       { path: ROUTES.PET.LIST,                 element: <S><PetListPage /></S> },
       { path: ROUTES.PET.CREATE,               element: <S><PetFormPage /></S> },
+      { path: ROUTES.PET.EDIT(':id'),          element: <S><PetEditPage /></S> },
       { path: ROUTES.PET.DETAIL(':id'),        element: <S><PetDetailPage /></S> },
       { path: ROUTES.PET.HEALTH(':id'),        element: <S><PetHealthPage /></S> },
       { path: ROUTES.ORGANIZATION.LIST,        element: <S><OrganizationListPage /></S> },
