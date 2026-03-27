@@ -13,12 +13,12 @@ export interface LostFoundReport {
   status: LostFoundStatus
   petName: string | null
   species: string | null
-  description: string | null
+  description: string
   location: string | null
   photoUrl: string | null
   contactEmail: string | null
   contactPhone: string | null
-  reportedById: string
+  reporterId: string
   createdAt: string
   updatedAt: string
 }
@@ -33,7 +33,7 @@ export interface CreateLostFoundData {
   type: LostFoundType
   petName?: string | null
   species?: string | null
-  description?: string | null
+  description: string
   location?: string | null
   contactEmail: string
   contactPhone?: string | null

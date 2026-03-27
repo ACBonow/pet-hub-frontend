@@ -67,7 +67,7 @@ export default function LostFoundForm({ onSubmit, isLoading }: LostFoundFormProp
         type: data.type,
         petName: data.petName || null,
         species: data.species || null,
-        description: data.description || null,
+        description: data.description,
         location: data.location || null,
         contactEmail: data.contactEmail,
         contactPhone: data.contactPhone || null,
@@ -133,9 +133,18 @@ export default function LostFoundForm({ onSubmit, isLoading }: LostFoundFormProp
           <textarea
             id="description"
             rows={3}
-            {...register('description')}
-            className="w-full px-3 py-2 border border-gray-300 rounded-[--radius-md] text-sm focus:outline-none focus:ring-2 focus:ring-[--color-primary]"
+            {...register('description', { required: 'Descrição é obrigatória' })}
+            className={[
+              'w-full px-3 py-2 border rounded-[--radius-md] text-sm',
+              'focus:outline-none focus:ring-2 focus:ring-[--color-primary]',
+              errors.description ? 'border-[--color-danger]' : 'border-gray-300',
+            ].join(' ')}
           />
+          {errors.description && (
+            <p role="alert" className="text-xs text-[--color-danger]">
+              {errors.description.message}
+            </p>
+          )}
         </div>
 
         <div className="flex flex-col gap-1">

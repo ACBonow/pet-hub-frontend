@@ -37,7 +37,7 @@ const mockReports = [
   {
     id: '1', type: 'LOST' as const, status: 'OPEN' as const, petName: 'Bolinha',
     species: 'cat', description: null, location: 'Centro', photoUrl: null,
-    contactEmail: 'a@b.com', contactPhone: null, reportedById: 'u1',
+    contactEmail: 'a@b.com', contactPhone: null, reporterId: 'u1',
     createdAt: '2024-01-01', updatedAt: '2024-01-01',
   },
 ]

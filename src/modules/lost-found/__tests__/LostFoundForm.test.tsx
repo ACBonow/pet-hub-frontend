@@ -66,6 +66,7 @@ describe('LostFoundForm', () => {
     renderWithRouter(<LostFoundForm onSubmit={mockOnSubmit} />)
 
     await userEvent.selectOptions(screen.getByLabelText(/tipo/i), 'FOUND')
+    await userEvent.type(screen.getByLabelText(/descrição/i), 'Gato encontrado.')
     await userEvent.type(screen.getByLabelText(/email de contato/i), 'maria@example.com')
     await userEvent.click(screen.getByRole('button', { name: /publicar/i }))
 
@@ -80,6 +81,7 @@ describe('LostFoundForm', () => {
     mockOnSubmit.mockRejectedValueOnce({ message: 'Erro ao criar relatório.' })
     renderWithRouter(<LostFoundForm onSubmit={mockOnSubmit} />)
 
+    await userEvent.type(screen.getByLabelText(/descrição/i), 'Cachorro perdido.')
     await userEvent.type(screen.getByLabelText(/email de contato/i), 'joao@example.com')
     await userEvent.click(screen.getByRole('button', { name: /publicar/i }))
 
@@ -111,6 +113,7 @@ describe('LostFoundForm', () => {
 
     const file = new File(['fake'], 'photo.jpg', { type: 'image/jpeg' })
     await userEvent.upload(screen.getByLabelText(/foto do animal/i), file)
+    await userEvent.type(screen.getByLabelText(/descrição/i), 'Cachorro perdido.')
     await userEvent.type(screen.getByLabelText(/email de contato/i), 'joao@example.com')
     await userEvent.click(screen.getByRole('button', { name: /publicar/i }))
 
