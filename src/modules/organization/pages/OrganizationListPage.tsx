@@ -14,10 +14,10 @@ import { useOrganization } from '@/modules/organization/hooks/useOrganization'
 import OrganizationCard from '@/modules/organization/components/OrganizationCard'
 
 export default function OrganizationListPage() {
-  const { organizations, isLoading, error, listOrganizations } = useOrganization()
+  const { organizations, isLoading, error, listMyOrganizations } = useOrganization()
 
   useEffect(() => {
-    listOrganizations()
+    listMyOrganizations()
   }, [])
 
   return (
