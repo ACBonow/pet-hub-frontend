@@ -9,7 +9,7 @@ export { default as ServiceCard } from './components/ServiceCard'
 export { default as ServicesListPage } from './pages/ServicesListPage'
 export type {
   ServiceListing,
-  ServiceType,
+  ServiceTypeRecord,
   ServiceFilters,
   CreateServiceData,
   UpdateServiceData,
