@@ -4,19 +4,18 @@
  * @description Filter bar for the services directory listing.
  */
 
-import { SERVICE_TYPE_LABELS } from '@/modules/services-directory/types'
-import type { ServiceType, ServiceFilters } from '@/modules/services-directory/types'
+import type { ServiceTypeRecord, ServiceFilters } from '@/modules/services-directory/types'
 
 interface ServiceFiltersProps {
   filters: ServiceFilters
+  serviceTypes: ServiceTypeRecord[]
   onNameChange: (name: string) => void
-  onTypeChange: (type: ServiceType | undefined) => void
+  onTypeChange: (type: string | undefined) => void
 }
-
-const SERVICE_TYPES = Object.keys(SERVICE_TYPE_LABELS) as ServiceType[]
 
 export default function ServiceFiltersBar({
   filters,
+  serviceTypes,
   onNameChange,
   onTypeChange,
 }: ServiceFiltersProps) {
@@ -44,15 +43,13 @@ export default function ServiceFiltersBar({
           id="service-type-filter"
           aria-label="Tipo"
           value={filters.type ?? ''}
-          onChange={(e) =>
-            onTypeChange(e.target.value ? (e.target.value as ServiceType) : undefined)
-          }
+          onChange={(e) => onTypeChange(e.target.value || undefined)}
           className="w-full sm:w-auto rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[--color-primary] focus:border-transparent"
         >
           <option value="">Todos os tipos</option>
-          {SERVICE_TYPES.map((type) => (
-            <option key={type} value={type}>
-              {SERVICE_TYPE_LABELS[type]}
+          {serviceTypes.map((t) => (
+            <option key={t.code} value={t.code}>
+              {t.label}
             </option>
           ))}
         </select>

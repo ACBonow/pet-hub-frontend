@@ -10,17 +10,32 @@ import { MemoryRouter } from 'react-router-dom'
 import ServicesListPage from '@/modules/services-directory/pages/ServicesListPage'
 
 const mockListServices = jest.fn()
+const mockListServiceTypes = jest.fn()
 
 const mockServices = [
   {
     id: 'svc-1',
     name: 'Clínica Pet Saúde',
-    type: 'CLINIC' as const,
+    serviceTypeId: 'type-2',
+    serviceType: { id: 'type-2', code: 'CLINIC', label: 'Clínica', color: 'bg-green-100 text-green-800', active: true, sortOrder: 2 },
     description: 'Clínica veterinária completa.',
-    address: 'Rua das Flores, 123',
+    zipCode: null,
+    street: null,
+    number: null,
+    complement: null,
+    neighborhood: null,
+    city: null,
+    state: null,
     phone: '11999990001',
+    whatsapp: null,
     email: 'contato@petsaude.com',
     website: null,
+    instagram: null,
+    facebook: null,
+    tiktok: null,
+    youtube: null,
+    googleMapsUrl: null,
+    googleBusinessUrl: null,
     organizationId: null,
     createdAt: '2026-03-01T00:00:00.000Z',
     updatedAt: '2026-03-01T00:00:00.000Z',
@@ -28,12 +43,26 @@ const mockServices = [
   {
     id: 'svc-2',
     name: 'Pet Banho e Tosa',
-    type: 'GROOMING' as const,
+    serviceTypeId: 'type-7',
+    serviceType: { id: 'type-7', code: 'GROOMING', label: 'Banho e Tosa', color: 'bg-pink-100 text-pink-800', active: true, sortOrder: 7 },
     description: null,
-    address: 'Av. Central, 456',
+    zipCode: null,
+    street: null,
+    number: null,
+    complement: null,
+    neighborhood: null,
+    city: null,
+    state: null,
     phone: '11999990002',
+    whatsapp: null,
     email: null,
     website: null,
+    instagram: null,
+    facebook: null,
+    tiktok: null,
+    youtube: null,
+    googleMapsUrl: null,
+    googleBusinessUrl: null,
     organizationId: null,
     createdAt: '2026-03-01T00:00:00.000Z',
     updatedAt: '2026-03-01T00:00:00.000Z',
@@ -43,9 +72,14 @@ const mockServices = [
 jest.mock('@/modules/services-directory/hooks/useServicesDirectory', () => ({
   useServicesDirectory: () => ({
     services: mockServices,
+    serviceTypes: [
+      { id: 'type-2', code: 'CLINIC', label: 'Clínica', color: 'bg-green-100 text-green-800', active: true, sortOrder: 2 },
+      { id: 'type-7', code: 'GROOMING', label: 'Banho e Tosa', color: 'bg-pink-100 text-pink-800', active: true, sortOrder: 7 },
+    ],
     isLoading: false,
     error: null,
     listServices: mockListServices,
+    listServiceTypes: mockListServiceTypes,
   }),
 }))
 
@@ -56,13 +90,13 @@ describe('ServicesListPage', () => {
   beforeEach(() => {
     jest.clearAllMocks()
     mockListServices.mockResolvedValue(undefined)
+    mockListServiceTypes.mockResolvedValue(undefined)
   })
 
   it('should render service cards with name and type badge', () => {
     renderWithRouter(<ServicesListPage />)
     expect(screen.getByText('Clínica Pet Saúde')).toBeInTheDocument()
     expect(screen.getByText('Pet Banho e Tosa')).toBeInTheDocument()
-    // Badge appears inside the card (may also appear in the filter <option>, so use getAllByText)
     expect(screen.getAllByText('Clínica').length).toBeGreaterThanOrEqual(1)
     expect(screen.getAllByText('Banho e Tosa').length).toBeGreaterThanOrEqual(1)
   })

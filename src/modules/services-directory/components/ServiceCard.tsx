@@ -2,11 +2,10 @@
  * @module services-directory
  * @file ServiceCard.tsx
  * @description Card component displaying a service listing with type badge.
- * Contact info (phone, email, address) is gated behind authentication — shown only on detail page.
+ * Contact info is gated behind authentication — shown only on detail page.
  */
 
 import { Link } from 'react-router-dom'
-import { SERVICE_TYPE_LABELS, SERVICE_TYPE_COLORS } from '@/modules/services-directory/types'
 import { ROUTES } from '@/routes/routes.config'
 import type { ServiceListing } from '@/modules/services-directory/types'
 
@@ -15,8 +14,8 @@ interface ServiceCardProps {
 }
 
 export default function ServiceCard({ service }: ServiceCardProps) {
-  const badgeClass = SERVICE_TYPE_COLORS[service.type]
-  const typeLabel = SERVICE_TYPE_LABELS[service.type]
+  const badgeClass = service.serviceType.color
+  const typeLabel = service.serviceType.label
 
   return (
     <Link to={ROUTES.SERVICES.DETAIL(service.id)} className="block">

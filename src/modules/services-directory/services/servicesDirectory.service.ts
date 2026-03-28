@@ -7,11 +7,19 @@
 import api from '@/shared/services/api.client'
 import type {
   ServiceListing,
+  ServiceTypeRecord,
   ServiceFilters,
   PaginatedServiceListings,
   CreateServiceData,
   UpdateServiceData,
 } from '@/modules/services-directory/types'
+
+export async function listServiceTypesRequest(): Promise<ServiceTypeRecord[]> {
+  const response = await api.get<{ success: true; data: ServiceTypeRecord[] }>(
+    '/api/v1/services-directory/types',
+  )
+  return response.data.data
+}
 
 export async function listServicesRequest(
   filters?: ServiceFilters,

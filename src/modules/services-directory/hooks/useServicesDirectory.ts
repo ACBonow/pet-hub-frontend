@@ -6,6 +6,7 @@
 
 import { useState, useCallback } from 'react'
 import {
+  listServiceTypesRequest,
   listServicesRequest,
   getServiceRequest,
   createServiceRequest,
@@ -14,6 +15,7 @@ import {
 } from '@/modules/services-directory/services/servicesDirectory.service'
 import type {
   ServiceListing,
+  ServiceTypeRecord,
   ServiceFilters,
   CreateServiceData,
   UpdateServiceData,
@@ -22,6 +24,7 @@ import type {
 interface UseServicesDirectoryState {
   services: ServiceListing[]
   service: ServiceListing | null
+  serviceTypes: ServiceTypeRecord[]
   isLoading: boolean
   error: string | null
 }
@@ -30,9 +33,19 @@ export function useServicesDirectory() {
   const [state, setState] = useState<UseServicesDirectoryState>({
     services: [],
     service: null,
+    serviceTypes: [],
     isLoading: false,
     error: null,
   })
+
+  const listServiceTypes = useCallback(async () => {
+    try {
+      const types = await listServiceTypesRequest()
+      setState((prev) => ({ ...prev, serviceTypes: types }))
+    } catch {
+      // silently fail — types still show as empty
+    }
+  }, [])
 
   const listServices = useCallback(async (filters?: ServiceFilters) => {
     setState((prev) => ({ ...prev, isLoading: true, error: null }))
@@ -121,6 +134,7 @@ export function useServicesDirectory() {
 
   return {
     ...state,
+    listServiceTypes,
     listServices,
     getService,
     createService,

@@ -12,22 +12,23 @@ import { useAuthStore } from '@/modules/auth/store/authSlice'
 import ServiceCard from '@/modules/services-directory/components/ServiceCard'
 import ServiceFiltersBar from '@/modules/services-directory/components/ServiceFilters'
 import { ROUTES } from '@/routes/routes.config'
-import type { ServiceType, ServiceFilters } from '@/modules/services-directory/types'
+import type { ServiceFilters } from '@/modules/services-directory/types'
 
 const DEBOUNCE_MS = 400
 
 export default function ServicesListPage() {
-  const { services, isLoading, error, listServices } = useServicesDirectory()
+  const { services, serviceTypes, isLoading, error, listServices, listServiceTypes } = useServicesDirectory()
   const { isAuthenticated } = useAuthStore()
   const [filters, setFilters] = useState<ServiceFilters>({})
   const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null)
 
   useEffect(() => {
     listServices(filters)
+    listServiceTypes()
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
-  function handleTypeChange(type: ServiceType | undefined) {
+  function handleTypeChange(type: string | undefined) {
     const next = { ...filters, type }
     if (!type) delete next.type
     setFilters(next)
@@ -61,6 +62,7 @@ export default function ServicesListPage() {
         </div>
         <ServiceFiltersBar
           filters={filters}
+          serviceTypes={serviceTypes}
           onNameChange={handleNameChange}
           onTypeChange={handleTypeChange}
         />

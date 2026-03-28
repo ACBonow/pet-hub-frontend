@@ -47,8 +47,15 @@ const mockReports = [
 const mockServices = {
   data: [
     {
-      id: '1', name: 'Clínica Vet', type: 'CLINIC' as const, description: null,
-      address: null, phone: null, email: null, website: null,
+      id: '1', name: 'Clínica Vet',
+      serviceTypeId: 'type-2',
+      serviceType: { id: 'type-2', code: 'CLINIC', label: 'Clínica', color: 'bg-green-100 text-green-800', active: true, sortOrder: 2 },
+      description: null,
+      zipCode: null, street: null, number: null, complement: null,
+      neighborhood: null, city: null, state: null,
+      phone: null, whatsapp: null, email: null, website: null,
+      instagram: null, facebook: null, tiktok: null, youtube: null,
+      googleMapsUrl: null, googleBusinessUrl: null,
       organizationId: null, createdAt: '2024-01-01', updatedAt: '2024-01-01',
     },
   ],

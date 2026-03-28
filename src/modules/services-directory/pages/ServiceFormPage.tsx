@@ -4,6 +4,7 @@
  * @description Private page for creating a new service listing.
  */
 
+import { useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { ROUTES } from '@/routes/routes.config'
 import AppShell from '@/shared/components/layout/AppShell'
@@ -15,7 +16,11 @@ import type { CreateServiceData } from '@/modules/services-directory/types'
 
 export default function ServiceFormPage() {
   const navigate = useNavigate()
-  const { isLoading, createService } = useServicesDirectory()
+  const { isLoading, serviceTypes, createService, listServiceTypes } = useServicesDirectory()
+
+  useEffect(() => {
+    listServiceTypes()
+  }, [listServiceTypes])
 
   const handleSubmit = async (data: CreateServiceData) => {
     const result = await createService(data)
@@ -28,7 +33,7 @@ export default function ServiceFormPage() {
     <AppShell>
       <Header title="Cadastrar Serviço" showBack />
       <PageWrapper>
-        <ServiceForm onSubmit={handleSubmit} isLoading={isLoading} />
+        <ServiceForm onSubmit={handleSubmit} isLoading={isLoading} serviceTypes={serviceTypes} />
       </PageWrapper>
     </AppShell>
   )

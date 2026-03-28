@@ -4,54 +4,45 @@
  * @description TypeScript types for the services-directory module.
  */
 
-export type ServiceType =
-  | 'VETERINARIAN'
-  | 'CLINIC'
-  | 'EXAM'
-  | 'PHARMACY'
-  | 'GROOMING'
-  | 'BOARDING'
-  | 'TRANSPORT'
-  | 'OTHER'
-
-export const SERVICE_TYPE_LABELS: Record<ServiceType, string> = {
-  VETERINARIAN: 'Veterinário',
-  CLINIC: 'Clínica',
-  EXAM: 'Exames',
-  PHARMACY: 'Farmácia de Manipulação',
-  GROOMING: 'Banho e Tosa',
-  BOARDING: 'Hospedaria',
-  TRANSPORT: 'Transporte',
-  OTHER: 'Outro',
-}
-
-export const SERVICE_TYPE_COLORS: Record<ServiceType, string> = {
-  VETERINARIAN: 'bg-blue-100 text-blue-800',
-  CLINIC: 'bg-green-100 text-green-800',
-  EXAM: 'bg-purple-100 text-purple-800',
-  PHARMACY: 'bg-orange-100 text-orange-800',
-  GROOMING: 'bg-pink-100 text-pink-800',
-  BOARDING: 'bg-yellow-100 text-yellow-800',
-  TRANSPORT: 'bg-indigo-100 text-indigo-800',
-  OTHER: 'bg-gray-100 text-gray-800',
+export interface ServiceTypeRecord {
+  id: string
+  code: string
+  label: string
+  color: string
+  active: boolean
+  sortOrder: number
 }
 
 export interface ServiceListing {
   id: string
   name: string
-  type: ServiceType
+  serviceTypeId: string
+  serviceType: ServiceTypeRecord
   description: string | null
-  address: string | null
+  zipCode: string | null
+  street: string | null
+  number: string | null
+  complement: string | null
+  neighborhood: string | null
+  city: string | null
+  state: string | null
   phone: string | null
+  whatsapp: string | null
   email: string | null
   website: string | null
+  instagram: string | null
+  facebook: string | null
+  tiktok: string | null
+  youtube: string | null
+  googleMapsUrl: string | null
+  googleBusinessUrl: string | null
   organizationId: string | null
   createdAt: string
   updatedAt: string
 }
 
 export interface ServiceFilters {
-  type?: ServiceType
+  type?: string
   name?: string
   page?: number
   pageSize?: number
@@ -66,22 +57,48 @@ export interface PaginatedServiceListings {
 
 export interface CreateServiceData {
   name: string
-  type: ServiceType
+  type: string
   description?: string
-  address?: string
+  zipCode?: string
+  street?: string
+  number?: string
+  complement?: string
+  neighborhood?: string
+  city?: string
+  state?: string
   phone?: string
+  whatsapp?: string
   email?: string
   website?: string
+  instagram?: string
+  facebook?: string
+  tiktok?: string
+  youtube?: string
+  googleMapsUrl?: string
+  googleBusinessUrl?: string
   organizationId?: string
 }
 
 export interface UpdateServiceData {
   name?: string
-  type?: ServiceType
+  type?: string
   description?: string
-  address?: string
+  zipCode?: string
+  street?: string
+  number?: string
+  complement?: string
+  neighborhood?: string
+  city?: string
+  state?: string
   phone?: string
+  whatsapp?: string
   email?: string
   website?: string
+  instagram?: string
+  facebook?: string
+  tiktok?: string
+  youtube?: string
+  googleMapsUrl?: string
+  googleBusinessUrl?: string
   organizationId?: string
 }
