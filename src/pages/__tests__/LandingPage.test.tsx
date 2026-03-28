@@ -36,7 +36,9 @@ const mockAdoptions = [
 const mockReports = [
   {
     id: '1', type: 'LOST' as const, status: 'OPEN' as const, petName: 'Bolinha',
-    species: 'cat', description: null, location: 'Centro', photoUrl: null,
+    species: 'cat', description: 'Gato perdido no centro', location: 'Centro', photoUrl: null,
+    addressStreet: null, addressNeighborhood: null, addressNumber: null,
+    addressCep: null, addressCity: null, addressState: null, addressNotes: null,
     contactEmail: 'a@b.com', contactPhone: null, reporterId: 'u1',
     createdAt: '2024-01-01', updatedAt: '2024-01-01',
   },
