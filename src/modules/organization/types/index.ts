@@ -14,6 +14,14 @@ export interface Organization {
   email: string | null
   phone: string | null
   description: string | null
+  website: string | null
+  instagram: string | null
+  addressStreet: string | null
+  addressNeighborhood: string | null
+  addressNumber: string | null
+  addressCep: string | null
+  addressCity: string | null
+  addressState: string | null
   responsiblePersonIds: string[]
   createdAt: string
   updatedAt: string
@@ -26,7 +34,15 @@ export interface CreateOrganizationData {
   email?: string | null
   phone?: string | null
   description?: string | null
-  responsiblePersonIds: string[]
+  website?: string | null
+  instagram?: string | null
+  addressStreet?: string | null
+  addressNeighborhood?: string | null
+  addressNumber?: string | null
+  addressCep?: string | null
+  addressCity?: string | null
+  addressState?: string | null
+  responsiblePersonIds?: string[] // optional — backend derives from JWT when absent
 }
 
 export interface UpdateOrganizationData {
@@ -35,4 +51,12 @@ export interface UpdateOrganizationData {
   email?: string | null
   phone?: string | null
   description?: string | null
+  website?: string | null
+  instagram?: string | null
+  addressStreet?: string | null
+  addressNeighborhood?: string | null
+  addressNumber?: string | null
+  addressCep?: string | null
+  addressCity?: string | null
+  addressState?: string | null
 }
