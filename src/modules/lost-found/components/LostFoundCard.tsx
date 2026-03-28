@@ -24,11 +24,20 @@ export default function LostFoundCard({ report }: LostFoundCardProps) {
       ].join(' ')}
     >
       <Link to={ROUTES.LOST_FOUND.DETAIL(report.id)} className="block">
-        <div className="flex items-start justify-between gap-2">
-          <div className="flex-1">
+        <div className="flex items-start gap-3">
+          {report.photoUrl && (
+            <img
+              src={report.photoUrl}
+              alt={report.petName ?? 'Animal'}
+              className="w-16 h-16 rounded-lg object-cover shrink-0 border border-gray-200"
+            />
+          )}
+          <div className="flex-1 min-w-0">
             <p className="font-semibold text-gray-900">{report.petName ?? 'Animal sem nome'}</p>
-            {report.location && (
-              <p className="text-xs text-gray-500 mt-0.5">{report.location}</p>
+            {(report.addressCity || report.addressNeighborhood || report.location) && (
+              <p className="text-xs text-gray-500 mt-0.5">
+                {[report.addressNeighborhood, report.addressCity].filter(Boolean).join(', ') || report.location}
+              </p>
             )}
             {report.description && (
               <p className="text-sm text-gray-600 mt-1 line-clamp-2">{report.description}</p>

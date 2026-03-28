@@ -20,11 +20,11 @@ describe('LostFoundForm', () => {
     mockOnSubmit.mockResolvedValue(undefined)
   })
 
-  it('should render type, description, location and contact fields', () => {
+  it('should render type, description, address and contact fields', () => {
     renderWithRouter(<LostFoundForm onSubmit={mockOnSubmit} />)
     expect(screen.getByLabelText(/tipo/i)).toBeInTheDocument()
     expect(screen.getByLabelText(/descrição/i)).toBeInTheDocument()
-    expect(screen.getByLabelText(/localização/i)).toBeInTheDocument()
+    expect(screen.getByLabelText(/cidade/i)).toBeInTheDocument()
     expect(screen.getByLabelText(/email de contato/i)).toBeInTheDocument()
   })
 
@@ -45,7 +45,7 @@ describe('LostFoundForm', () => {
 
     await userEvent.selectOptions(screen.getByLabelText(/tipo/i), 'LOST')
     await userEvent.type(screen.getByLabelText(/descrição/i), 'Cachorro perdido no parque.')
-    await userEvent.type(screen.getByLabelText(/localização/i), 'Parque Ibirapuera')
+    await userEvent.type(screen.getByLabelText(/cidade/i), 'São Paulo')
     await userEvent.type(screen.getByLabelText(/email de contato/i), 'joao@example.com')
 
     await userEvent.click(screen.getByRole('button', { name: /publicar/i }))
@@ -55,7 +55,7 @@ describe('LostFoundForm', () => {
         expect.objectContaining({
           type: 'LOST',
           description: 'Cachorro perdido no parque.',
-          location: 'Parque Ibirapuera',
+          addressCity: 'São Paulo',
           contactEmail: 'joao@example.com',
         }),
       )

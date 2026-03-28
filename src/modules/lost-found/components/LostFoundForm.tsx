@@ -14,7 +14,13 @@ interface LostFoundFormValues {
   petName: string
   species: string
   description: string
-  location: string
+  addressStreet: string
+  addressNumber: string
+  addressNeighborhood: string
+  addressCep: string
+  addressCity: string
+  addressState: string
+  addressNotes: string
   contactEmail: string
   contactPhone: string
 }
@@ -27,6 +33,8 @@ interface LostFoundFormProps {
   onSubmit: (data: LostFoundFormSubmitData) => Promise<void>
   isLoading?: boolean
 }
+
+const inputClass = 'w-full min-h-[44px] px-3 py-2 border border-gray-300 rounded-[--radius-md] text-sm focus:outline-none focus:ring-2 focus:ring-[--color-primary]'
 
 export default function LostFoundForm({ onSubmit, isLoading }: LostFoundFormProps) {
   const [apiError, setApiError] = useState<string | null>(null)
@@ -44,7 +52,13 @@ export default function LostFoundForm({ onSubmit, isLoading }: LostFoundFormProp
       petName: '',
       species: '',
       description: '',
-      location: '',
+      addressStreet: '',
+      addressNumber: '',
+      addressNeighborhood: '',
+      addressCep: '',
+      addressCity: '',
+      addressState: '',
+      addressNotes: '',
       contactEmail: '',
       contactPhone: '',
     },
@@ -68,7 +82,13 @@ export default function LostFoundForm({ onSubmit, isLoading }: LostFoundFormProp
         petName: data.petName || null,
         species: data.species || null,
         description: data.description,
-        location: data.location || null,
+        addressStreet: data.addressStreet || null,
+        addressNumber: data.addressNumber || null,
+        addressNeighborhood: data.addressNeighborhood || null,
+        addressCep: data.addressCep || null,
+        addressCity: data.addressCity || null,
+        addressState: data.addressState || null,
+        addressNotes: data.addressNotes || null,
         contactEmail: data.contactEmail,
         contactPhone: data.contactPhone || null,
         photoFile,
@@ -82,41 +102,31 @@ export default function LostFoundForm({ onSubmit, isLoading }: LostFoundFormProp
   return (
     <form onSubmit={handleSubmit(handleFormSubmit)} noValidate>
       <div className="flex flex-col gap-4">
+        {/* Tipo */}
         <div className="flex flex-col gap-1">
           <label htmlFor="type" className="text-sm font-medium text-gray-700">
             Tipo
           </label>
-          <select
-            id="type"
-            {...register('type')}
-            className="w-full min-h-[44px] px-3 py-2 border border-gray-300 rounded-[--radius-md] text-sm focus:outline-none focus:ring-2 focus:ring-[--color-primary]"
-          >
+          <select id="type" {...register('type')} className={inputClass}>
             <option value="LOST">Perdido</option>
             <option value="FOUND">Achado</option>
           </select>
         </div>
 
+        {/* Nome */}
         <div className="flex flex-col gap-1">
           <label htmlFor="petName" className="text-sm font-medium text-gray-700">
             Nome do animal (opcional)
           </label>
-          <input
-            id="petName"
-            type="text"
-            {...register('petName')}
-            className="w-full min-h-[44px] px-3 py-2 border border-gray-300 rounded-[--radius-md] text-sm focus:outline-none focus:ring-2 focus:ring-[--color-primary]"
-          />
+          <input id="petName" type="text" {...register('petName')} className={inputClass} />
         </div>
 
+        {/* Espécie */}
         <div className="flex flex-col gap-1">
           <label htmlFor="species" className="text-sm font-medium text-gray-700">
             Espécie (opcional)
           </label>
-          <select
-            id="species"
-            {...register('species')}
-            className="w-full min-h-[44px] px-3 py-2 border border-gray-300 rounded-[--radius-md] text-sm focus:outline-none focus:ring-2 focus:ring-[--color-primary]"
-          >
+          <select id="species" {...register('species')} className={inputClass}>
             <option value="">Selecione...</option>
             <option value="dog">Cão</option>
             <option value="cat">Gato</option>
@@ -126,6 +136,7 @@ export default function LostFoundForm({ onSubmit, isLoading }: LostFoundFormProp
           </select>
         </div>
 
+        {/* Descrição */}
         <div className="flex flex-col gap-1">
           <label htmlFor="description" className="text-sm font-medium text-gray-700">
             Descrição
@@ -147,18 +158,90 @@ export default function LostFoundForm({ onSubmit, isLoading }: LostFoundFormProp
           )}
         </div>
 
-        <div className="flex flex-col gap-1">
-          <label htmlFor="location" className="text-sm font-medium text-gray-700">
-            Localização
-          </label>
-          <input
-            id="location"
-            type="text"
-            {...register('location')}
-            className="w-full min-h-[44px] px-3 py-2 border border-gray-300 rounded-[--radius-md] text-sm focus:outline-none focus:ring-2 focus:ring-[--color-primary]"
-          />
-        </div>
+        {/* Endereço */}
+        <fieldset className="flex flex-col gap-3 border border-gray-200 rounded-[--radius-md] p-4">
+          <legend className="text-sm font-medium text-gray-700 px-1">
+            Localização (opcional)
+          </legend>
 
+          {/* Rua + Número */}
+          <div className="flex gap-2">
+            <div className="flex flex-col gap-1 flex-1">
+              <label htmlFor="addressStreet" className="text-sm text-gray-600">
+                Rua
+              </label>
+              <input id="addressStreet" type="text" {...register('addressStreet')} className={inputClass} />
+            </div>
+            <div className="flex flex-col gap-1 w-24">
+              <label htmlFor="addressNumber" className="text-sm text-gray-600">
+                Número
+              </label>
+              <input id="addressNumber" type="text" {...register('addressNumber')} className={inputClass} />
+            </div>
+          </div>
+
+          {/* Bairro + CEP */}
+          <div className="flex gap-2">
+            <div className="flex flex-col gap-1 flex-1">
+              <label htmlFor="addressNeighborhood" className="text-sm text-gray-600">
+                Bairro
+              </label>
+              <input id="addressNeighborhood" type="text" {...register('addressNeighborhood')} className={inputClass} />
+            </div>
+            <div className="flex flex-col gap-1 w-32">
+              <label htmlFor="addressCep" className="text-sm text-gray-600">
+                CEP
+              </label>
+              <input
+                id="addressCep"
+                type="text"
+                inputMode="numeric"
+                placeholder="00000-000"
+                {...register('addressCep')}
+                className={inputClass}
+              />
+            </div>
+          </div>
+
+          {/* Cidade + Estado */}
+          <div className="flex gap-2">
+            <div className="flex flex-col gap-1 flex-1">
+              <label htmlFor="addressCity" className="text-sm text-gray-600">
+                Cidade
+              </label>
+              <input id="addressCity" type="text" {...register('addressCity')} className={inputClass} />
+            </div>
+            <div className="flex flex-col gap-1 w-20">
+              <label htmlFor="addressState" className="text-sm text-gray-600">
+                Estado
+              </label>
+              <input
+                id="addressState"
+                type="text"
+                placeholder="SP"
+                maxLength={2}
+                {...register('addressState')}
+                className={inputClass}
+              />
+            </div>
+          </div>
+
+          {/* Observações do local */}
+          <div className="flex flex-col gap-1">
+            <label htmlFor="addressNotes" className="text-sm text-gray-600">
+              Observações do local
+            </label>
+            <textarea
+              id="addressNotes"
+              rows={2}
+              placeholder="Ex: próximo ao parque, portão verde..."
+              {...register('addressNotes')}
+              className="w-full px-3 py-2 border border-gray-300 rounded-[--radius-md] text-sm focus:outline-none focus:ring-2 focus:ring-[--color-primary]"
+            />
+          </div>
+        </fieldset>
+
+        {/* Email de contato */}
         <div className="flex flex-col gap-1">
           <label htmlFor="contactEmail" className="text-sm font-medium text-gray-700">
             Email de contato
@@ -180,6 +263,21 @@ export default function LostFoundForm({ onSubmit, isLoading }: LostFoundFormProp
           )}
         </div>
 
+        {/* Telefone */}
+        <div className="flex flex-col gap-1">
+          <label htmlFor="contactPhone" className="text-sm font-medium text-gray-700">
+            Telefone (opcional)
+          </label>
+          <input
+            id="contactPhone"
+            type="tel"
+            inputMode="numeric"
+            {...register('contactPhone')}
+            className={inputClass}
+          />
+        </div>
+
+        {/* Foto */}
         <div className="flex flex-col gap-1">
           <span className="text-sm font-medium text-gray-700">Foto (opcional)</span>
           <div className="flex items-center gap-3">
