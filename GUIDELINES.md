@@ -206,6 +206,39 @@ O api.client:
 
 ---
 
+## Componentes e Hooks Compartilhados
+
+Ficam em `src/shared/` e podem ser usados por qualquer módulo.
+
+### Componentes UI notáveis (`shared/components/ui/`)
+
+| Componente | Quando usar |
+|-----------|-------------|
+| `ContactGate` | **Obrigatório** em qualquer dado de contato em páginas públicas (adoção, achados/perdidos, serviços). Sem exceções. |
+| `ActingAsSelector` | **Obrigatório** em todas as pages de criação (pet, adoção, achado/perdido, serviço). O componente não se renderiza quando o usuário não tem orgs — basta incluí-lo. |
+| `CreatorBadge` | Exibir criador (pessoa ou org) em cards de listagem |
+
+### Hooks compartilhados (`shared/hooks/`)
+
+| Hook | Responsabilidade |
+|------|-----------------|
+| `useActingAs` | Contexto "agindo como" — retorna `{ context, availableOrgs, setContext }`. Persiste em Zustand. Usar para obter `organizationId` ao enviar formulários. |
+
+### Regras de visibilidade por papel de organização
+
+O backend retorna `myRole: 'OWNER' | 'MANAGER' | 'MEMBER' | undefined` nas respostas de organização.
+
+| Papel | Editar org | Gerenciar membros | Criar/editar recursos | Apenas criar |
+|-------|-----------|-------------------|----------------------|-------------|
+| `OWNER` | ✅ | ✅ | ✅ | ✅ |
+| `MANAGER` | ❌ | ❌ | ✅ | ✅ |
+| `MEMBER` | ❌ | ❌ | ❌ | ✅ |
+| não membro | ❌ | ❌ | ❌ | ❌ |
+
+Sempre leia `myRole` da API — nunca assuma o papel do usuário.
+
+---
+
 ## Validadores (Frontend)
 
 Os validadores de CPF e CNPJ do frontend (`shared/validators/`) devem implementar o **mesmo algoritmo** que o backend. Isso permite validação client-side antes da chamada de API, reduzindo latência em redes móveis.
