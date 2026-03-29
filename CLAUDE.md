@@ -46,7 +46,9 @@ PetHUB é um sistema web brasileiro de gerenciamento de vida do pet (petcare / s
    - Nunca use menu hambúrguer ou sidebar — mobile é sempre `BottomNav`.
 9. **Inputs de CPF e CNPJ** devem usar os componentes compartilhados (`CpfInput.tsx`, `CnpjInput.tsx`) com `inputMode="numeric"`.
 10. **Erros de validação são exibidos inline** no campo, em português, nunca como alert/toast para erros de formulário.
-11. **Contato (email/telefone) em páginas públicas** deve sempre usar `ContactGate` (`shared/components/ui/ContactGate.tsx`) — nunca exibir dados de contato diretamente sem gate de autenticação.
+11. **Contato em páginas públicas** deve sempre usar `ContactGate` (`shared/components/ui/ContactGate.tsx`) — nunca exibir dados de contato diretamente sem gate de autenticação. Isso se aplica a **todos os módulos**: adoção (email, telefone, WhatsApp), achados/perdidos (email, telefone) e serviços (telefone, WhatsApp, email, endereço completo, redes sociais, links de mapa).
+12. **Páginas de criação de recursos** (pet, adoção, achado/perdido, serviço) devem incluir `<ActingAsSelector />` (`shared/components/ui/ActingAsSelector.tsx`) quando o usuário for OWNER ou MANAGER de alguma organização. O componente só se renderiza quando há organizações disponíveis. O `organizationId` selecionado deve ser incluído no payload da requisição.
+13. **Visibilidade de ações de organização é controlada pelo papel do usuário.** Use o campo `myRole` retornado pela API: OWNER vê editar/excluir/membros; MANAGER vê apenas ações operacionais; MEMBER não vê controles administrativos. Nunca hardcode visibilidade sem verificar o papel.
 
 ---
 
@@ -131,6 +133,24 @@ Nunca hardcode URLs de API. Sempre use `import.meta.env.VITE_API_BASE_URL`.
 
 ---
 
+## Componentes Compartilhados Relevantes
+
+| Componente | Caminho | Uso |
+|-----------|---------|-----|
+| `ContactGate` | `shared/components/ui/ContactGate.tsx` | Ocultar contato para não-autenticados |
+| `ActingAsSelector` | `shared/components/ui/ActingAsSelector.tsx` | Seletor "Criar como: Eu / Org" nas pages de criação |
+| `CreatorBadge` | `shared/components/ui/CreatorBadge.tsx` | Exibir criador (pessoa ou org) em cards |
+| `CpfInput` | `shared/components/forms/CpfInput.tsx` | Input CPF com máscara |
+| `CnpjInput` | `shared/components/forms/CnpjInput.tsx` | Input CNPJ com máscara |
+
+## Hooks Compartilhados Relevantes
+
+| Hook | Caminho | Uso |
+|------|---------|-----|
+| `useActingAs` | `shared/hooks/useActingAs.ts` | Contexto "agindo como" (pessoa vs. org) |
+| `useAuth` | `modules/auth/hooks/useAuth.ts` | Estado de autenticação |
+| `useDebounce` | `shared/hooks/useDebounce.ts` | Debounce de inputs de busca |
+
 ## O que o Claude NÃO deve fazer
 
 - Não modifique `shared/validators/` sem atualizar também o arquivo de testes.
@@ -140,32 +160,26 @@ Nunca hardcode URLs de API. Sempre use `import.meta.env.VITE_API_BASE_URL`.
 - Não use `getByTestId` como primeira escolha em testes — prefira queries semânticas.
 - Não implemente navegação com sidebar ou hambúrguer no mobile — use sempre BottomNav.
 - Não adicione breakpoints antes de escrever o estilo mobile base.
-- Não exiba dados de contato (email, telefone) em páginas públicas sem usar `ContactGate`.
+- Não exiba dados de contato em páginas públicas sem `ContactGate` — isso vale para TODOS os módulos (adoção, achados/perdidos, serviços), não apenas adoção.
 - Não use `AppShell` em páginas públicas — use `PublicLayout`.
 - Não use `PublicLayout` em páginas autenticadas — use `AppShell`.
+- Não implemente lógica de controle de visibilidade de ações de org sem verificar `myRole` — nunca assuma o papel.
+- Não adicione `organizationId` ao payload sem usar `useActingAs` — nunca leia org context diretamente do store.
 
 ---
 
-## Fluxo Git Obrigatório por Task
-
-Antes de iniciar qualquer task:
-```bash
-git checkout main && git pull origin main
-git checkout -b TASK-FE-XXX
-```
+## Fluxo Git por Task
 
 Ao concluir a task (todos os testes passando):
 ```bash
 git add <arquivos específicos>
 git commit -m "type(scope): descrição"
-git push origin TASK-FE-XXX
-gh pr create --base homologacao --title "[TASK-FE-XXX] Descrição" --body "..."
+git push origin main
 ```
 
 Regras:
-- Nunca commitar diretamente em `main` ou `homologacao`.
-- Sempre criar o branch a partir de `main` atualizada.
-- PR target é sempre `homologacao`.
+- Commitar diretamente em `main`.
+- Nunca usar feature branches ou PRs.
 
 ---
 
