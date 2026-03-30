@@ -5,6 +5,21 @@
  */
 
 export type OrganizationType = 'COMPANY' | 'NGO'
+export type OrgRole = 'OWNER' | 'MANAGER' | 'MEMBER'
+
+export interface OrgMember {
+  organizationId: string
+  personId: string
+  role: OrgRole
+  assignedAt: string
+}
+
+export interface OrgResponsiblePerson {
+  organizationId: string
+  personId: string
+  role: OrgRole
+  assignedAt: string
+}
 
 export interface Organization {
   id: string
@@ -16,6 +31,7 @@ export interface Organization {
   description: string | null
   website: string | null
   instagram: string | null
+  photoUrl?: string | null
   addressStreet: string | null
   addressNeighborhood: string | null
   addressNumber: string | null
@@ -23,6 +39,8 @@ export interface Organization {
   addressCity: string | null
   addressState: string | null
   responsiblePersonIds: string[]
+  responsiblePersons?: OrgResponsiblePerson[]
+  myRole?: OrgRole
   createdAt: string
   updatedAt: string
 }

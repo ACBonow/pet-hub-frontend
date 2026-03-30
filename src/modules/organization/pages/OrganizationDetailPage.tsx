@@ -1,7 +1,7 @@
 /**
  * @module organization
  * @file OrganizationDetailPage.tsx
- * @description Page for viewing organization details.
+ * @description Page for viewing organization details, member list, and role-based actions.
  */
 
 import { useEffect } from 'react'
@@ -12,18 +12,34 @@ import Header from '@/shared/components/layout/Header'
 import PageWrapper from '@/shared/components/layout/PageWrapper'
 import { useOrganization } from '@/modules/organization/hooks/useOrganization'
 import { applyCnpjMask } from '@/shared/utils/mask'
+import type { OrgRole } from '@/modules/organization/types'
 
 const TYPE_LABELS: Record<string, string> = {
   COMPANY: 'Empresa',
   NGO: 'ONG',
 }
 
+const ROLE_LABELS: Record<OrgRole, string> = {
+  OWNER: 'OWNER',
+  MANAGER: 'MANAGER',
+  MEMBER: 'MEMBER',
+}
+
+const ROLE_COLORS: Record<OrgRole, string> = {
+  OWNER: 'bg-yellow-100 text-yellow-800',
+  MANAGER: 'bg-blue-100 text-blue-800',
+  MEMBER: 'bg-gray-100 text-gray-700',
+}
+
 export default function OrganizationDetailPage() {
   const { id } = useParams<{ id: string }>()
-  const { organization, isLoading, error, getOrganization } = useOrganization()
+  const { organization, isLoading, error, getOrganization, getMembers } = useOrganization()
 
   useEffect(() => {
-    if (id) getOrganization(id)
+    if (id) {
+      getOrganization(id)
+      getMembers(id)
+    }
   }, [id])
 
   return (
@@ -35,7 +51,15 @@ export default function OrganizationDetailPage() {
 
         {organization && (
           <div className="flex flex-col gap-4">
+            {/* Org info card */}
             <div className="bg-white rounded-[--radius-lg] border border-gray-200 p-4">
+              {organization.photoUrl && (
+                <img
+                  src={organization.photoUrl}
+                  alt={organization.name}
+                  className="w-16 h-16 rounded-full object-cover mb-3"
+                />
+              )}
               <p className="text-xl font-bold text-gray-900">{organization.name}</p>
               <p className="text-sm text-gray-500">{TYPE_LABELS[organization.type]}</p>
               {organization.cnpj && (
@@ -54,12 +78,36 @@ export default function OrganizationDetailPage() {
               )}
             </div>
 
-            <Link
-              to={ROUTES.ORGANIZATION.EDIT(organization.id)}
-              className="text-sm font-medium text-[--color-primary] hover:underline"
-            >
-              Editar organização
-            </Link>
+            {/* Members section */}
+            {organization.responsiblePersons && organization.responsiblePersons.length > 0 && (
+              <div className="bg-white rounded-[--radius-lg] border border-gray-200 p-4">
+                <p className="text-sm font-semibold text-gray-700 mb-3">Membros</p>
+                <ul className="flex flex-col gap-2">
+                  {organization.responsiblePersons.map((member) => (
+                    <li key={member.personId} className="flex items-center justify-between">
+                      <span className="text-sm text-gray-600 font-mono truncate max-w-[180px]">
+                        {member.personId}
+                      </span>
+                      <span
+                        className={`text-xs font-medium px-2 py-0.5 rounded-full ${ROLE_COLORS[member.role]}`}
+                      >
+                        {ROLE_LABELS[member.role]}
+                      </span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
+
+            {/* OWNER-only actions */}
+            {organization.myRole === 'OWNER' && (
+              <Link
+                to={ROUTES.ORGANIZATION.EDIT(organization.id)}
+                className="text-sm font-medium text-[--color-primary] hover:underline"
+              >
+                Editar organização
+              </Link>
+            )}
           </div>
         )}
       </PageWrapper>

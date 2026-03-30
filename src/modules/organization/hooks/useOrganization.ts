@@ -11,13 +11,15 @@ import {
   getOrganizationRequest,
   createOrganizationRequest,
   updateOrganizationRequest,
+  getOrgMembersRequest,
 } from '@/modules/organization/services/organization.service'
-import type { Organization, CreateOrganizationData, UpdateOrganizationData } from '@/modules/organization/types'
+import type { Organization, CreateOrganizationData, UpdateOrganizationData, OrgMember } from '@/modules/organization/types'
 import type { ApiError } from '@/shared/types'
 
 interface UseOrganizationResult {
   organization: Organization | null
   organizations: Organization[]
+  members: OrgMember[]
   isLoading: boolean
   error: string | null
   getOrganization: (id: string) => Promise<void>
@@ -25,11 +27,13 @@ interface UseOrganizationResult {
   listMyOrganizations: () => Promise<void>
   createOrganization: (data: CreateOrganizationData) => Promise<void>
   updateOrganization: (id: string, data: UpdateOrganizationData) => Promise<void>
+  getMembers: (id: string) => Promise<void>
 }
 
 export function useOrganization(): UseOrganizationResult {
   const [organization, setOrganization] = useState<Organization | null>(null)
   const [organizations, setOrganizations] = useState<Organization[]>([])
+  const [members, setMembers] = useState<OrgMember[]>([])
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
@@ -108,5 +112,20 @@ export function useOrganization(): UseOrganizationResult {
     }
   }
 
-  return { organization, organizations, isLoading, error, getOrganization, listOrganizations, listMyOrganizations, createOrganization, updateOrganization }
+  async function getMembers(id: string): Promise<void> {
+    setIsLoading(true)
+    setError(null)
+    try {
+      const data = await getOrgMembersRequest(id)
+      setMembers(data)
+    } catch (err) {
+      const apiError = err as ApiError
+      setError(apiError.message ?? 'Erro ao carregar membros.')
+      throw err
+    } finally {
+      setIsLoading(false)
+    }
+  }
+
+  return { organization, organizations, members, isLoading, error, getOrganization, listOrganizations, listMyOrganizations, createOrganization, updateOrganization, getMembers }
 }

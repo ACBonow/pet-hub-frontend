@@ -5,7 +5,7 @@
  */
 
 import api from '@/shared/services/api.client'
-import type { Organization, CreateOrganizationData, UpdateOrganizationData } from '@/modules/organization/types'
+import type { Organization, CreateOrganizationData, UpdateOrganizationData, OrgMember } from '@/modules/organization/types'
 
 export async function listOrganizationsRequest(): Promise<Organization[]> {
   const response = await api.get<{ success: true; data: Organization[] }>('/api/v1/organizations')
@@ -29,5 +29,10 @@ export async function createOrganizationRequest(data: CreateOrganizationData): P
 
 export async function updateOrganizationRequest(id: string, data: UpdateOrganizationData): Promise<Organization> {
   const response = await api.put<{ success: true; data: Organization }>(`/api/v1/organizations/${id}`, data)
+  return response.data.data
+}
+
+export async function getOrgMembersRequest(id: string): Promise<OrgMember[]> {
+  const response = await api.get<{ success: true; data: OrgMember[] }>(`/api/v1/organizations/${id}/members`)
   return response.data.data
 }

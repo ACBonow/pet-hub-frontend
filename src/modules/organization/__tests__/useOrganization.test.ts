@@ -196,4 +196,39 @@ describe('useOrganization', () => {
       expect(result.current.organization).toEqual(updated)
     })
   })
+
+  describe('getMembers', () => {
+    const mockMemberList = [
+      { personId: 'person-1', organizationId: 'org-1', role: 'OWNER' as const, assignedAt: '2026-01-01T00:00:00.000Z' },
+      { personId: 'person-2', organizationId: 'org-1', role: 'MEMBER' as const, assignedAt: '2026-01-01T00:00:00.000Z' },
+    ]
+
+    it('should fetch and set members list', async () => {
+      mockOrganizationService.getOrgMembersRequest.mockResolvedValueOnce(mockMemberList)
+
+      const { result } = renderHook(() => useOrganization())
+
+      await act(async () => {
+        await result.current.getMembers('org-1')
+      })
+
+      expect(result.current.members).toEqual(mockMemberList)
+      expect(result.current.isLoading).toBe(false)
+    })
+
+    it('should set error when getMembers fails', async () => {
+      mockOrganizationService.getOrgMembersRequest.mockRejectedValueOnce({
+        code: 'NOT_FOUND',
+        message: 'Organização não encontrada.',
+      })
+
+      const { result } = renderHook(() => useOrganization())
+
+      await act(async () => {
+        await result.current.getMembers('nonexistent').catch(() => {})
+      })
+
+      expect(result.current.error).toBe('Organização não encontrada.')
+    })
+  })
 })
