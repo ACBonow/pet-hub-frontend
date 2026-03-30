@@ -64,3 +64,17 @@ export async function updateServiceRequest(
 export async function deleteServiceRequest(id: string): Promise<void> {
   await api.delete(`/api/v1/services-directory/${id}`)
 }
+
+export async function uploadServicePhotoRequest(
+  serviceId: string,
+  file: File,
+): Promise<{ photoUrl: string }> {
+  const formData = new FormData()
+  formData.append('file', file)
+  const response = await api.patch<{ success: true; data: ServiceListing }>(
+    `/api/v1/services-directory/${serviceId}/photo`,
+    formData,
+    { headers: { 'Content-Type': 'multipart/form-data' } },
+  )
+  return { photoUrl: response.data.data.photoUrl ?? '' }
+}

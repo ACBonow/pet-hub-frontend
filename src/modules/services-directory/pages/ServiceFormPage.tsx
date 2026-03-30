@@ -13,24 +13,29 @@ import PageWrapper from '@/shared/components/layout/PageWrapper'
 import ServiceForm from '@/modules/services-directory/components/ServiceForm'
 import { useServicesDirectory } from '@/modules/services-directory/hooks/useServicesDirectory'
 import type { CreateServiceData } from '@/modules/services-directory/types'
+
 import ActingAsSelector from '@/shared/components/ui/ActingAsSelector'
 import { useActingAs } from '@/shared/hooks/useActingAs'
 
 export default function ServiceFormPage() {
   const navigate = useNavigate()
-  const { isLoading, serviceTypes, createService, listServiceTypes } = useServicesDirectory()
+  const { isLoading, serviceTypes, createService, listServiceTypes, uploadServicePhoto } = useServicesDirectory()
   const { context } = useActingAs()
 
   useEffect(() => {
     listServiceTypes()
   }, [listServiceTypes])
 
-  const handleSubmit = async (data: CreateServiceData) => {
+  const handleSubmit = async (data: CreateServiceData & { photoFile?: File | null }) => {
+    const { photoFile, ...serviceData } = data
     const result = await createService({
-      ...data,
+      ...serviceData,
       organizationId: context.type === 'org' ? context.organizationId ?? null : null,
     })
     if (result) {
+      if (photoFile) {
+        await uploadServicePhoto(result.id, photoFile)
+      }
       navigate(ROUTES.SERVICES.DETAIL(result.id))
     }
   }

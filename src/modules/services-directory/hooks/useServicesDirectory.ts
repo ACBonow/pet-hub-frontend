@@ -12,6 +12,7 @@ import {
   createServiceRequest,
   updateServiceRequest,
   deleteServiceRequest,
+  uploadServicePhotoRequest,
 } from '@/modules/services-directory/services/servicesDirectory.service'
 import type {
   ServiceListing,
@@ -132,6 +133,14 @@ export function useServicesDirectory() {
     }
   }, [])
 
+  const uploadServicePhoto = useCallback(async (serviceId: string, file: File): Promise<void> => {
+    try {
+      await uploadServicePhotoRequest(serviceId, file)
+    } catch {
+      // silently fail — photo upload failure does not block navigation
+    }
+  }, [])
+
   return {
     ...state,
     listServiceTypes,
@@ -140,5 +149,6 @@ export function useServicesDirectory() {
     createService,
     updateService,
     deleteService,
+    uploadServicePhoto,
   }
 }

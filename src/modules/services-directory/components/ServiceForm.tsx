@@ -4,6 +4,7 @@
  * @description Form component for creating/editing a service listing.
  */
 
+import { useState, useRef } from 'react'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
@@ -39,17 +40,32 @@ const schema = z.object({
 type FormData = z.infer<typeof schema>
 
 interface ServiceFormProps {
-  onSubmit: (data: CreateServiceData) => Promise<void>
+  onSubmit: (data: CreateServiceData & { photoFile?: File | null }) => Promise<void>
   isLoading: boolean
   serviceTypes: ServiceTypeRecord[]
 }
 
 export default function ServiceForm({ onSubmit, isLoading, serviceTypes }: ServiceFormProps) {
+  const [photoFile, setPhotoFile] = useState<File | null>(null)
+  const [photoPreview, setPhotoPreview] = useState<string | null>(null)
+  const fileInputRef = useRef<HTMLInputElement>(null)
+
   const {
     register,
     handleSubmit,
     formState: { errors },
   } = useForm<FormData>({ resolver: zodResolver(schema) })
+
+  const handlePhotoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0] ?? null
+    setPhotoFile(file)
+    if (file) {
+      const url = URL.createObjectURL(file)
+      setPhotoPreview(url)
+    } else {
+      setPhotoPreview(null)
+    }
+  }
 
   const handleFormSubmit = async (data: FormData) => {
     await onSubmit({
@@ -73,6 +89,7 @@ export default function ServiceForm({ onSubmit, isLoading, serviceTypes }: Servi
       youtube: data.youtube || undefined,
       googleMapsUrl: data.googleMapsUrl || undefined,
       googleBusinessUrl: data.googleBusinessUrl || undefined,
+      photoFile,
     })
   }
 
@@ -349,6 +366,33 @@ export default function ServiceForm({ onSubmit, isLoading, serviceTypes }: Servi
         {errors.googleBusinessUrl && (
           <p role="alert" className="text-xs text-[--color-danger]">{errors.googleBusinessUrl.message}</p>
         )}
+      </div>
+
+      {sectionTitle('Foto')}
+
+      <div className="flex flex-col gap-2">
+        {photoPreview && (
+          <img
+            src={photoPreview}
+            alt="Prévia da foto"
+            className="w-full h-40 object-cover rounded-[--radius-md]"
+          />
+        )}
+        <input
+          ref={fileInputRef}
+          type="file"
+          accept="image/*"
+          className="hidden"
+          onChange={handlePhotoChange}
+          aria-label="Foto do serviço"
+        />
+        <button
+          type="button"
+          onClick={() => fileInputRef.current?.click()}
+          className="w-full min-h-[44px] px-3 py-2 border border-dashed border-gray-400 rounded-[--radius-md] text-sm text-gray-600 hover:border-gray-600 transition-colors"
+        >
+          {photoFile ? 'Alterar foto' : 'Adicionar foto (opcional)'}
+        </button>
       </div>
 
       <Button type="submit" loading={isLoading} className="w-full mt-2">

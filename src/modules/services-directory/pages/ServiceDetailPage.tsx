@@ -5,16 +5,29 @@
  * Contact info requires authentication via ContactGate.
  */
 
-import { useEffect } from 'react'
+import { useEffect, useRef } from 'react'
 import { useParams } from 'react-router-dom'
 import PublicLayout from '@/shared/components/layout/PublicLayout'
 import PageWrapper from '@/shared/components/layout/PageWrapper'
 import ContactGate from '@/shared/components/ui/ContactGate'
 import { useServicesDirectory } from '@/modules/services-directory/hooks/useServicesDirectory'
+import { useAuth } from '@/modules/auth/hooks/useAuth'
 
 export default function ServiceDetailPage() {
   const { id } = useParams<{ id: string }>()
-  const { service, isLoading, error, getService } = useServicesDirectory()
+  const { service, isLoading, error, getService, uploadServicePhoto } = useServicesDirectory()
+  const { user } = useAuth()
+  const fileInputRef = useRef<HTMLInputElement>(null)
+
+  const isOwner = !!user && !!service && user.id === service.createdByUserId
+
+  const handlePhotoChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
+    if (file && service) {
+      await uploadServicePhoto(service.id, file)
+      getService(service.id)
+    }
+  }
 
   useEffect(() => {
     if (id) getService(id)
@@ -50,6 +63,38 @@ export default function ServiceDetailPage() {
 
         {service && (
           <div className="flex flex-col gap-4">
+            {/* Photo */}
+            {service.photoUrl ? (
+              <img
+                src={service.photoUrl}
+                alt={service.name}
+                className="w-full h-48 object-cover rounded-[--radius-lg]"
+              />
+            ) : isOwner ? (
+              <div className={`w-full h-48 flex items-center justify-center rounded-[--radius-lg] ${badgeClass}`}>
+                <span className="text-4xl">🏥</span>
+              </div>
+            ) : null}
+
+            {isOwner && (
+              <>
+                <input
+                  ref={fileInputRef}
+                  type="file"
+                  accept="image/*"
+                  className="hidden"
+                  onChange={handlePhotoChange}
+                  aria-label="Alterar foto do serviço"
+                />
+                <button
+                  onClick={() => fileInputRef.current?.click()}
+                  className="text-sm text-[--color-primary] underline self-start"
+                >
+                  Alterar foto
+                </button>
+              </>
+            )}
+
             {/* Header */}
             <div className="bg-white rounded-[--radius-lg] border border-gray-200 p-4">
               <div className="flex items-start justify-between gap-2 mb-1">
