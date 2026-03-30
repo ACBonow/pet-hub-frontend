@@ -36,3 +36,14 @@ export async function getOrgMembersRequest(id: string): Promise<OrgMember[]> {
   const response = await api.get<{ success: true; data: OrgMember[] }>(`/api/v1/organizations/${id}/members`)
   return response.data.data
 }
+
+export async function uploadOrgPhotoRequest(orgId: string, file: File): Promise<{ photoUrl: string }> {
+  const formData = new FormData()
+  formData.append('file', file)
+  const response = await api.patch<{ success: true; data: Organization }>(
+    `/api/v1/organizations/${orgId}/photo`,
+    formData,
+    { headers: { 'Content-Type': 'multipart/form-data' } },
+  )
+  return { photoUrl: response.data.data.photoUrl ?? '' }
+}

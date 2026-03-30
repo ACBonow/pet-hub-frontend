@@ -12,6 +12,7 @@ import {
   createOrganizationRequest,
   updateOrganizationRequest,
   getOrgMembersRequest,
+  uploadOrgPhotoRequest,
 } from '@/modules/organization/services/organization.service'
 import type { Organization, CreateOrganizationData, UpdateOrganizationData, OrgMember } from '@/modules/organization/types'
 import type { ApiError } from '@/shared/types'
@@ -25,9 +26,10 @@ interface UseOrganizationResult {
   getOrganization: (id: string) => Promise<void>
   listOrganizations: () => Promise<void>
   listMyOrganizations: () => Promise<void>
-  createOrganization: (data: CreateOrganizationData) => Promise<void>
+  createOrganization: (data: CreateOrganizationData) => Promise<Organization>
   updateOrganization: (id: string, data: UpdateOrganizationData) => Promise<void>
   getMembers: (id: string) => Promise<void>
+  uploadOrgPhoto: (orgId: string, file: File) => Promise<void>
 }
 
 export function useOrganization(): UseOrganizationResult {
@@ -82,12 +84,13 @@ export function useOrganization(): UseOrganizationResult {
     }
   }
 
-  async function createOrganization(data: CreateOrganizationData): Promise<void> {
+  async function createOrganization(data: CreateOrganizationData): Promise<Organization> {
     setIsLoading(true)
     setError(null)
     try {
       const created = await createOrganizationRequest(data)
       setOrganization(created)
+      return created
     } catch (err) {
       const apiError = err as ApiError
       setError(apiError.message ?? 'Erro ao criar organização.')
@@ -127,5 +130,22 @@ export function useOrganization(): UseOrganizationResult {
     }
   }
 
-  return { organization, organizations, members, isLoading, error, getOrganization, listOrganizations, listMyOrganizations, createOrganization, updateOrganization, getMembers }
+  async function uploadOrgPhoto(orgId: string, file: File): Promise<void> {
+    setIsLoading(true)
+    setError(null)
+    try {
+      const { photoUrl } = await uploadOrgPhotoRequest(orgId, file)
+      if (organization) {
+        setOrganization({ ...organization, photoUrl })
+      }
+    } catch (err) {
+      const apiError = err as ApiError
+      setError(apiError.message ?? 'Erro ao enviar foto.')
+      throw err
+    } finally {
+      setIsLoading(false)
+    }
+  }
+
+  return { organization, organizations, members, isLoading, error, getOrganization, listOrganizations, listMyOrganizations, createOrganization, updateOrganization, getMembers, uploadOrgPhoto }
 }

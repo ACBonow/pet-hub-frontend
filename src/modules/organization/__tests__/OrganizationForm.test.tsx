@@ -132,4 +132,40 @@ describe('OrganizationForm', () => {
     expect(screen.getByDisplayValue('Pet Care LTDA')).toBeInTheDocument()
     expect(screen.getByDisplayValue('11.222.333/0001-81')).toBeInTheDocument()
   })
+
+  it('should render a photo file input', () => {
+    renderWithRouter(<OrganizationForm onSubmit={mockOnSubmit} />)
+    expect(screen.getByLabelText(/foto/i)).toBeInTheDocument()
+  })
+
+  it('should show image preview when a file is selected', async () => {
+    renderWithRouter(<OrganizationForm onSubmit={mockOnSubmit} />)
+
+    const file = new File(['img'], 'org.jpg', { type: 'image/jpeg' })
+    const input = screen.getByLabelText(/foto/i)
+
+    await userEvent.upload(input, file)
+
+    await waitFor(() => {
+      expect(screen.getByRole('img', { name: /preview/i })).toBeInTheDocument()
+    })
+  })
+
+  it('should include photoFile in onSubmit data when file is selected', async () => {
+    renderWithRouter(<OrganizationForm onSubmit={mockOnSubmit} />)
+
+    await userEvent.type(screen.getByLabelText(/nome/i), 'Amigos dos Pets')
+    await userEvent.selectOptions(screen.getByLabelText(/tipo/i), 'NGO')
+
+    const file = new File(['img'], 'org.jpg', { type: 'image/jpeg' })
+    await userEvent.upload(screen.getByLabelText(/foto/i), file)
+
+    await userEvent.click(screen.getByRole('button', { name: /salvar/i }))
+
+    await waitFor(() => {
+      expect(mockOnSubmit).toHaveBeenCalledWith(
+        expect.objectContaining({ photoFile: file }),
+      )
+    })
+  })
 })

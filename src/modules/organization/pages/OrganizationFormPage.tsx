@@ -15,13 +15,16 @@ import type { OrganizationFormSubmitData } from '@/modules/organization/componen
 
 export default function OrganizationFormPage() {
   const navigate = useNavigate()
-  const { isLoading, createOrganization } = useOrganization()
+  const { isLoading, createOrganization, uploadOrgPhoto } = useOrganization()
 
   const handleSubmit = async (data: OrganizationFormSubmitData) => {
-    await createOrganization({
+    const org = await createOrganization({
       ...data,
       cnpj: data.cnpj || null,
     })
+    if (data.photoFile) {
+      await uploadOrgPhoto(org.id, data.photoFile)
+    }
     navigate(ROUTES.ORGANIZATION.LIST)
   }
 

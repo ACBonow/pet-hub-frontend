@@ -4,7 +4,7 @@
  * @description Page for viewing organization details, member list, and role-based actions.
  */
 
-import { useEffect } from 'react'
+import { useEffect, useRef } from 'react'
 import { useParams, Link } from 'react-router-dom'
 import { ROUTES } from '@/routes/routes.config'
 import AppShell from '@/shared/components/layout/AppShell'
@@ -33,7 +33,17 @@ const ROLE_COLORS: Record<OrgRole, string> = {
 
 export default function OrganizationDetailPage() {
   const { id } = useParams<{ id: string }>()
-  const { organization, isLoading, error, getOrganization, getMembers } = useOrganization()
+  const { organization, isLoading, error, getOrganization, getMembers, uploadOrgPhoto } = useOrganization()
+  const photoInputRef = useRef<HTMLInputElement>(null)
+
+  const canEditPhoto = organization?.myRole === 'OWNER' || organization?.myRole === 'MANAGER'
+
+  const handlePhotoChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
+    if (file && id) {
+      await uploadOrgPhoto(id, file)
+    }
+  }
 
   useEffect(() => {
     if (id) {
@@ -53,13 +63,39 @@ export default function OrganizationDetailPage() {
           <div className="flex flex-col gap-4">
             {/* Org info card */}
             <div className="bg-white rounded-[--radius-lg] border border-gray-200 p-4">
-              {organization.photoUrl && (
-                <img
-                  src={organization.photoUrl}
-                  alt={organization.name}
-                  className="w-16 h-16 rounded-full object-cover mb-3"
-                />
-              )}
+              <div className="flex items-start gap-3 mb-3">
+                {organization.photoUrl ? (
+                  <img
+                    src={organization.photoUrl}
+                    alt={organization.name}
+                    className="w-20 h-20 rounded-full object-cover shrink-0"
+                  />
+                ) : (
+                  <div className="w-20 h-20 rounded-full bg-gray-200 flex items-center justify-center shrink-0">
+                    <span className="text-2xl font-bold text-gray-500">
+                      {organization.name.charAt(0).toUpperCase()}
+                    </span>
+                  </div>
+                )}
+                {canEditPhoto && (
+                  <div className="flex flex-col gap-1 pt-1">
+                    <button
+                      type="button"
+                      onClick={() => photoInputRef.current?.click()}
+                      className="text-sm font-medium text-[--color-primary] hover:underline"
+                    >
+                      Alterar foto
+                    </button>
+                    <input
+                      ref={photoInputRef}
+                      type="file"
+                      accept="image/jpeg,image/png,image/webp"
+                      onChange={handlePhotoChange}
+                      className="hidden"
+                    />
+                  </div>
+                )}
+              </div>
               <p className="text-xl font-bold text-gray-900">{organization.name}</p>
               <p className="text-sm text-gray-500">{TYPE_LABELS[organization.type]}</p>
               {organization.cnpj && (

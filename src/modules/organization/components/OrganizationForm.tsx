@@ -5,7 +5,7 @@
  *              responsiblePersonId is derived from JWT by the backend — not required in the form.
  */
 
-import { useState } from 'react'
+import { useState, useRef } from 'react'
 import { useForm } from 'react-hook-form'
 import CnpjInput from '@/shared/components/forms/CnpjInput'
 import Button from '@/shared/components/ui/Button'
@@ -43,6 +43,7 @@ export interface OrganizationFormSubmitData {
   addressCep: string | null
   addressCity: string | null
   addressState: string | null
+  photoFile?: File | null
 }
 
 interface OrganizationFormProps {
@@ -61,6 +62,8 @@ const labelOptClass = 'text-sm text-gray-600'
 
 export default function OrganizationForm({ onSubmit, initialData, isLoading }: OrganizationFormProps) {
   const [apiError, setApiError] = useState<string | null>(null)
+  const [photoPreview, setPhotoPreview] = useState<string | null>(null)
+  const photoFileRef = useRef<File | null>(null)
 
   const {
     register,
@@ -90,6 +93,17 @@ export default function OrganizationForm({ onSubmit, initialData, isLoading }: O
 
   const selectedType = watch('type')
 
+  const handlePhotoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0] ?? null
+    photoFileRef.current = file
+    if (file) {
+      const url = URL.createObjectURL(file)
+      setPhotoPreview(url)
+    } else {
+      setPhotoPreview(null)
+    }
+  }
+
   const handleFormSubmit = async (data: OrganizationFormValues) => {
     setApiError(null)
     try {
@@ -108,6 +122,7 @@ export default function OrganizationForm({ onSubmit, initialData, isLoading }: O
         addressCep: data.addressCep || null,
         addressCity: data.addressCity || null,
         addressState: data.addressState || null,
+        photoFile: photoFileRef.current,
       })
     } catch (err) {
       const error = err as { message?: string }
@@ -280,6 +295,25 @@ export default function OrganizationForm({ onSubmit, initialData, isLoading }: O
             </div>
           </div>
         </fieldset>
+
+        {/* Foto */}
+        <div className="flex flex-col gap-1">
+          <label htmlFor="photoFile" className={labelOptClass}>Foto (opcional)</label>
+          {photoPreview && (
+            <img
+              src={photoPreview}
+              alt="preview"
+              className="w-20 h-20 rounded-full object-cover mb-1"
+            />
+          )}
+          <input
+            id="photoFile"
+            type="file"
+            accept="image/jpeg,image/png,image/webp"
+            onChange={handlePhotoChange}
+            className="text-sm text-gray-600"
+          />
+        </div>
 
         {apiError && (
           <p role="alert" className="text-sm text-[--color-danger]">{apiError}</p>

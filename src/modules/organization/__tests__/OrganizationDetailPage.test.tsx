@@ -5,6 +5,7 @@
  */
 
 import { render, screen, waitFor } from '@testing-library/react'
+import userEvent from '@testing-library/user-event'
 import { MemoryRouter, Route, Routes } from 'react-router-dom'
 import OrganizationDetailPage from '@/modules/organization/pages/OrganizationDetailPage'
 
@@ -24,6 +25,7 @@ jest.mock('@/shared/components/layout/PageWrapper', () => ({
 
 const mockGetOrganization = jest.fn()
 const mockGetMembers = jest.fn()
+const mockUploadOrgPhoto = jest.fn()
 
 const hookState = {
   organization: null as object | null,
@@ -40,6 +42,7 @@ jest.mock('@/modules/organization/hooks/useOrganization', () => ({
     error: hookState.error,
     getOrganization: mockGetOrganization,
     getMembers: mockGetMembers,
+    uploadOrgPhoto: mockUploadOrgPhoto,
   }),
 }))
 
@@ -166,5 +169,55 @@ describe('OrganizationDetailPage', () => {
     expect(screen.getByText('OWNER')).toBeInTheDocument()
     expect(screen.getByText('MANAGER')).toBeInTheDocument()
     expect(screen.getByText('MEMBER')).toBeInTheDocument()
+  })
+
+  // ── Photo display ────────────────────────────────────────────────────────────
+
+  it('should display org photo when photoUrl is present', () => {
+    hookState.organization = { ...ORG_BASE, photoUrl: 'https://cdn.example.com/org.jpg' }
+    renderPage()
+    const img = screen.getByRole('img', { name: /pet rescue ong/i })
+    expect(img).toHaveAttribute('src', 'https://cdn.example.com/org.jpg')
+  })
+
+  it('should show "Alterar foto" button when myRole is OWNER', () => {
+    hookState.organization = { ...ORG_BASE, myRole: 'OWNER' }
+    renderPage()
+    expect(screen.getByRole('button', { name: /alterar foto/i })).toBeInTheDocument()
+  })
+
+  it('should show "Alterar foto" button when myRole is MANAGER', () => {
+    hookState.organization = { ...ORG_BASE, myRole: 'MANAGER' }
+    renderPage()
+    expect(screen.getByRole('button', { name: /alterar foto/i })).toBeInTheDocument()
+  })
+
+  it('should NOT show "Alterar foto" button when myRole is MEMBER', () => {
+    hookState.organization = { ...ORG_BASE, myRole: 'MEMBER' }
+    renderPage()
+    expect(screen.queryByRole('button', { name: /alterar foto/i })).not.toBeInTheDocument()
+  })
+
+  it('should NOT show "Alterar foto" button when user is not a member', () => {
+    hookState.organization = { ...ORG_BASE }
+    renderPage()
+    expect(screen.queryByRole('button', { name: /alterar foto/i })).not.toBeInTheDocument()
+  })
+
+  it('should call uploadOrgPhoto when file is selected via "Alterar foto"', async () => {
+    hookState.organization = { ...ORG_BASE, myRole: 'OWNER' }
+    mockUploadOrgPhoto.mockResolvedValue(undefined)
+    renderPage()
+
+    const file = new File(['img'], 'org.jpg', { type: 'image/jpeg' })
+    const btn = screen.getByRole('button', { name: /alterar foto/i })
+    await userEvent.click(btn)
+
+    const fileInput = document.querySelector('input[type="file"]') as HTMLInputElement
+    await userEvent.upload(fileInput, file)
+
+    await waitFor(() => {
+      expect(mockUploadOrgPhoto).toHaveBeenCalledWith('org-1', file)
+    })
   })
 })
