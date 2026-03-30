@@ -12,13 +12,19 @@ import PageWrapper from '@/shared/components/layout/PageWrapper'
 import LostFoundForm from '@/modules/lost-found/components/LostFoundForm'
 import { useLostFound } from '@/modules/lost-found/hooks/useLostFound'
 import type { LostFoundFormSubmitData } from '@/modules/lost-found/components/LostFoundForm'
+import ActingAsSelector from '@/shared/components/ui/ActingAsSelector'
+import { useActingAs } from '@/shared/hooks/useActingAs'
 
 export default function LostFoundFormPage() {
   const navigate = useNavigate()
   const { isLoading, createReport, uploadPhoto } = useLostFound()
+  const { context } = useActingAs()
 
   const handleSubmit = async (data: LostFoundFormSubmitData) => {
-    const report = await createReport(data)
+    const report = await createReport({
+      ...data,
+      organizationId: context.type === 'org' ? context.organizationId ?? null : null,
+    })
     if (data.photoFile) {
       await uploadPhoto(report.id, data.photoFile)
     }
@@ -29,7 +35,10 @@ export default function LostFoundFormPage() {
     <AppShell>
       <Header title="Novo Relatório" showBack />
       <PageWrapper>
-        <LostFoundForm onSubmit={handleSubmit} isLoading={isLoading} />
+        <div className="flex flex-col gap-4">
+          <ActingAsSelector />
+          <LostFoundForm onSubmit={handleSubmit} isLoading={isLoading} />
+        </div>
       </PageWrapper>
     </AppShell>
   )

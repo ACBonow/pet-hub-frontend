@@ -9,7 +9,6 @@ import userEvent from '@testing-library/user-event'
 import { MemoryRouter } from 'react-router-dom'
 import AdoptionForm from '@/modules/adoption/components/AdoptionForm'
 import type { Pet } from '@/modules/pet/types'
-import type { Organization } from '@/modules/organization/types'
 
 const MOCK_PET: Pet = {
   id: 'pet-1',
@@ -23,27 +22,6 @@ const MOCK_PET: Pet = {
   primaryTutorId: 'person-1',
   primaryTutorshipType: 'OWNER',
   coTutorIds: [],
-  createdAt: '2026-01-01T00:00:00.000Z',
-  updatedAt: '2026-01-01T00:00:00.000Z',
-}
-
-const MOCK_ORG: Organization = {
-  id: 'org-1',
-  name: 'Pet Rescue ONG',
-  type: 'NGO',
-  cnpj: null,
-  email: null,
-  phone: null,
-  description: null,
-  website: null,
-  instagram: null,
-  addressStreet: null,
-  addressNeighborhood: null,
-  addressNumber: null,
-  addressCep: null,
-  addressCity: null,
-  addressState: null,
-  responsiblePersonIds: ['person-1'],
   createdAt: '2026-01-01T00:00:00.000Z',
   updatedAt: '2026-01-01T00:00:00.000Z',
 }
@@ -63,23 +41,6 @@ jest.mock('@/modules/adoption/components/PetPickerModal', () => ({
     ) : null,
 }))
 
-const mockListMyOrganizations = jest.fn()
-let mockOrganizations: Organization[] = []
-
-jest.mock('@/modules/organization/hooks/useOrganization', () => ({
-  useOrganization: () => ({
-    organizations: mockOrganizations,
-    isLoading: false,
-    error: null,
-    listMyOrganizations: mockListMyOrganizations,
-    listOrganizations: jest.fn(),
-    getOrganization: jest.fn(),
-    createOrganization: jest.fn(),
-    updateOrganization: jest.fn(),
-    organization: null,
-  }),
-}))
-
 const mockOnSubmit = jest.fn()
 
 function renderForm() {
@@ -94,7 +55,6 @@ describe('AdoptionForm', () => {
   beforeEach(() => {
     jest.clearAllMocks()
     mockOnSubmit.mockResolvedValue(undefined)
-    mockListMyOrganizations.mockResolvedValue(undefined)
   })
 
   it('renders "Selecionar pet" button initially', () => {
@@ -210,78 +170,7 @@ describe('AdoptionForm', () => {
       </MemoryRouter>,
     )
 
-    // Loading button is disabled — just verify the button shows loading state
     const submitButton = screen.getByRole('button', { name: /publicar anúncio/i })
     expect(submitButton).toBeDisabled()
-  })
-
-  it('calls listMyOrganizations on mount', () => {
-    renderForm()
-    expect(mockListMyOrganizations).toHaveBeenCalledTimes(1)
-  })
-})
-
-describe('AdoptionForm with organizations', () => {
-  beforeEach(() => {
-    jest.clearAllMocks()
-    mockOnSubmit.mockResolvedValue(undefined)
-    mockListMyOrganizations.mockResolvedValue(undefined)
-    mockOrganizations = [MOCK_ORG]
-  })
-
-  afterEach(() => {
-    mockOrganizations = []
-  })
-
-  it('shows org picker when user has organizations', () => {
-    render(
-      <MemoryRouter>
-        <AdoptionForm onSubmit={mockOnSubmit} isLoading={false} />
-      </MemoryRouter>,
-    )
-
-    expect(screen.getByLabelText(/publicar como/i)).toBeInTheDocument()
-  })
-
-  it('submits with organizationId when org is selected', async () => {
-    render(
-      <MemoryRouter>
-        <AdoptionForm onSubmit={mockOnSubmit} isLoading={false} />
-      </MemoryRouter>,
-    )
-
-    await userEvent.click(screen.getByRole('button', { name: /selecionar pet/i }))
-    await userEvent.click(screen.getByRole('button', { name: /selecionar rex/i }))
-
-    // Select the org
-    await userEvent.selectOptions(screen.getByLabelText(/publicar como/i), 'org-1')
-
-    await userEvent.click(screen.getByRole('button', { name: /publicar anúncio/i }))
-
-    await waitFor(() => {
-      expect(mockOnSubmit).toHaveBeenCalledWith(
-        expect.objectContaining({ organizationId: 'org-1' }),
-      )
-    })
-  })
-
-  it('submits without organizationId when "Eu mesmo" is selected', async () => {
-    render(
-      <MemoryRouter>
-        <AdoptionForm onSubmit={mockOnSubmit} isLoading={false} />
-      </MemoryRouter>,
-    )
-
-    await userEvent.click(screen.getByRole('button', { name: /selecionar pet/i }))
-    await userEvent.click(screen.getByRole('button', { name: /selecionar rex/i }))
-
-    // Keep default "Eu mesmo" selection
-    await userEvent.click(screen.getByRole('button', { name: /publicar anúncio/i }))
-
-    await waitFor(() => {
-      expect(mockOnSubmit).toHaveBeenCalledWith(
-        expect.objectContaining({ organizationId: null }),
-      )
-    })
   })
 })

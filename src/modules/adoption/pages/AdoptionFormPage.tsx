@@ -12,13 +12,19 @@ import PageWrapper from '@/shared/components/layout/PageWrapper'
 import AdoptionForm from '@/modules/adoption/components/AdoptionForm'
 import { useAdoption } from '@/modules/adoption/hooks/useAdoption'
 import type { CreateAdoptionData } from '@/modules/adoption/types'
+import ActingAsSelector from '@/shared/components/ui/ActingAsSelector'
+import { useActingAs } from '@/shared/hooks/useActingAs'
 
 export default function AdoptionFormPage() {
   const navigate = useNavigate()
   const { isLoading, createAdoption } = useAdoption()
+  const { context } = useActingAs()
 
   const handleSubmit = async (data: CreateAdoptionData) => {
-    await createAdoption(data)
+    await createAdoption({
+      ...data,
+      organizationId: context.type === 'org' ? context.organizationId ?? null : null,
+    })
     navigate(ROUTES.ADOPTION.LIST)
   }
 
@@ -26,7 +32,10 @@ export default function AdoptionFormPage() {
     <AppShell>
       <Header title="Novo Anúncio" showBack />
       <PageWrapper>
-        <AdoptionForm onSubmit={handleSubmit} isLoading={isLoading} />
+        <div className="flex flex-col gap-4">
+          <ActingAsSelector />
+          <AdoptionForm onSubmit={handleSubmit} isLoading={isLoading} />
+        </div>
       </PageWrapper>
     </AppShell>
   )

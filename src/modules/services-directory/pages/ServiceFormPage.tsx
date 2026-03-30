@@ -13,17 +13,23 @@ import PageWrapper from '@/shared/components/layout/PageWrapper'
 import ServiceForm from '@/modules/services-directory/components/ServiceForm'
 import { useServicesDirectory } from '@/modules/services-directory/hooks/useServicesDirectory'
 import type { CreateServiceData } from '@/modules/services-directory/types'
+import ActingAsSelector from '@/shared/components/ui/ActingAsSelector'
+import { useActingAs } from '@/shared/hooks/useActingAs'
 
 export default function ServiceFormPage() {
   const navigate = useNavigate()
   const { isLoading, serviceTypes, createService, listServiceTypes } = useServicesDirectory()
+  const { context } = useActingAs()
 
   useEffect(() => {
     listServiceTypes()
   }, [listServiceTypes])
 
   const handleSubmit = async (data: CreateServiceData) => {
-    const result = await createService(data)
+    const result = await createService({
+      ...data,
+      organizationId: context.type === 'org' ? context.organizationId ?? null : null,
+    })
     if (result) {
       navigate(ROUTES.SERVICES.DETAIL(result.id))
     }
@@ -33,7 +39,10 @@ export default function ServiceFormPage() {
     <AppShell>
       <Header title="Cadastrar Serviço" showBack />
       <PageWrapper>
-        <ServiceForm onSubmit={handleSubmit} isLoading={isLoading} serviceTypes={serviceTypes} />
+        <div className="flex flex-col gap-4">
+          <ActingAsSelector />
+          <ServiceForm onSubmit={handleSubmit} isLoading={isLoading} serviceTypes={serviceTypes} />
+        </div>
       </PageWrapper>
     </AppShell>
   )
