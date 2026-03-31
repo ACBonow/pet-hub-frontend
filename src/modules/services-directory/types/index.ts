@@ -48,6 +48,7 @@ export interface ServiceFilters {
   name?: string
   page?: number
   pageSize?: number
+  organizationId?: string
 }
 
 export interface PaginatedServiceListings {

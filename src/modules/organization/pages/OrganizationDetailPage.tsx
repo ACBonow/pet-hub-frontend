@@ -256,6 +256,16 @@ export default function OrganizationDetailPage() {
               )}
             </div>
 
+            {/* Member actions */}
+            {organization.myRole && (
+              <Link
+                to={ROUTES.ORGANIZATION.DASHBOARD(organization.id)}
+                className="text-sm font-medium text-[--color-primary] hover:underline"
+              >
+                Gerenciar
+              </Link>
+            )}
+
             {/* OWNER-only actions */}
             {isOwner && (
               <Link

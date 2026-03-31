@@ -7,8 +7,8 @@
 import api from '@/shared/services/api.client'
 import type { Pet, CreatePetData, UpdatePetData, TransferTutorshipData, TutorshipHistoryEntry } from '@/modules/pet/types'
 
-export async function listPetsRequest(): Promise<Pet[]> {
-  const response = await api.get<{ success: true; data: Pet[] }>('/api/v1/pets')
+export async function listPetsRequest(filters?: { organizationId?: string }): Promise<Pet[]> {
+  const response = await api.get<{ success: true; data: Pet[] }>('/api/v1/pets', { params: filters })
   return response.data.data
 }
 

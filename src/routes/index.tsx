@@ -42,6 +42,7 @@ const PetHealthPage = lazy(() => import('@/modules/pet-health/pages/PetHealthPag
 const OrganizationListPage = lazy(() => import('@/modules/organization/pages/OrganizationListPage'))
 const OrganizationFormPage = lazy(() => import('@/modules/organization/pages/OrganizationFormPage'))
 const OrganizationDetailPage = lazy(() => import('@/modules/organization/pages/OrganizationDetailPage'))
+const OrganizationDashboardPage = lazy(() => import('@/modules/organization/pages/OrganizationDashboardPage'))
 const ProfilePage = lazy(() => import('@/modules/person/pages/ProfilePage'))
 
 function PageLoader() {
@@ -91,6 +92,7 @@ export const router = createBrowserRouter([
       { path: ROUTES.ORGANIZATION.CREATE,      element: <S><OrganizationFormPage /></S> },
       { path: ROUTES.ORGANIZATION.DETAIL(':id'), element: <S><OrganizationDetailPage /></S> },
       { path: ROUTES.ORGANIZATION.EDIT(':id'), element: <S><OrganizationFormPage /></S> },
+      { path: ROUTES.ORGANIZATION.DASHBOARD(':id'), element: <S><OrganizationDashboardPage /></S> },
       { path: ROUTES.SERVICES.CREATE,          element: <S><ServiceFormPage /></S> },
       { path: ROUTES.PROFILE,                  element: <S><ProfilePage /></S> },
     ],

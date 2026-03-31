@@ -34,6 +34,7 @@ export interface LostFoundFilters {
   type?: LostFoundType
   status?: LostFoundStatus
   species?: string
+  organizationId?: string
 }
 
 export interface CreateLostFoundData {

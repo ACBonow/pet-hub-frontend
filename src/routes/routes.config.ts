@@ -14,6 +14,7 @@ export const ROUTES = {
     CREATE: '/organizacoes/novo',
     DETAIL: (id: string) => `/organizacoes/${id}`,
     EDIT: (id: string) => `/organizacoes/${id}/editar`,
+    DASHBOARD: (id: string) => `/organizacoes/${id}/painel`,
   },
   PET: {
     LIST: '/pets',
