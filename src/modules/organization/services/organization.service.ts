@@ -37,6 +37,18 @@ export async function getOrgMembersRequest(id: string): Promise<OrgMember[]> {
   return response.data.data
 }
 
+export async function addOrgMemberRequest(orgId: string, cpf: string, role: OrgRole): Promise<void> {
+  await api.post(`/api/v1/organizations/${orgId}/members`, { cpf, role })
+}
+
+export async function removeOrgMemberRequest(orgId: string, personId: string): Promise<void> {
+  await api.delete(`/api/v1/organizations/${orgId}/members/${personId}`)
+}
+
+export async function changeMemberRoleRequest(orgId: string, personId: string, role: OrgRole): Promise<void> {
+  await api.patch(`/api/v1/organizations/${orgId}/members/${personId}/role`, { role })
+}
+
 export async function uploadOrgPhotoRequest(orgId: string, file: File): Promise<{ photoUrl: string }> {
   const formData = new FormData()
   formData.append('file', file)

@@ -8,8 +8,8 @@ export type OrganizationType = 'COMPANY' | 'NGO'
 export type OrgRole = 'OWNER' | 'MANAGER' | 'MEMBER'
 
 export interface OrgMember {
-  organizationId: string
   personId: string
+  name: string
   role: OrgRole
   assignedAt: string
 }
