@@ -4,6 +4,12 @@
  * @description TypeScript types for the services-directory module.
  */
 
+export interface CreatorInfo {
+  type: 'person' | 'org'
+  name: string
+  photoUrl?: string | null
+}
+
 export interface ServiceTypeRecord {
   id: string
   code: string
@@ -39,6 +45,7 @@ export interface ServiceListing {
   organizationId: string | null
   photoUrl: string | null
   createdByUserId: string | null
+  createdBy?: CreatorInfo
   createdAt: string
   updatedAt: string
 }

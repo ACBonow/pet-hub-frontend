@@ -6,6 +6,12 @@
 
 export type AdoptionStatus = 'AVAILABLE' | 'RESERVED' | 'ADOPTED'
 
+export interface CreatorInfo {
+  type: 'person' | 'org'
+  name: string
+  photoUrl?: string | null
+}
+
 export interface AdoptionListing {
   id: string
   petId: string
@@ -21,6 +27,7 @@ export interface AdoptionListing {
   contactPhone: string | null
   contactWhatsapp: string | null
   organizationId: string | null
+  createdBy?: CreatorInfo
   createdAt: string
   updatedAt: string
 }

@@ -6,6 +6,7 @@
 
 import { Link } from 'react-router-dom'
 import { ROUTES } from '@/routes/routes.config'
+import CreatorBadge from '@/shared/components/ui/CreatorBadge'
 import type { AdoptionListing } from '@/modules/adoption/types'
 
 interface AdoptionCardProps {
@@ -70,6 +71,15 @@ export default function AdoptionCard({ listing }: AdoptionCardProps) {
           </p>
           {listing.description && (
             <p className="text-xs text-gray-600 line-clamp-2">{listing.description}</p>
+          )}
+          {listing.createdBy && (
+            <div className="mt-2 pt-2 border-t border-gray-100">
+              <CreatorBadge
+                type={listing.createdBy.type}
+                name={listing.createdBy.name}
+                photoUrl={listing.createdBy.photoUrl}
+              />
+            </div>
           )}
         </div>
       </Link>

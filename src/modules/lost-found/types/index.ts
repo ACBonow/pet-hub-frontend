@@ -7,6 +7,12 @@
 export type LostFoundType = 'LOST' | 'FOUND'
 export type LostFoundStatus = 'OPEN' | 'RESOLVED'
 
+export interface CreatorInfo {
+  type: 'person' | 'org'
+  name: string
+  photoUrl?: string | null
+}
+
 export interface LostFoundReport {
   id: string
   type: LostFoundType
@@ -26,6 +32,7 @@ export interface LostFoundReport {
   contactEmail: string | null
   contactPhone: string | null
   reporterId: string
+  createdBy?: CreatorInfo
   createdAt: string
   updatedAt: string
 }

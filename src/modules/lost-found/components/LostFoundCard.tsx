@@ -6,6 +6,7 @@
 
 import { Link } from 'react-router-dom'
 import { ROUTES } from '@/routes/routes.config'
+import CreatorBadge from '@/shared/components/ui/CreatorBadge'
 import type { LostFoundReport } from '@/modules/lost-found/types'
 
 interface LostFoundCardProps {
@@ -61,6 +62,15 @@ export default function LostFoundCard({ report }: LostFoundCardProps) {
             )}
           </div>
         </div>
+        {report.createdBy && (
+          <div className="mt-2 pt-2 border-t border-gray-100">
+            <CreatorBadge
+              type={report.createdBy.type}
+              name={report.createdBy.name}
+              photoUrl={report.createdBy.photoUrl}
+            />
+          </div>
+        )}
       </Link>
     </li>
   )

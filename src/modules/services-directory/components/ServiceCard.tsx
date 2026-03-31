@@ -7,6 +7,7 @@
 
 import { Link } from 'react-router-dom'
 import { ROUTES } from '@/routes/routes.config'
+import CreatorBadge from '@/shared/components/ui/CreatorBadge'
 import type { ServiceListing } from '@/modules/services-directory/types'
 
 interface ServiceCardProps {
@@ -45,6 +46,15 @@ export default function ServiceCard({ service }: ServiceCardProps) {
 
           {service.description && (
             <p className="text-sm text-gray-600 line-clamp-2">{service.description}</p>
+          )}
+          {service.createdBy && (
+            <div className="mt-2 pt-2 border-t border-gray-100">
+              <CreatorBadge
+                type={service.createdBy.type}
+                name={service.createdBy.name}
+                photoUrl={service.createdBy.photoUrl}
+              />
+            </div>
           )}
         </div>
       </article>
