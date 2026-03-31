@@ -52,7 +52,7 @@ jest.mock('@/modules/adoption/components/PetPickerModal', () => ({
 }))
 
 const mockSetContext = jest.fn()
-let mockContext = { type: 'person' as const }
+let mockContext: import('@/shared/hooks/useActingAs').ActingAsContext = { type: 'person' }
 let mockAvailableOrgs: { id: string; name: string }[] = []
 
 jest.mock('@/shared/hooks/useActingAs', () => ({
@@ -96,7 +96,7 @@ function renderPage() {
 
 beforeEach(() => {
   jest.clearAllMocks()
-  mockContext = { type: 'person' }
+  mockContext = { type: 'person' } as import('@/shared/hooks/useActingAs').ActingAsContext
   mockAvailableOrgs = []
   mockCreateAdoption.mockResolvedValue(undefined)
 })

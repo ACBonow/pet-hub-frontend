@@ -30,7 +30,7 @@ export default function ServiceFormPage() {
     const { photoFile, ...serviceData } = data
     const result = await createService({
       ...serviceData,
-      organizationId: context.type === 'org' ? context.organizationId ?? null : null,
+      organizationId: context.type === 'org' ? context.organizationId ?? undefined : undefined,
     })
     if (result) {
       if (photoFile) {

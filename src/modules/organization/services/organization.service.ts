@@ -5,7 +5,7 @@
  */
 
 import api from '@/shared/services/api.client'
-import type { Organization, CreateOrganizationData, UpdateOrganizationData, OrgMember } from '@/modules/organization/types'
+import type { Organization, CreateOrganizationData, UpdateOrganizationData, OrgMember, OrgRole } from '@/modules/organization/types'
 
 export async function listOrganizationsRequest(): Promise<Organization[]> {
   const response = await api.get<{ success: true; data: Organization[] }>('/api/v1/organizations')

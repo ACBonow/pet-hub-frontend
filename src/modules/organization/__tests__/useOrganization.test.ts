@@ -199,8 +199,8 @@ describe('useOrganization', () => {
 
   describe('getMembers', () => {
     const mockMemberList = [
-      { personId: 'person-1', organizationId: 'org-1', role: 'OWNER' as const, assignedAt: '2026-01-01T00:00:00.000Z' },
-      { personId: 'person-2', organizationId: 'org-1', role: 'MEMBER' as const, assignedAt: '2026-01-01T00:00:00.000Z' },
+      { personId: 'person-1', name: 'Alice', role: 'OWNER' as const, assignedAt: '2026-01-01T00:00:00.000Z' },
+      { personId: 'person-2', name: 'Bob', role: 'MEMBER' as const, assignedAt: '2026-01-01T00:00:00.000Z' },
     ]
 
     it('should fetch and set members list', async () => {

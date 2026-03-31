@@ -7,9 +7,10 @@
 import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import ActingAsSelector from '@/shared/components/ui/ActingAsSelector'
+import type { ActingAsContext } from '@/shared/hooks/useActingAs'
 
 const mockSetContext = jest.fn()
-let mockContext = { type: 'person' as const }
+let mockContext: ActingAsContext = { type: 'person' }
 let mockAvailableOrgs: { id: string; name: string }[] = []
 
 jest.mock('@/shared/hooks/useActingAs', () => ({
@@ -22,7 +23,7 @@ jest.mock('@/shared/hooks/useActingAs', () => ({
 
 beforeEach(() => {
   jest.clearAllMocks()
-  mockContext = { type: 'person' }
+  mockContext = { type: 'person' } as ActingAsContext
   mockAvailableOrgs = []
 })
 

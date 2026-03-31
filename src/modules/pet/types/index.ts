@@ -30,6 +30,7 @@ export interface CreatePetData {
   castrated?: boolean | null
   birthDate?: string | null
   tutorshipType?: TutorshipType
+  organizationId?: string | null
 }
 
 export interface UpdatePetData {

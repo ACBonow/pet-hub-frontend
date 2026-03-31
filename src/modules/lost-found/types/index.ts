@@ -59,4 +59,5 @@ export interface CreateLostFoundData {
   addressNotes?: string | null
   contactEmail: string
   contactPhone?: string | null
+  organizationId?: string | null
 }
