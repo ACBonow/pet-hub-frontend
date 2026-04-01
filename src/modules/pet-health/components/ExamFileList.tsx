@@ -11,6 +11,7 @@ import type { ExamFile, UploadExamData } from '@/modules/pet-health/types'
 interface ExamFileListProps {
   examFiles: ExamFile[]
   onUpload: (data: UploadExamData) => Promise<void>
+  onDelete?: (examId: string) => Promise<void>
   isUploading?: boolean
 }
 
@@ -18,7 +19,7 @@ function formatDate(dateStr: string): string {
   return new Date(dateStr).toLocaleDateString('pt-BR')
 }
 
-export default function ExamFileList({ examFiles, onUpload, isUploading }: ExamFileListProps) {
+export default function ExamFileList({ examFiles, onUpload, onDelete, isUploading }: ExamFileListProps) {
   const [showUpload, setShowUpload] = useState(false)
 
   return (
@@ -36,14 +37,26 @@ export default function ExamFileList({ examFiles, onUpload, isUploading }: ExamF
                 <p className="text-sm font-medium text-gray-900">{exam.name}</p>
                 <p className="text-xs text-gray-500">{formatDate(exam.examDate)}</p>
               </div>
-              <a
-                href={exam.fileUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-xs text-[--color-primary] hover:underline ml-2"
-              >
-                Ver
-              </a>
+              <div className="flex items-center gap-2 shrink-0">
+                <a
+                  href={exam.fileUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-xs text-[--color-primary] hover:underline"
+                >
+                  Ver
+                </a>
+                {onDelete && (
+                  <button
+                    type="button"
+                    onClick={() => onDelete(exam.id)}
+                    aria-label={`Remover ${exam.name}`}
+                    className="text-xs text-[--color-danger] hover:underline"
+                  >
+                    Remover
+                  </button>
+                )}
+              </div>
             </li>
           ))}
         </ul>

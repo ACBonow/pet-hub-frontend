@@ -61,4 +61,27 @@ describe('ExamFileList', () => {
 
     expect(screen.getByLabelText(/arquivo/i)).toBeInTheDocument()
   })
+
+  it('should render a delete button for each exam when onDelete is provided', () => {
+    const onDelete = jest.fn()
+    renderWithRouter(<ExamFileList examFiles={mockExamFiles} onUpload={mockOnUpload} onDelete={onDelete} />)
+
+    expect(screen.getByRole('button', { name: /remover hemograma completo/i })).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: /remover raio-x tórax/i })).toBeInTheDocument()
+  })
+
+  it('should call onDelete with the exam id when delete button is clicked', async () => {
+    const onDelete = jest.fn()
+    renderWithRouter(<ExamFileList examFiles={mockExamFiles} onUpload={mockOnUpload} onDelete={onDelete} />)
+
+    await userEvent.click(screen.getByRole('button', { name: /remover hemograma completo/i }))
+
+    expect(onDelete).toHaveBeenCalledWith('exam-1')
+  })
+
+  it('should not render delete buttons when onDelete is not provided', () => {
+    renderWithRouter(<ExamFileList examFiles={mockExamFiles} onUpload={mockOnUpload} />)
+
+    expect(screen.queryByRole('button', { name: /remover/i })).not.toBeInTheDocument()
+  })
 })

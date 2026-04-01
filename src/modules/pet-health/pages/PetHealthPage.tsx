@@ -19,7 +19,7 @@ type Tab = 'vaccinations' | 'exams'
 
 export default function PetHealthPage() {
   const { id: petId } = useParams<{ id: string }>()
-  const { vaccinations, examFiles, isLoading, error, listVaccinations, createVaccination, listExamFiles, uploadExamFile } = usePetHealth()
+  const { vaccinations, examFiles, isLoading, error, listVaccinations, createVaccination, listExamFiles, uploadExamFile, deleteExamFile } = usePetHealth()
   const [activeTab, setActiveTab] = useState<Tab>('vaccinations')
   const [showVaccinationForm, setShowVaccinationForm] = useState(false)
 
@@ -32,6 +32,10 @@ export default function PetHealthPage() {
 
   const handleUpload = async (data: UploadExamData) => {
     if (petId) await uploadExamFile(petId, data)
+  }
+
+  const handleDeleteExam = async (examId: string) => {
+    if (petId) await deleteExamFile(petId, examId)
   }
 
   return (
@@ -97,6 +101,7 @@ export default function PetHealthPage() {
           <ExamFileList
             examFiles={examFiles}
             onUpload={handleUpload}
+            onDelete={handleDeleteExam}
             isUploading={isLoading}
           />
         )}

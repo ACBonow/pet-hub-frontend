@@ -10,6 +10,7 @@ import {
   createVaccinationRequest,
   listExamFilesRequest,
   uploadExamFileRequest,
+  deleteExamFileRequest,
 } from '@/modules/pet-health/services/petHealth.service'
 import type { Vaccination, CreateVaccinationData, ExamFile, UploadExamData } from '@/modules/pet-health/types'
 import type { ApiError } from '@/shared/types'
@@ -23,6 +24,7 @@ interface UsePetHealthResult {
   createVaccination: (petId: string, data: CreateVaccinationData) => Promise<void>
   listExamFiles: (petId: string) => Promise<void>
   uploadExamFile: (petId: string, data: UploadExamData) => Promise<void>
+  deleteExamFile: (petId: string, examId: string) => Promise<void>
 }
 
 export function usePetHealth(): UsePetHealthResult {
@@ -91,5 +93,20 @@ export function usePetHealth(): UsePetHealthResult {
     }
   }
 
-  return { vaccinations, examFiles, isLoading, error, listVaccinations, createVaccination, listExamFiles, uploadExamFile }
+  async function deleteExamFile(petId: string, examId: string): Promise<void> {
+    setIsLoading(true)
+    setError(null)
+    try {
+      await deleteExamFileRequest(petId, examId)
+      setExamFiles((prev) => prev.filter((e) => e.id !== examId))
+    } catch (err) {
+      const apiError = err as ApiError
+      setError(apiError.message ?? 'Erro ao remover exame.')
+      throw err
+    } finally {
+      setIsLoading(false)
+    }
+  }
+
+  return { vaccinations, examFiles, isLoading, error, listVaccinations, createVaccination, listExamFiles, uploadExamFile, deleteExamFile }
 }
