@@ -41,6 +41,11 @@ export async function getTutorshipHistoryRequest(petId: string): Promise<Tutorsh
   return response.data.data
 }
 
+export async function getOrgPetsRequest(orgId: string): Promise<Pet[]> {
+  const response = await api.get<{ success: true; data: Pet[] }>(`/api/v1/organizations/${orgId}/pets`)
+  return response.data.data
+}
+
 export async function uploadPetPhotoRequest(petId: string, file: File): Promise<Pet> {
   const formData = new FormData()
   formData.append('file', file)

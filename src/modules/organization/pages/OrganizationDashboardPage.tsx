@@ -14,6 +14,7 @@ import { useOrganization } from '@/modules/organization/hooks/useOrganization'
 import { useOrgResources } from '@/modules/organization/hooks/useOrgResources'
 import OrgDataTab from '@/modules/organization/components/OrgDataTab'
 import OrgResourceTab from '@/modules/organization/components/OrgResourceTab'
+import PetCard from '@/modules/pet/components/PetCard'
 import type { OrgRole } from '@/modules/organization/types'
 
 type TabKey = 'dados' | 'membros' | 'pets' | 'adocoes' | 'achados-perdidos' | 'servicos'
@@ -138,15 +139,11 @@ export default function OrganizationDashboardPage() {
                   isEmpty={pets.length === 0}
                   emptyMessage="Nenhum pet cadastrado para esta organização."
                 >
-                  {pets.map(pet => (
-                    <Link
-                      key={pet.id}
-                      to={ROUTES.PET.DETAIL(pet.id)}
-                      className="flex items-center gap-2 p-2 rounded border border-gray-200 hover:bg-gray-50 text-sm text-gray-800"
-                    >
-                      {pet.name}
-                    </Link>
-                  ))}
+                  <ul className="flex flex-col gap-2">
+                    {pets.map(pet => (
+                      <PetCard key={pet.id} pet={pet} />
+                    ))}
+                  </ul>
                 </OrgResourceTab>
               )}
 

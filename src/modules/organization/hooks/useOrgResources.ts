@@ -5,7 +5,7 @@
  */
 
 import { useState } from 'react'
-import { listPetsRequest } from '@/modules/pet/services/pet.service'
+import { getOrgPetsRequest } from '@/modules/pet/services/pet.service'
 import { listAdoptionsRequest } from '@/modules/adoption/services/adoption.service'
 import { listReportsRequest } from '@/modules/lost-found/services/lostFound.service'
 import { listServicesRequest } from '@/modules/services-directory/services/servicesDirectory.service'
@@ -36,7 +36,7 @@ export function useOrgResources() {
   async function loadPets(orgId: string): Promise<void> {
     setState(s => ({ ...s, isLoading: true, error: null }))
     try {
-      const pets = await listPetsRequest({ organizationId: orgId })
+      const pets = await getOrgPetsRequest(orgId)
       setState(s => ({ ...s, pets, isLoading: false }))
     } catch {
       setState(s => ({ ...s, isLoading: false, error: 'Erro ao carregar pets.' }))

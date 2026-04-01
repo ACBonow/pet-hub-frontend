@@ -224,6 +224,45 @@ describe('OrganizationDashboardPage', () => {
     expect(screen.getByRole('tab', { name: 'Adoções' })).toHaveAttribute('aria-selected', 'true')
   })
 
+  // ── Pets tab ──────────────────────────────────────────────────────────────────
+
+  it('should render PetCard for each pet in the Pets tab', async () => {
+    orgHookState.organization = { ...ORG_BASE, myRole: 'OWNER' }
+    resourceState.pets = [
+      {
+        id: 'p1',
+        name: 'Rex',
+        species: 'dog',
+        breed: null,
+        gender: 'M',
+        castrated: false,
+        birthDate: null,
+        photoUrl: null,
+        primaryTutorId: 'u1',
+        primaryTutorshipType: 'OWNER',
+        coTutorIds: [],
+        createdAt: '2026-01-01T00:00:00.000Z',
+        updatedAt: '2026-01-01T00:00:00.000Z',
+      },
+    ]
+    renderPage('/organizacoes/org-1/painel?tab=pets')
+    expect(screen.getByText('Rex')).toBeInTheDocument()
+  })
+
+  it('should show empty message when org has no pets', () => {
+    orgHookState.organization = { ...ORG_BASE, myRole: 'OWNER' }
+    resourceState.pets = []
+    renderPage('/organizacoes/org-1/painel?tab=pets')
+    expect(screen.getByText('Nenhum pet cadastrado para esta organização.')).toBeInTheDocument()
+  })
+
+  it('should call loadPets when Pets tab is clicked', async () => {
+    orgHookState.organization = { ...ORG_BASE, myRole: 'OWNER' }
+    renderPage()
+    await userEvent.click(screen.getByRole('tab', { name: 'Pets' }))
+    expect(mockLoadPets).toHaveBeenCalledWith('org-1')
+  })
+
   // ── Private route ─────────────────────────────────────────────────────────────
 
   it('should redirect unauthenticated user to login', () => {
