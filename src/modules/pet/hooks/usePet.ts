@@ -13,8 +13,10 @@ import {
   transferTutorshipRequest,
   getTutorshipHistoryRequest,
   uploadPetPhotoRequest,
+  addCoTutorRequest,
+  removeCoTutorRequest,
 } from '@/modules/pet/services/pet.service'
-import type { Pet, CreatePetData, UpdatePetData, TransferTutorshipData, TutorshipHistoryEntry } from '@/modules/pet/types'
+import type { Pet, CoTutor, CreatePetData, UpdatePetData, TransferTutorshipData, TutorshipHistoryEntry } from '@/modules/pet/types'
 import type { ApiError } from '@/shared/types'
 
 interface UsePetResult {
@@ -30,6 +32,8 @@ interface UsePetResult {
   transferTutorship: (petId: string, data: TransferTutorshipData) => Promise<void>
   getTutorshipHistory: (petId: string) => Promise<void>
   uploadPhoto: (petId: string, file: File) => Promise<Pet>
+  addCoTutor: (petId: string, cpf: string) => Promise<CoTutor>
+  removeCoTutor: (petId: string, coTutorId: string) => Promise<void>
 }
 
 export function usePet(): UsePetResult {
@@ -146,5 +150,36 @@ export function usePet(): UsePetResult {
     }
   }
 
-  return { pet, pets, tutorshipHistory, isLoading, error, getPet, listPets, createPet, updatePet, transferTutorship, getTutorshipHistory, uploadPhoto }
+  async function addCoTutor(petId: string, cpf: string): Promise<CoTutor> {
+    setIsLoading(true)
+    setError(null)
+    try {
+      const coTutor = await addCoTutorRequest(petId, cpf)
+      setPet((prev) => prev ? { ...prev, coTutors: [...prev.coTutors, coTutor] } : prev)
+      return coTutor
+    } catch (err) {
+      const apiError = err as ApiError
+      setError(apiError.message ?? 'Erro ao adicionar co-tutor.')
+      throw err
+    } finally {
+      setIsLoading(false)
+    }
+  }
+
+  async function removeCoTutor(petId: string, coTutorId: string): Promise<void> {
+    setIsLoading(true)
+    setError(null)
+    try {
+      await removeCoTutorRequest(petId, coTutorId)
+      setPet((prev) => prev ? { ...prev, coTutors: prev.coTutors.filter((c) => c.id !== coTutorId) } : prev)
+    } catch (err) {
+      const apiError = err as ApiError
+      setError(apiError.message ?? 'Erro ao remover co-tutor.')
+      throw err
+    } finally {
+      setIsLoading(false)
+    }
+  }
+
+  return { pet, pets, tutorshipHistory, isLoading, error, getPet, listPets, createPet, updatePet, transferTutorship, getTutorshipHistory, uploadPhoto, addCoTutor, removeCoTutor }
 }

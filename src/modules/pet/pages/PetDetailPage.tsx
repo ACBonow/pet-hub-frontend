@@ -4,7 +4,7 @@
  * @description Page for viewing pet details, tutorship info, co-tutors, and tutorship history.
  */
 
-import { useEffect, useRef } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { useParams, Link } from 'react-router-dom'
 import AppShell from '@/shared/components/layout/AppShell'
 import Header from '@/shared/components/layout/Header'
@@ -15,6 +15,9 @@ import TutorshipInfo from '@/modules/pet/components/TutorshipInfo'
 import TutorshipTransfer from '@/modules/pet/components/TutorshipTransfer'
 import CoTutorsList from '@/modules/pet/components/CoTutorsList'
 import TutorshipHistory from '@/modules/pet/components/TutorshipHistory'
+import CpfInput from '@/shared/components/forms/CpfInput'
+import { useForm } from 'react-hook-form'
+import { validateCpf } from '@/shared/validators/cpf.validator'
 
 function formatBirthDate(dateStr: string): string {
   const birth = new Date(dateStr)
@@ -30,10 +33,16 @@ function formatBirthDate(dateStr: string): string {
   return `Nascimento: ${formatted} (${age})`
 }
 
+interface AddCoTutorForm {
+  cpf: string
+}
+
 export default function PetDetailPage() {
   const { id } = useParams<{ id: string }>()
-  const { pet, tutorshipHistory, isLoading, error, getPet, getTutorshipHistory, transferTutorship, uploadPhoto } = usePet()
+  const { pet, tutorshipHistory, isLoading, error, getPet, getTutorshipHistory, transferTutorship, uploadPhoto, addCoTutor, removeCoTutor } = usePet()
   const photoInputRef = useRef<HTMLInputElement>(null)
+  const [showAddCoTutor, setShowAddCoTutor] = useState(false)
+  const { control, handleSubmit, reset, formState: { errors } } = useForm<AddCoTutorForm>()
 
   useEffect(() => {
     if (id) {
@@ -51,6 +60,18 @@ export default function PetDetailPage() {
     if (!file || !id) return
     await uploadPhoto(id, file)
     await getPet(id)
+  }
+
+  const handleAddCoTutor = handleSubmit(async ({ cpf }) => {
+    if (!id) return
+    await addCoTutor(id, cpf)
+    setShowAddCoTutor(false)
+    reset()
+  })
+
+  const handleRemoveCoTutor = async (coTutorId: string) => {
+    if (!id) return
+    await removeCoTutor(id, coTutorId)
   }
 
   return (
@@ -135,7 +156,45 @@ export default function PetDetailPage() {
 
             <TutorshipTransfer petId={pet.id} onTransfer={handleTransfer} />
 
-            <CoTutorsList coTutors={[]} />
+            <CoTutorsList
+              coTutors={pet.coTutors}
+              onRemove={handleRemoveCoTutor}
+            />
+            {!showAddCoTutor ? (
+              <button
+                type="button"
+                onClick={() => setShowAddCoTutor(true)}
+                className="text-sm text-[--color-primary] hover:underline text-left"
+              >
+                + Adicionar co-tutor
+              </button>
+            ) : (
+              <form onSubmit={handleAddCoTutor} aria-label="Adicionar co-tutor" className="flex flex-col gap-3 bg-gray-50 rounded-[--radius-md] p-4">
+                <CpfInput
+                  name="cpf"
+                  control={control}
+                  label="CPF do co-tutor"
+                  rules={{ validate: (v: string) => validateCpf(v) || 'CPF inválido' }}
+                />
+                {errors.cpf && <p className="text-xs text-[--color-danger]">{errors.cpf.message}</p>}
+                <div className="flex gap-2">
+                  <button
+                    type="submit"
+                    disabled={isLoading}
+                    className="text-sm font-medium text-white bg-[--color-primary] px-3 py-1.5 rounded-[--radius-sm] disabled:opacity-50"
+                  >
+                    {isLoading ? 'Salvando...' : 'Adicionar'}
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => { setShowAddCoTutor(false); reset() }}
+                    className="text-sm text-gray-500 hover:underline"
+                  >
+                    Cancelar
+                  </button>
+                </div>
+              </form>
+            )}
 
             <TutorshipHistory entries={tutorshipHistory} />
           </div>

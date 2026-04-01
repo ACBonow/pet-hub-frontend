@@ -5,7 +5,7 @@
  */
 
 import api from '@/shared/services/api.client'
-import type { Pet, CreatePetData, UpdatePetData, TransferTutorshipData, TutorshipHistoryEntry } from '@/modules/pet/types'
+import type { Pet, CoTutor, CreatePetData, UpdatePetData, TransferTutorshipData, TutorshipHistoryEntry } from '@/modules/pet/types'
 
 export async function listPetsRequest(filters?: { organizationId?: string }): Promise<Pet[]> {
   const response = await api.get<{ success: true; data: Pet[] }>('/api/v1/pets', { params: filters })
@@ -55,4 +55,16 @@ export async function uploadPetPhotoRequest(petId: string, file: File): Promise<
     { headers: { 'Content-Type': 'multipart/form-data' } },
   )
   return response.data.data
+}
+
+export async function addCoTutorRequest(petId: string, cpf: string): Promise<CoTutor> {
+  const response = await api.post<{ success: true; data: CoTutor }>(
+    `/api/v1/pets/${petId}/co-tutors`,
+    { tutorType: 'PERSON', personCpf: cpf },
+  )
+  return response.data.data
+}
+
+export async function removeCoTutorRequest(petId: string, coTutorId: string): Promise<void> {
+  await api.delete(`/api/v1/pets/${petId}/co-tutors/${coTutorId}`)
 }

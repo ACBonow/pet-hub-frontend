@@ -6,6 +6,11 @@
 
 export type TutorshipType = 'OWNER' | 'TUTOR' | 'TEMPORARY_HOME'
 
+export interface CoTutor {
+  id: string
+  name: string
+}
+
 export interface Pet {
   id: string
   name: string
@@ -17,7 +22,7 @@ export interface Pet {
   photoUrl: string | null
   primaryTutorId: string
   primaryTutorshipType: TutorshipType
-  coTutorIds: string[]
+  coTutors: CoTutor[]
   createdAt: string
   updatedAt: string
 }

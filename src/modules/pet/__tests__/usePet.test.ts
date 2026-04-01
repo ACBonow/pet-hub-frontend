@@ -23,7 +23,7 @@ const mockPet = {
   photoUrl: null,
   primaryTutorId: 'person-1',
   primaryTutorshipType: 'OWNER' as const,
-  coTutorIds: [],
+  coTutors: [],
   createdAt: '2026-03-01T00:00:00.000Z',
   updatedAt: '2026-03-01T00:00:00.000Z',
 }
@@ -218,6 +218,95 @@ describe('usePet', () => {
       })
 
       expect(returned).toEqual(petWithPhoto)
+    })
+  })
+
+  describe('addCoTutor', () => {
+    it('should call addCoTutorRequest with petId and cpf', async () => {
+      const coTutor = { id: 'co-1', name: 'Maria Santos' }
+      mockPetService.addCoTutorRequest.mockResolvedValueOnce(coTutor)
+
+      const { result } = renderHook(() => usePet())
+
+      await act(async () => {
+        await result.current.addCoTutor('pet-1', '52998224725')
+      })
+
+      expect(mockPetService.addCoTutorRequest).toHaveBeenCalledWith('pet-1', '52998224725')
+    })
+
+    it('should append the new co-tutor to pet.coTutors when pet is loaded', async () => {
+      const petWithNoCoTutors = { ...mockPet, coTutors: [] }
+      mockPetService.getPetRequest.mockResolvedValueOnce(petWithNoCoTutors)
+      const coTutor = { id: 'co-1', name: 'Maria Santos' }
+      mockPetService.addCoTutorRequest.mockResolvedValueOnce(coTutor)
+
+      const { result } = renderHook(() => usePet())
+
+      await act(async () => {
+        await result.current.getPet('pet-1')
+        await result.current.addCoTutor('pet-1', '52998224725')
+      })
+
+      expect(result.current.pet?.coTutors).toEqual([coTutor])
+    })
+
+    it('should set error when addCoTutor fails', async () => {
+      mockPetService.addCoTutorRequest.mockRejectedValueOnce({
+        message: 'CPF não encontrado.',
+      })
+
+      const { result } = renderHook(() => usePet())
+
+      await act(async () => {
+        await result.current.addCoTutor('pet-1', '99999999999').catch(() => {})
+      })
+
+      expect(result.current.error).toBe('CPF não encontrado.')
+    })
+  })
+
+  describe('removeCoTutor', () => {
+    it('should call removeCoTutorRequest with petId and coTutorId', async () => {
+      mockPetService.removeCoTutorRequest.mockResolvedValueOnce(undefined)
+
+      const { result } = renderHook(() => usePet())
+
+      await act(async () => {
+        await result.current.removeCoTutor('pet-1', 'co-1')
+      })
+
+      expect(mockPetService.removeCoTutorRequest).toHaveBeenCalledWith('pet-1', 'co-1')
+    })
+
+    it('should remove co-tutor from pet.coTutors when pet is loaded', async () => {
+      const coTutor = { id: 'co-1', name: 'Maria Santos' }
+      const petWithCoTutor = { ...mockPet, coTutors: [coTutor] }
+      mockPetService.getPetRequest.mockResolvedValueOnce(petWithCoTutor)
+      mockPetService.removeCoTutorRequest.mockResolvedValueOnce(undefined)
+
+      const { result } = renderHook(() => usePet())
+
+      await act(async () => {
+        await result.current.getPet('pet-1')
+        await result.current.removeCoTutor('pet-1', 'co-1')
+      })
+
+      expect(result.current.pet?.coTutors).toEqual([])
+    })
+
+    it('should set error when removeCoTutor fails', async () => {
+      mockPetService.removeCoTutorRequest.mockRejectedValueOnce({
+        message: 'Co-tutor não encontrado.',
+      })
+
+      const { result } = renderHook(() => usePet())
+
+      await act(async () => {
+        await result.current.removeCoTutor('pet-1', 'co-1').catch(() => {})
+      })
+
+      expect(result.current.error).toBe('Co-tutor não encontrado.')
     })
   })
 })
