@@ -5,6 +5,7 @@
  */
 
 import { render, screen } from '@testing-library/react'
+import userEvent from '@testing-library/user-event'
 import { MemoryRouter } from 'react-router-dom'
 import VaccinationCard from '@/modules/pet-health/components/VaccinationCard'
 
@@ -67,5 +68,25 @@ describe('VaccinationCard', () => {
   it('should display empty message when no vaccinations', () => {
     renderWithRouter(<VaccinationCard vaccinations={[]} today={TODAY} />)
     expect(screen.getByText(/nenhuma vacina registrada/i)).toBeInTheDocument()
+  })
+
+  it('should not render delete buttons when onDelete is not provided', () => {
+    renderWithRouter(<VaccinationCard vaccinations={mockVaccinations} today={TODAY} />)
+    expect(screen.queryByRole('button', { name: /remover/i })).not.toBeInTheDocument()
+  })
+
+  it('should render a delete button for each vaccination when onDelete is provided', () => {
+    const onDelete = jest.fn()
+    renderWithRouter(<VaccinationCard vaccinations={mockVaccinations} today={TODAY} onDelete={onDelete} />)
+    expect(screen.getAllByRole('button', { name: /remover/i })).toHaveLength(3)
+  })
+
+  it('should call onDelete with the vaccination id when delete button is clicked', async () => {
+    const onDelete = jest.fn().mockResolvedValue(undefined)
+    renderWithRouter(
+      <VaccinationCard vaccinations={[mockVaccinations[0]]} today={TODAY} onDelete={onDelete} />,
+    )
+    await userEvent.click(screen.getByRole('button', { name: /remover antirrábica/i }))
+    expect(onDelete).toHaveBeenCalledWith('vac-1')
   })
 })

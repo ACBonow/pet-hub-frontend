@@ -19,7 +19,7 @@ type Tab = 'vaccinations' | 'exams'
 
 export default function PetHealthPage() {
   const { id: petId } = useParams<{ id: string }>()
-  const { vaccinations, examFiles, isLoading, error, listVaccinations, createVaccination, listExamFiles, uploadExamFile, deleteExamFile } = usePetHealth()
+  const { vaccinations, examFiles, isLoading, error, listVaccinations, createVaccination, deleteVaccination, listExamFiles, uploadExamFile, deleteExamFile } = usePetHealth()
   const [activeTab, setActiveTab] = useState<Tab>('vaccinations')
   const [showVaccinationForm, setShowVaccinationForm] = useState(false)
 
@@ -36,6 +36,10 @@ export default function PetHealthPage() {
 
   const handleDeleteExam = async (examId: string) => {
     if (petId) await deleteExamFile(petId, examId)
+  }
+
+  const handleDeleteVaccination = async (vaccinationId: string) => {
+    if (petId) await deleteVaccination(petId, vaccinationId)
   }
 
   return (
@@ -74,7 +78,7 @@ export default function PetHealthPage() {
 
         {activeTab === 'vaccinations' && (
           <div className="flex flex-col gap-4">
-            <VaccinationCard vaccinations={vaccinations} />
+            <VaccinationCard vaccinations={vaccinations} onDelete={handleDeleteVaccination} />
             {!showVaccinationForm ? (
               <button
                 type="button"

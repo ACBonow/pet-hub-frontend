@@ -9,6 +9,7 @@ import type { Vaccination } from '@/modules/pet-health/types'
 interface VaccinationCardProps {
   vaccinations: Vaccination[]
   today?: Date
+  onDelete?: (vaccinationId: string) => Promise<void>
 }
 
 function formatDate(dateStr: string): string {
@@ -22,7 +23,7 @@ function isWithin30Days(dateStr: string, today: Date): boolean {
   return diffDays >= 0 && diffDays <= 30
 }
 
-export default function VaccinationCard({ vaccinations, today = new Date() }: VaccinationCardProps) {
+export default function VaccinationCard({ vaccinations, today = new Date(), onDelete }: VaccinationCardProps) {
   const sorted = [...vaccinations].sort(
     (a, b) => new Date(b.applicationDate).getTime() - new Date(a.applicationDate).getTime(),
   )
@@ -60,6 +61,16 @@ export default function VaccinationCard({ vaccinations, today = new Date() }: Va
             )}
             {vac.notes && (
               <p className="text-xs text-gray-400 mt-1">{vac.notes}</p>
+            )}
+            {onDelete && (
+              <button
+                type="button"
+                aria-label={`Remover ${vac.name}`}
+                onClick={() => onDelete(vac.id)}
+                className="mt-2 text-xs text-[--color-danger] hover:underline"
+              >
+                Remover
+              </button>
             )}
           </li>
         )

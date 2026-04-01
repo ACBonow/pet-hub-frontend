@@ -39,3 +39,7 @@ export async function uploadExamFileRequest(petId: string, data: UploadExamData)
 export async function deleteExamFileRequest(petId: string, examId: string): Promise<void> {
   await api.delete(`/api/v1/pet-health/${petId}/exams/${examId}`)
 }
+
+export async function deleteVaccinationRequest(petId: string, vaccinationId: string): Promise<void> {
+  await api.delete(`/api/v1/pet-health/${petId}/vaccinations/${vaccinationId}`)
+}
