@@ -15,9 +15,9 @@ interface VaccinationFormProps {
 }
 
 interface VaccinationFormValues {
-  name: string
+  vaccineName: string
   applicationDate: string
-  nextDoseDate: string
+  nextDueDate: string
   notes: string
 }
 
@@ -29,16 +29,16 @@ export default function VaccinationForm({ onSubmit, isLoading }: VaccinationForm
     handleSubmit,
     formState: { errors },
   } = useForm<VaccinationFormValues>({
-    defaultValues: { name: '', applicationDate: '', nextDoseDate: '', notes: '' },
+    defaultValues: { vaccineName: '', applicationDate: '', nextDueDate: '', notes: '' },
   })
 
   const handleFormSubmit = async (data: VaccinationFormValues) => {
     setApiError(null)
     try {
       await onSubmit({
-        name: data.name,
+        vaccineName: data.vaccineName,
         applicationDate: data.applicationDate,
-        nextDoseDate: data.nextDoseDate || null,
+        nextDueDate: data.nextDueDate || null,
         notes: data.notes || null,
       })
     } catch (err) {
@@ -57,15 +57,15 @@ export default function VaccinationForm({ onSubmit, isLoading }: VaccinationForm
           <input
             id="vac-name"
             type="text"
-            {...register('name', { required: 'Nome da vacina é obrigatório' })}
+            {...register('vaccineName', { required: 'Nome da vacina é obrigatório' })}
             className={[
               'w-full min-h-[44px] px-3 py-2 border rounded-[--radius-md] text-sm',
               'focus:outline-none focus:ring-2 focus:ring-[--color-primary]',
               errors.name ? 'border-[--color-danger]' : 'border-gray-300',
             ].join(' ')}
           />
-          {errors.name && (
-            <p role="alert" className="text-xs text-[--color-danger]">{errors.name.message}</p>
+          {errors.vaccineName && (
+            <p role="alert" className="text-xs text-[--color-danger]">{errors.vaccineName.message}</p>
           )}
         </div>
 
@@ -82,13 +82,13 @@ export default function VaccinationForm({ onSubmit, isLoading }: VaccinationForm
         </div>
 
         <div className="flex flex-col gap-1">
-          <label htmlFor="nextDoseDate" className="text-sm font-medium text-gray-700">
+          <label htmlFor="nextDueDate" className="text-sm font-medium text-gray-700">
             Próxima dose (opcional)
           </label>
           <input
-            id="nextDoseDate"
+            id="nextDueDate"
             type="date"
-            {...register('nextDoseDate')}
+            {...register('nextDueDate')}
             className="w-full min-h-[44px] px-3 py-2 border border-gray-300 rounded-[--radius-md] text-sm focus:outline-none focus:ring-2 focus:ring-[--color-primary]"
           />
         </div>

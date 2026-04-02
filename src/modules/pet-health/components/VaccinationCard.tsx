@@ -35,7 +35,7 @@ export default function VaccinationCard({ vaccinations, today = new Date(), onDe
   return (
     <ul className="flex flex-col gap-3" role="list">
       {sorted.map((vac) => {
-        const alert = vac.nextDoseDate && isWithin30Days(vac.nextDoseDate, today)
+        const alert = vac.nextDueDate && isWithin30Days(vac.nextDueDate, today)
 
         return (
           <li
@@ -45,13 +45,13 @@ export default function VaccinationCard({ vaccinations, today = new Date(), onDe
               alert ? 'border-amber-300 bg-amber-50' : 'border-gray-200',
             ].join(' ')}
           >
-            <p className="font-medium text-gray-900">{vac.name}</p>
+            <p className="font-medium text-gray-900">{vac.vaccineName}</p>
             <p className="text-xs text-gray-500">
               Aplicação: {formatDate(vac.applicationDate)}
             </p>
-            {vac.nextDoseDate && (
+            {vac.nextDueDate && (
               <p className="text-xs text-gray-500">
-                Próxima dose: {formatDate(vac.nextDoseDate)}
+                Próxima dose: {formatDate(vac.nextDueDate)}
               </p>
             )}
             {alert && (
@@ -65,7 +65,7 @@ export default function VaccinationCard({ vaccinations, today = new Date(), onDe
             {onDelete && (
               <button
                 type="button"
-                aria-label={`Remover ${vac.name}`}
+                aria-label={`Remover ${vac.vaccineName}`}
                 onClick={() => onDelete(vac.id)}
                 className="mt-2 text-xs text-[--color-danger] hover:underline"
               >

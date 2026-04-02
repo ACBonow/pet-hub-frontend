@@ -6,31 +6,45 @@
 
 export interface Vaccination {
   id: string
-  name: string
+  petId: string
+  vaccineName: string
+  manufacturer: string | null
+  batchNumber: string | null
   applicationDate: string
-  nextDoseDate: string | null
+  nextDueDate: string | null
+  veterinarianName: string | null
+  clinicName: string | null
+  fileUrl: string | null
   notes: string | null
+  createdAt: string
 }
 
 export interface CreateVaccinationData {
-  name: string
+  vaccineName: string
+  manufacturer?: string
+  batchNumber?: string
   applicationDate: string
-  nextDoseDate?: string | null
+  nextDueDate?: string | null
+  veterinarianName?: string
+  clinicName?: string
   notes?: string | null
 }
 
-export type ExamFileType = 'PDF' | 'IMAGE' | 'OTHER'
-
 export interface ExamFile {
   id: string
-  name: string
+  petId: string
+  examType: string
   fileUrl: string
   examDate: string
-  fileType: ExamFileType
+  labName: string | null
+  notes: string | null
+  createdAt: string
 }
 
 export interface UploadExamData {
-  name: string
+  examType: string
   examDate: string
   file: File
+  labName?: string
+  notes?: string
 }

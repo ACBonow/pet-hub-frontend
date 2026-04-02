@@ -18,24 +18,45 @@ const PAST_DATE = '2026-01-15'
 const mockVaccinations = [
   {
     id: 'vac-1',
-    name: 'Antirrábica',
+    petId: 'pet-1',
+    vaccineName: 'Antirrábica',
+    manufacturer: null,
+    batchNumber: null,
     applicationDate: '2025-03-19',
-    nextDoseDate: WITHIN_30_DAYS,
+    nextDueDate: WITHIN_30_DAYS,
+    veterinarianName: null,
+    clinicName: null,
+    fileUrl: null,
     notes: null,
+    createdAt: '2025-03-19T00:00:00.000Z',
   },
   {
     id: 'vac-2',
-    name: 'V10',
+    petId: 'pet-1',
+    vaccineName: 'V10',
+    manufacturer: null,
+    batchNumber: null,
     applicationDate: '2025-06-01',
-    nextDoseDate: AFTER_30_DAYS,
+    nextDueDate: AFTER_30_DAYS,
+    veterinarianName: null,
+    clinicName: null,
+    fileUrl: null,
     notes: null,
+    createdAt: '2025-06-01T00:00:00.000Z',
   },
   {
     id: 'vac-3',
-    name: 'Giárdia',
+    petId: 'pet-1',
+    vaccineName: 'Giárdia',
+    manufacturer: null,
+    batchNumber: null,
     applicationDate: PAST_DATE,
-    nextDoseDate: null,
+    nextDueDate: null,
+    veterinarianName: null,
+    clinicName: null,
+    fileUrl: null,
     notes: 'Dose única',
+    createdAt: PAST_DATE + 'T00:00:00.000Z',
   },
 ]
 
@@ -49,7 +70,7 @@ describe('VaccinationCard', () => {
     // Dates: Giárdia=2026-01-15, V10=2025-06-01, Antirrábica=2025-03-19
     // Reverse chronological: Giárdia first, then V10, then Antirrábica
     const items = screen.getAllByRole('listitem')
-    expect(items[0]).toHaveTextContent('Giárdia')
+    expect(items[0]).toHaveTextContent('Giárdia')  // vaccineName
     expect(items[1]).toHaveTextContent('V10')
     expect(items[2]).toHaveTextContent('Antirrábica')
   })
@@ -86,7 +107,7 @@ describe('VaccinationCard', () => {
     renderWithRouter(
       <VaccinationCard vaccinations={[mockVaccinations[0]]} today={TODAY} onDelete={onDelete} />,
     )
-    await userEvent.click(screen.getByRole('button', { name: /remover antirrábica/i }))
+    await userEvent.click(screen.getByRole('button', { name: /remover antirrábica/i })) // vaccineName
     expect(onDelete).toHaveBeenCalledWith('vac-1')
   })
 })

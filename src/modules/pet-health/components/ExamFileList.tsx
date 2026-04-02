@@ -34,7 +34,7 @@ export default function ExamFileList({ examFiles, onUpload, onDelete, isUploadin
               className="flex items-center justify-between bg-white rounded-[--radius-md] border border-gray-200 px-3 py-2"
             >
               <div>
-                <p className="text-sm font-medium text-gray-900">{exam.name}</p>
+                <p className="text-sm font-medium text-gray-900">{exam.examType}</p>
                 <p className="text-xs text-gray-500">{formatDate(exam.examDate)}</p>
               </div>
               <div className="flex items-center gap-2 shrink-0">
@@ -50,7 +50,7 @@ export default function ExamFileList({ examFiles, onUpload, onDelete, isUploadin
                   <button
                     type="button"
                     onClick={() => onDelete(exam.id)}
-                    aria-label={`Remover ${exam.name}`}
+                    aria-label={`Remover ${exam.examType}`}
                     className="text-xs text-[--color-danger] hover:underline"
                   >
                     Remover
@@ -84,7 +84,7 @@ interface ExamUploadInlineFormProps {
 }
 
 function ExamUploadInlineForm({ onUpload, isUploading, onCancel }: ExamUploadInlineFormProps) {
-  const [name, setName] = useState('')
+  const [examType, setExamType] = useState('')
   const [examDate, setExamDate] = useState('')
   const [file, setFile] = useState<File | null>(null)
   const [error, setError] = useState<string | null>(null)
@@ -97,7 +97,7 @@ function ExamUploadInlineForm({ onUpload, isUploading, onCancel }: ExamUploadInl
     }
     setError(null)
     try {
-      await onUpload({ name, examDate, file })
+      await onUpload({ examType, examDate, file })
       onCancel()
     } catch (err) {
       const apiErr = err as { message?: string }
@@ -108,14 +108,14 @@ function ExamUploadInlineForm({ onUpload, isUploading, onCancel }: ExamUploadInl
   return (
     <form onSubmit={handleSubmit} noValidate className="flex flex-col gap-3 p-3 bg-gray-50 rounded-[--radius-md] border border-gray-200">
       <div className="flex flex-col gap-1">
-        <label htmlFor="exam-name" className="text-sm font-medium text-gray-700">
-          Nome do exame
+        <label htmlFor="exam-type" className="text-sm font-medium text-gray-700">
+          Tipo do exame
         </label>
         <input
-          id="exam-name"
+          id="exam-type"
           type="text"
-          value={name}
-          onChange={(e) => setName(e.target.value)}
+          value={examType}
+          onChange={(e) => setExamType(e.target.value)}
           required
           className="w-full min-h-[44px] px-3 py-2 border border-gray-300 rounded-[--radius-md] text-sm focus:outline-none focus:ring-2 focus:ring-[--color-primary]"
         />

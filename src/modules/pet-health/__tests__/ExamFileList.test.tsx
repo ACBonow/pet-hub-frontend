@@ -13,17 +13,23 @@ import type { ExamFile } from '@/modules/pet-health/types'
 const mockExamFiles: ExamFile[] = [
   {
     id: 'exam-1',
-    name: 'Hemograma Completo',
+    petId: 'pet-1',
+    examType: 'Hemograma Completo',
     fileUrl: 'https://storage.example.com/exams/hemograma.pdf',
     examDate: '2026-01-10',
-    fileType: 'PDF',
+    labName: null,
+    notes: null,
+    createdAt: '2026-01-10T00:00:00.000Z',
   },
   {
     id: 'exam-2',
-    name: 'Raio-X Tórax',
+    petId: 'pet-1',
+    examType: 'Raio-X Tórax',
     fileUrl: 'https://storage.example.com/exams/raio-x.png',
     examDate: '2026-02-20',
-    fileType: 'IMAGE',
+    labName: null,
+    notes: null,
+    createdAt: '2026-02-20T00:00:00.000Z',
   },
 ]
 
@@ -37,7 +43,7 @@ describe('ExamFileList', () => {
     jest.clearAllMocks()
   })
 
-  it('should list exam files with name and date', () => {
+  it('should list exam files with examType and date', () => {
     renderWithRouter(<ExamFileList examFiles={mockExamFiles} onUpload={mockOnUpload} />)
 
     expect(screen.getByText('Hemograma Completo')).toBeInTheDocument()
@@ -54,12 +60,12 @@ describe('ExamFileList', () => {
     expect(screen.getByText(/nenhum exame registrado/i)).toBeInTheDocument()
   })
 
-  it('should show file input when upload button is clicked', async () => {
+  it('should show exam type input when upload button is clicked', async () => {
     renderWithRouter(<ExamFileList examFiles={[]} onUpload={mockOnUpload} />)
 
     await userEvent.click(screen.getByRole('button', { name: /enviar exame/i }))
 
-    expect(screen.getByLabelText(/arquivo/i)).toBeInTheDocument()
+    expect(screen.getByLabelText(/tipo do exame/i)).toBeInTheDocument()
   })
 
   it('should render a delete button for each exam when onDelete is provided', () => {

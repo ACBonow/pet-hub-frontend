@@ -14,18 +14,28 @@ const mockService = petHealthService as jest.Mocked<typeof petHealthService>
 
 const VACCINATION_FIXTURE = {
   id: 'vac-1',
-  name: 'Antirrábica',
+  petId: 'pet-1',
+  vaccineName: 'Antirrábica',
+  manufacturer: null,
+  batchNumber: null,
   applicationDate: '2025-03-19',
-  nextDoseDate: null,
+  nextDueDate: null,
+  veterinarianName: null,
+  clinicName: null,
+  fileUrl: null,
   notes: null,
+  createdAt: '2025-03-19T00:00:00.000Z',
 }
 
 const EXAM_FIXTURE = {
   id: 'exam-1',
-  name: 'Hemograma',
+  petId: 'pet-1',
+  examType: 'Hemograma',
   fileUrl: 'https://storage.example.com/exams/hemograma.pdf',
   examDate: '2026-01-10',
-  fileType: 'PDF' as const,
+  labName: null,
+  notes: null,
+  createdAt: '2026-01-10T00:00:00.000Z',
 }
 
 describe('usePetHealth — deleteExamFile', () => {

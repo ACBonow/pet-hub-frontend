@@ -8,28 +8,30 @@ import api from '@/shared/services/api.client'
 import type { Vaccination, CreateVaccinationData, ExamFile, UploadExamData } from '@/modules/pet-health/types'
 
 export async function listVaccinationsRequest(petId: string): Promise<Vaccination[]> {
-  const response = await api.get<{ success: true; data: Vaccination[] }>(`/api/v1/pets/${petId}/vaccinations`)
+  const response = await api.get<{ success: true; data: Vaccination[] }>(`/api/v1/pet-health/${petId}/vaccination-card`)
   return response.data.data
 }
 
 export async function createVaccinationRequest(petId: string, data: CreateVaccinationData): Promise<Vaccination> {
-  const response = await api.post<{ success: true; data: Vaccination }>(`/api/v1/pets/${petId}/vaccinations`, data)
+  const response = await api.post<{ success: true; data: Vaccination }>(`/api/v1/pet-health/${petId}/vaccinations`, data)
   return response.data.data
 }
 
 export async function listExamFilesRequest(petId: string): Promise<ExamFile[]> {
-  const response = await api.get<{ success: true; data: ExamFile[] }>(`/api/v1/pets/${petId}/exams`)
+  const response = await api.get<{ success: true; data: ExamFile[] }>(`/api/v1/pet-health/${petId}/exams`)
   return response.data.data
 }
 
 export async function uploadExamFileRequest(petId: string, data: UploadExamData): Promise<ExamFile> {
   const formData = new FormData()
   formData.append('file', data.file)
-  formData.append('name', data.name)
+  formData.append('examType', data.examType)
   formData.append('examDate', data.examDate)
+  if (data.labName) formData.append('labName', data.labName)
+  if (data.notes) formData.append('notes', data.notes)
 
   const response = await api.post<{ success: true; data: ExamFile }>(
-    `/api/v1/pets/${petId}/exams`,
+    `/api/v1/pet-health/${petId}/exams`,
     formData,
     { headers: { 'Content-Type': 'multipart/form-data' } },
   )
