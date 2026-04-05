@@ -4,7 +4,25 @@ import { router } from './routes'
 import { useAuthStore } from './modules/auth/store/authSlice'
 import { refreshTokenRequest } from './modules/auth/services/auth.service'
 import { STORAGE_REFRESH_KEY, STORAGE_USER_KEY } from './modules/auth/hooks/useAuth'
+import { setRefreshHandlers } from './shared/services/api.client'
 import type { AuthUser } from './modules/auth/types'
+
+// Configure the 401 auto-refresh handler once at module load.
+// Uses getState() to avoid stale closure over store values.
+setRefreshHandlers(
+  (token) => refreshTokenRequest({ refreshToken: token }),
+  (accessToken, newRefreshToken) => {
+    localStorage.setItem(STORAGE_REFRESH_KEY, newRefreshToken)
+    const user = useAuthStore.getState().user
+    if (user) useAuthStore.getState().setAuth(accessToken, user)
+  },
+  () => {
+    localStorage.removeItem(STORAGE_REFRESH_KEY)
+    localStorage.removeItem(STORAGE_USER_KEY)
+    useAuthStore.getState().clearAuth()
+    window.location.href = '/login'
+  },
+)
 
 export default function App() {
   const { setAuth } = useAuthStore()
