@@ -17,7 +17,6 @@ import CoTutorsList from '@/modules/pet/components/CoTutorsList'
 import TutorshipHistory from '@/modules/pet/components/TutorshipHistory'
 import CpfInput from '@/shared/components/forms/CpfInput'
 import { useForm } from 'react-hook-form'
-import { validateCpf } from '@/shared/validators/cpf.validator'
 
 function formatBirthDate(dateStr: string): string {
   const birth = new Date(dateStr)
@@ -174,7 +173,6 @@ export default function PetDetailPage() {
                   name="cpf"
                   control={control}
                   label="CPF do co-tutor"
-                  rules={{ validate: (v: string) => validateCpf(v) || 'CPF inválido' }}
                 />
                 {errors.cpf && <p className="text-xs text-[--color-danger]">{errors.cpf.message}</p>}
                 <div className="flex gap-2">

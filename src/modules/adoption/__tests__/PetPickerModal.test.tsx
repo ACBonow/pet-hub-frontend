@@ -66,6 +66,8 @@ function makeUsePetReturn(overrides = {}) {
     transferTutorship: jest.fn(),
     getTutorshipHistory: jest.fn(),
     uploadPhoto: jest.fn(),
+    addCoTutor: jest.fn(),
+    removeCoTutor: jest.fn(),
     ...overrides,
   }
 }

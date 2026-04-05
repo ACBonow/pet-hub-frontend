@@ -61,7 +61,7 @@ export default function VaccinationForm({ onSubmit, isLoading }: VaccinationForm
             className={[
               'w-full min-h-[44px] px-3 py-2 border rounded-[--radius-md] text-sm',
               'focus:outline-none focus:ring-2 focus:ring-[--color-primary]',
-              errors.name ? 'border-[--color-danger]' : 'border-gray-300',
+              errors.vaccineName ? 'border-[--color-danger]' : 'border-gray-300',
             ].join(' ')}
           />
           {errors.vaccineName && (
