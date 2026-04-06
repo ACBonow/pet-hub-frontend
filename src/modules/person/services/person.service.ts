@@ -7,8 +7,8 @@
 import api from '@/shared/services/api.client'
 import type { Person, CreatePersonData, UpdatePersonData } from '@/modules/person/types'
 
-export async function getMeRequest(): Promise<Person> {
-  const response = await api.get<{ success: true; data: Person }>('/api/v1/persons/me')
+export async function getMeRequest(signal?: AbortSignal): Promise<Person> {
+  const response = await api.get<{ success: true; data: Person }>('/api/v1/persons/me', { signal })
   return response.data.data
 }
 
@@ -17,8 +17,8 @@ export async function createPersonRequest(data: CreatePersonData): Promise<Perso
   return response.data.data
 }
 
-export async function getPersonRequest(id: string): Promise<Person> {
-  const response = await api.get<{ success: true; data: Person }>(`/api/v1/persons/${id}`)
+export async function getPersonRequest(id: string, signal?: AbortSignal): Promise<Person> {
+  const response = await api.get<{ success: true; data: Person }>(`/api/v1/persons/${id}`, { signal })
   return response.data.data
 }
 

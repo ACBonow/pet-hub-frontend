@@ -7,18 +7,18 @@
 import api from '@/shared/services/api.client'
 import type { Organization, CreateOrganizationData, UpdateOrganizationData, OrgMember, OrgRole } from '@/modules/organization/types'
 
-export async function listOrganizationsRequest(): Promise<Organization[]> {
-  const response = await api.get<{ success: true; data: Organization[] }>('/api/v1/organizations')
+export async function listOrganizationsRequest(signal?: AbortSignal): Promise<Organization[]> {
+  const response = await api.get<{ success: true; data: Organization[] }>('/api/v1/organizations', { signal })
   return response.data.data
 }
 
-export async function listMyOrganizationsRequest(): Promise<Organization[]> {
-  const response = await api.get<{ success: true; data: Organization[] }>('/api/v1/organizations/my')
+export async function listMyOrganizationsRequest(signal?: AbortSignal): Promise<Organization[]> {
+  const response = await api.get<{ success: true; data: Organization[] }>('/api/v1/organizations/my', { signal })
   return response.data.data
 }
 
-export async function getOrganizationRequest(id: string): Promise<Organization> {
-  const response = await api.get<{ success: true; data: Organization }>(`/api/v1/organizations/${id}`)
+export async function getOrganizationRequest(id: string, signal?: AbortSignal): Promise<Organization> {
+  const response = await api.get<{ success: true; data: Organization }>(`/api/v1/organizations/${id}`, { signal })
   return response.data.data
 }
 
@@ -32,8 +32,8 @@ export async function updateOrganizationRequest(id: string, data: UpdateOrganiza
   return response.data.data
 }
 
-export async function getOrgMembersRequest(id: string): Promise<OrgMember[]> {
-  const response = await api.get<{ success: true; data: OrgMember[] }>(`/api/v1/organizations/${id}/members`)
+export async function getOrgMembersRequest(id: string, signal?: AbortSignal): Promise<OrgMember[]> {
+  const response = await api.get<{ success: true; data: OrgMember[] }>(`/api/v1/organizations/${id}/members`, { signal })
   return response.data.data
 }
 

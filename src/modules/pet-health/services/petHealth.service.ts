@@ -7,8 +7,8 @@
 import api from '@/shared/services/api.client'
 import type { Vaccination, CreateVaccinationData, ExamFile, UploadExamData } from '@/modules/pet-health/types'
 
-export async function listVaccinationsRequest(petId: string): Promise<Vaccination[]> {
-  const response = await api.get<{ success: true; data: Vaccination[] }>(`/api/v1/pet-health/${petId}/vaccination-card`)
+export async function listVaccinationsRequest(petId: string, signal?: AbortSignal): Promise<Vaccination[]> {
+  const response = await api.get<{ success: true; data: Vaccination[] }>(`/api/v1/pet-health/${petId}/vaccination-card`, { signal })
   return response.data.data
 }
 
@@ -17,8 +17,8 @@ export async function createVaccinationRequest(petId: string, data: CreateVaccin
   return response.data.data
 }
 
-export async function listExamFilesRequest(petId: string): Promise<ExamFile[]> {
-  const response = await api.get<{ success: true; data: ExamFile[] }>(`/api/v1/pet-health/${petId}/exams`)
+export async function listExamFilesRequest(petId: string, signal?: AbortSignal): Promise<ExamFile[]> {
+  const response = await api.get<{ success: true; data: ExamFile[] }>(`/api/v1/pet-health/${petId}/exams`, { signal })
   return response.data.data
 }
 

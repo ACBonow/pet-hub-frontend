@@ -7,13 +7,13 @@
 import api from '@/shared/services/api.client'
 import type { Pet, CoTutor, CreatePetData, UpdatePetData, TransferTutorshipData, TutorshipHistoryEntry } from '@/modules/pet/types'
 
-export async function listPetsRequest(filters?: { organizationId?: string }): Promise<Pet[]> {
-  const response = await api.get<{ success: true; data: Pet[] }>('/api/v1/pets', { params: filters })
+export async function listPetsRequest(filters?: { organizationId?: string }, signal?: AbortSignal): Promise<Pet[]> {
+  const response = await api.get<{ success: true; data: Pet[] }>('/api/v1/pets', { params: filters, signal })
   return response.data.data
 }
 
-export async function getPetRequest(id: string): Promise<Pet> {
-  const response = await api.get<{ success: true; data: Pet }>(`/api/v1/pets/${id}`)
+export async function getPetRequest(id: string, signal?: AbortSignal): Promise<Pet> {
+  const response = await api.get<{ success: true; data: Pet }>(`/api/v1/pets/${id}`, { signal })
   return response.data.data
 }
 
@@ -36,13 +36,13 @@ export async function transferTutorshipRequest(petId: string, data: TransferTuto
   return response.data.data
 }
 
-export async function getTutorshipHistoryRequest(petId: string): Promise<TutorshipHistoryEntry[]> {
-  const response = await api.get<{ success: true; data: TutorshipHistoryEntry[] }>(`/api/v1/pets/${petId}/tutorship-history`)
+export async function getTutorshipHistoryRequest(petId: string, signal?: AbortSignal): Promise<TutorshipHistoryEntry[]> {
+  const response = await api.get<{ success: true; data: TutorshipHistoryEntry[] }>(`/api/v1/pets/${petId}/tutorship-history`, { signal })
   return response.data.data
 }
 
-export async function getOrgPetsRequest(orgId: string): Promise<Pet[]> {
-  const response = await api.get<{ success: true; data: Pet[] }>(`/api/v1/organizations/${orgId}/pets`)
+export async function getOrgPetsRequest(orgId: string, signal?: AbortSignal): Promise<Pet[]> {
+  const response = await api.get<{ success: true; data: Pet[] }>(`/api/v1/organizations/${orgId}/pets`, { signal })
   return response.data.data
 }
 

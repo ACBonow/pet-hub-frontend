@@ -7,13 +7,13 @@
 import api from '@/shared/services/api.client'
 import type { LostFoundReport, LostFoundFilters, CreateLostFoundData } from '@/modules/lost-found/types'
 
-export async function listReportsRequest(filters?: LostFoundFilters): Promise<LostFoundReport[]> {
-  const response = await api.get<{ success: true; data: LostFoundReport[] }>('/api/v1/lost-found', { params: filters })
+export async function listReportsRequest(filters?: LostFoundFilters, signal?: AbortSignal): Promise<LostFoundReport[]> {
+  const response = await api.get<{ success: true; data: LostFoundReport[] }>('/api/v1/lost-found', { params: filters, signal })
   return response.data.data
 }
 
-export async function getReportRequest(id: string): Promise<LostFoundReport> {
-  const response = await api.get<{ success: true; data: LostFoundReport }>(`/api/v1/lost-found/${id}`)
+export async function getReportRequest(id: string, signal?: AbortSignal): Promise<LostFoundReport> {
+  const response = await api.get<{ success: true; data: LostFoundReport }>(`/api/v1/lost-found/${id}`, { signal })
   return response.data.data
 }
 

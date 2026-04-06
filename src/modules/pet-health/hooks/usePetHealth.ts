@@ -4,7 +4,7 @@
  * @description Hook for loading and managing pet health data.
  */
 
-import { useState } from 'react'
+import { useState, useRef, useEffect } from 'react'
 import {
   listVaccinationsRequest,
   createVaccinationRequest,
@@ -35,13 +35,26 @@ export function usePetHealth(): UsePetHealthResult {
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
+  const abortControllerRef = useRef<AbortController | null>(null)
+
+  useEffect(() => {
+    return () => {
+      abortControllerRef.current?.abort()
+    }
+  }, [])
+
   async function listVaccinations(petId: string): Promise<void> {
+    abortControllerRef.current?.abort()
+    const controller = new AbortController()
+    abortControllerRef.current = controller
+
     setIsLoading(true)
     setError(null)
     try {
-      const data = await listVaccinationsRequest(petId)
+      const data = await listVaccinationsRequest(petId, controller.signal)
       setVaccinations(data)
     } catch (err) {
+      if ((err as ApiError).code === 'REQUEST_CANCELED') return
       const apiError = err as ApiError
       setError(apiError.message ?? 'Erro ao carregar vacinas.')
       throw err
@@ -66,12 +79,17 @@ export function usePetHealth(): UsePetHealthResult {
   }
 
   async function listExamFiles(petId: string): Promise<void> {
+    abortControllerRef.current?.abort()
+    const controller = new AbortController()
+    abortControllerRef.current = controller
+
     setIsLoading(true)
     setError(null)
     try {
-      const data = await listExamFilesRequest(petId)
+      const data = await listExamFilesRequest(petId, controller.signal)
       setExamFiles(data)
     } catch (err) {
+      if ((err as ApiError).code === 'REQUEST_CANCELED') return
       const apiError = err as ApiError
       setError(apiError.message ?? 'Erro ao carregar exames.')
       throw err

@@ -4,7 +4,7 @@
  * @description Hook for loading and managing pet data.
  */
 
-import { useState } from 'react'
+import { useState, useRef, useEffect } from 'react'
 import {
   listPetsRequest,
   getPetRequest,
@@ -43,13 +43,26 @@ export function usePet(): UsePetResult {
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
+  const abortControllerRef = useRef<AbortController | null>(null)
+
+  useEffect(() => {
+    return () => {
+      abortControllerRef.current?.abort()
+    }
+  }, [])
+
   async function getPet(id: string): Promise<void> {
+    abortControllerRef.current?.abort()
+    const controller = new AbortController()
+    abortControllerRef.current = controller
+
     setIsLoading(true)
     setError(null)
     try {
-      const data = await getPetRequest(id)
+      const data = await getPetRequest(id, controller.signal)
       setPet(data)
     } catch (err) {
+      if ((err as ApiError).code === 'REQUEST_CANCELED') return
       const apiError = err as ApiError
       setError(apiError.message ?? 'Erro ao carregar pet.')
       throw err
@@ -59,12 +72,17 @@ export function usePet(): UsePetResult {
   }
 
   async function listPets(): Promise<void> {
+    abortControllerRef.current?.abort()
+    const controller = new AbortController()
+    abortControllerRef.current = controller
+
     setIsLoading(true)
     setError(null)
     try {
-      const data = await listPetsRequest()
+      const data = await listPetsRequest(undefined, controller.signal)
       setPets(data)
     } catch (err) {
+      if ((err as ApiError).code === 'REQUEST_CANCELED') return
       const apiError = err as ApiError
       setError(apiError.message ?? 'Erro ao carregar pets.')
       throw err
@@ -120,12 +138,17 @@ export function usePet(): UsePetResult {
   }
 
   async function getTutorshipHistory(petId: string): Promise<void> {
+    abortControllerRef.current?.abort()
+    const controller = new AbortController()
+    abortControllerRef.current = controller
+
     setIsLoading(true)
     setError(null)
     try {
-      const data = await getTutorshipHistoryRequest(petId)
+      const data = await getTutorshipHistoryRequest(petId, controller.signal)
       setTutorshipHistory(data)
     } catch (err) {
+      if ((err as ApiError).code === 'REQUEST_CANCELED') return
       const apiError = err as ApiError
       setError(apiError.message ?? 'Erro ao carregar histórico de tutoria.')
       throw err

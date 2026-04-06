@@ -90,6 +90,19 @@ describe('api.client', () => {
         message: 'Sem conexão com o servidor.',
       })
     })
+
+    it('should reject with REQUEST_CANCELED when axios.isCancel returns true', async () => {
+      // Simulate a CanceledError (thrown by axios when AbortController.abort() is called)
+      const canceledError = new Error('canceled')
+      canceledError.name = 'CanceledError'
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      ;(canceledError as any).__CANCEL__ = true
+
+      await expect(responseErrorInterceptor(canceledError)).rejects.toMatchObject({
+        code: 'REQUEST_CANCELED',
+        message: 'canceled',
+      })
+    })
   })
 
   describe('setApiBaseUrl', () => {

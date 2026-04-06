@@ -4,7 +4,7 @@
  * @description Hook for loading and updating person data.
  */
 
-import { useState } from 'react'
+import { useState, useRef, useEffect } from 'react'
 import {
   getMeRequest,
   createPersonRequest,
@@ -29,13 +29,26 @@ export function usePerson(): UsePersonResult {
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
+  const abortControllerRef = useRef<AbortController | null>(null)
+
+  useEffect(() => {
+    return () => {
+      abortControllerRef.current?.abort()
+    }
+  }, [])
+
   async function getMe(): Promise<void> {
+    abortControllerRef.current?.abort()
+    const controller = new AbortController()
+    abortControllerRef.current = controller
+
     setIsLoading(true)
     setError(null)
     try {
-      const data = await getMeRequest()
+      const data = await getMeRequest(controller.signal)
       setPerson(data)
     } catch (err) {
+      if ((err as ApiError).code === 'REQUEST_CANCELED') return
       const apiError = err as ApiError
       setError(apiError.message ?? 'Erro ao carregar perfil.')
       throw err
@@ -60,12 +73,17 @@ export function usePerson(): UsePersonResult {
   }
 
   async function getPerson(id: string): Promise<void> {
+    abortControllerRef.current?.abort()
+    const controller = new AbortController()
+    abortControllerRef.current = controller
+
     setIsLoading(true)
     setError(null)
     try {
-      const data = await getPersonRequest(id)
+      const data = await getPersonRequest(id, controller.signal)
       setPerson(data)
     } catch (err) {
+      if ((err as ApiError).code === 'REQUEST_CANCELED') return
       const apiError = err as ApiError
       setError(apiError.message ?? 'Erro ao carregar dados da pessoa.')
       throw err

@@ -60,7 +60,7 @@ describe('useAdoption', () => {
         await result.current.listAdoptions({ species: 'dog' })
       })
 
-      expect(mockAdoptionService.listAdoptionsRequest).toHaveBeenCalledWith({ species: 'dog' })
+      expect(mockAdoptionService.listAdoptionsRequest).toHaveBeenCalledWith({ species: 'dog' }, expect.any(AbortSignal))
     })
 
     it('should set isLoading true during fetch', async () => {

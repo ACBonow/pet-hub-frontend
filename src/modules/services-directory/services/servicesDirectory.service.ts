@@ -14,30 +14,33 @@ import type {
   UpdateServiceData,
 } from '@/modules/services-directory/types'
 
-export async function listServiceTypesRequest(): Promise<ServiceTypeRecord[]> {
+export async function listServiceTypesRequest(signal?: AbortSignal): Promise<ServiceTypeRecord[]> {
   const response = await api.get<{ success: true; data: ServiceTypeRecord[] }>(
     '/api/v1/services-directory/types',
+    { signal },
   )
   return response.data.data
 }
 
 export async function listServicesRequest(
   filters?: ServiceFilters,
+  signal?: AbortSignal,
 ): Promise<PaginatedServiceListings> {
   const response = await api.get<{
     success: true
     data: ServiceListing[]
     meta: { total: number; page: number; pageSize: number }
-  }>('/api/v1/services-directory', { params: filters })
+  }>('/api/v1/services-directory', { params: filters, signal })
   return {
     data: response.data.data,
     ...response.data.meta,
   }
 }
 
-export async function getServiceRequest(id: string): Promise<ServiceListing> {
+export async function getServiceRequest(id: string, signal?: AbortSignal): Promise<ServiceListing> {
   const response = await api.get<{ success: true; data: ServiceListing }>(
     `/api/v1/services-directory/${id}`,
+    { signal },
   )
   return response.data.data
 }

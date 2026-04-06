@@ -41,7 +41,7 @@ describe('pet.service — getOrgPetsRequest', () => {
   it('should GET /api/v1/organizations/:orgId/pets', async () => {
     mockApi.get.mockResolvedValueOnce({ data: { success: true, data: [] } })
     await getOrgPetsRequest('org-1')
-    expect(mockApi.get).toHaveBeenCalledWith('/api/v1/organizations/org-1/pets')
+    expect(mockApi.get).toHaveBeenCalledWith('/api/v1/organizations/org-1/pets', { signal: undefined })
   })
 
   it('should return the pets array from response', async () => {

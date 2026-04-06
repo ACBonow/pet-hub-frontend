@@ -4,7 +4,7 @@
  * @description Hook for loading and managing lost & found reports.
  */
 
-import { useState } from 'react'
+import { useState, useRef, useEffect } from 'react'
 import {
   listReportsRequest,
   getReportRequest,
@@ -31,13 +31,26 @@ export function useLostFound(): UseLostFoundResult {
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
+  const abortControllerRef = useRef<AbortController | null>(null)
+
+  useEffect(() => {
+    return () => {
+      abortControllerRef.current?.abort()
+    }
+  }, [])
+
   async function listReports(filters?: LostFoundFilters): Promise<void> {
+    abortControllerRef.current?.abort()
+    const controller = new AbortController()
+    abortControllerRef.current = controller
+
     setIsLoading(true)
     setError(null)
     try {
-      const data = await listReportsRequest(filters)
+      const data = await listReportsRequest(filters, controller.signal)
       setReports(data)
     } catch (err) {
+      if ((err as ApiError).code === 'REQUEST_CANCELED') return
       const apiError = err as ApiError
       setError(apiError.message ?? 'Erro ao carregar relatórios.')
       throw err
@@ -47,12 +60,17 @@ export function useLostFound(): UseLostFoundResult {
   }
 
   async function getReport(id: string): Promise<void> {
+    abortControllerRef.current?.abort()
+    const controller = new AbortController()
+    abortControllerRef.current = controller
+
     setIsLoading(true)
     setError(null)
     try {
-      const data = await getReportRequest(id)
+      const data = await getReportRequest(id, controller.signal)
       setReport(data)
     } catch (err) {
+      if ((err as ApiError).code === 'REQUEST_CANCELED') return
       const apiError = err as ApiError
       setError(apiError.message ?? 'Erro ao carregar relatório.')
       throw err

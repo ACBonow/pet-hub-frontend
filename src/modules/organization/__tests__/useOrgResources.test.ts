@@ -47,7 +47,7 @@ describe('useOrgResources — loadPets', () => {
     mockGetOrgPets.mockResolvedValueOnce([])
     const { result } = renderHook(() => useOrgResources())
     await act(async () => { await result.current.loadPets('org-1') })
-    expect(mockGetOrgPets).toHaveBeenCalledWith('org-1')
+    expect(mockGetOrgPets).toHaveBeenCalledWith('org-1', expect.any(AbortSignal))
   })
 
   it('should set pets state on success', async () => {

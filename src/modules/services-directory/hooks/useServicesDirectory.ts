@@ -4,7 +4,7 @@
  * @description Hook for managing services directory state and API interactions.
  */
 
-import { useState, useCallback } from 'react'
+import { useState, useRef, useEffect, useCallback } from 'react'
 import {
   listServiceTypesRequest,
   listServicesRequest,
@@ -21,6 +21,7 @@ import type {
   CreateServiceData,
   UpdateServiceData,
 } from '@/modules/services-directory/types'
+import type { ApiError } from '@/shared/types'
 
 interface UseServicesDirectoryState {
   services: ServiceListing[]
@@ -39,21 +40,39 @@ export function useServicesDirectory() {
     error: null,
   })
 
+  const abortControllerRef = useRef<AbortController | null>(null)
+
+  useEffect(() => {
+    return () => {
+      abortControllerRef.current?.abort()
+    }
+  }, [])
+
   const listServiceTypes = useCallback(async () => {
+    abortControllerRef.current?.abort()
+    const controller = new AbortController()
+    abortControllerRef.current = controller
+
     try {
-      const types = await listServiceTypesRequest()
+      const types = await listServiceTypesRequest(controller.signal)
       setState((prev) => ({ ...prev, serviceTypes: types }))
-    } catch {
+    } catch (err) {
+      if ((err as ApiError).code === 'REQUEST_CANCELED') return
       // silently fail — types still show as empty
     }
   }, [])
 
   const listServices = useCallback(async (filters?: ServiceFilters) => {
+    abortControllerRef.current?.abort()
+    const controller = new AbortController()
+    abortControllerRef.current = controller
+
     setState((prev) => ({ ...prev, isLoading: true, error: null }))
     try {
-      const result = await listServicesRequest(filters)
+      const result = await listServicesRequest(filters, controller.signal)
       setState((prev) => ({ ...prev, services: result.data, isLoading: false }))
-    } catch {
+    } catch (err) {
+      if ((err as ApiError).code === 'REQUEST_CANCELED') return
       setState((prev) => ({
         ...prev,
         isLoading: false,
@@ -63,11 +82,16 @@ export function useServicesDirectory() {
   }, [])
 
   const getService = useCallback(async (id: string) => {
+    abortControllerRef.current?.abort()
+    const controller = new AbortController()
+    abortControllerRef.current = controller
+
     setState((prev) => ({ ...prev, isLoading: true, error: null }))
     try {
-      const result = await getServiceRequest(id)
+      const result = await getServiceRequest(id, controller.signal)
       setState((prev) => ({ ...prev, service: result, isLoading: false }))
-    } catch {
+    } catch (err) {
+      if ((err as ApiError).code === 'REQUEST_CANCELED') return
       setState((prev) => ({
         ...prev,
         isLoading: false,

@@ -4,7 +4,7 @@
  * @description Hook for loading and managing organization data.
  */
 
-import { useState } from 'react'
+import { useState, useRef, useEffect } from 'react'
 import {
   listOrganizationsRequest,
   listMyOrganizationsRequest,
@@ -45,13 +45,26 @@ export function useOrganization(): UseOrganizationResult {
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
+  const abortControllerRef = useRef<AbortController | null>(null)
+
+  useEffect(() => {
+    return () => {
+      abortControllerRef.current?.abort()
+    }
+  }, [])
+
   async function getOrganization(id: string): Promise<void> {
+    abortControllerRef.current?.abort()
+    const controller = new AbortController()
+    abortControllerRef.current = controller
+
     setIsLoading(true)
     setError(null)
     try {
-      const data = await getOrganizationRequest(id)
+      const data = await getOrganizationRequest(id, controller.signal)
       setOrganization(data)
     } catch (err) {
+      if ((err as ApiError).code === 'REQUEST_CANCELED') return
       const apiError = err as ApiError
       setError(apiError.message ?? 'Erro ao carregar organização.')
       throw err
@@ -61,12 +74,17 @@ export function useOrganization(): UseOrganizationResult {
   }
 
   async function listOrganizations(): Promise<void> {
+    abortControllerRef.current?.abort()
+    const controller = new AbortController()
+    abortControllerRef.current = controller
+
     setIsLoading(true)
     setError(null)
     try {
-      const data = await listOrganizationsRequest()
+      const data = await listOrganizationsRequest(controller.signal)
       setOrganizations(data)
     } catch (err) {
+      if ((err as ApiError).code === 'REQUEST_CANCELED') return
       const apiError = err as ApiError
       setError(apiError.message ?? 'Erro ao carregar organizações.')
       throw err
@@ -76,12 +94,17 @@ export function useOrganization(): UseOrganizationResult {
   }
 
   async function listMyOrganizations(): Promise<void> {
+    abortControllerRef.current?.abort()
+    const controller = new AbortController()
+    abortControllerRef.current = controller
+
     setIsLoading(true)
     setError(null)
     try {
-      const data = await listMyOrganizationsRequest()
+      const data = await listMyOrganizationsRequest(controller.signal)
       setOrganizations(data)
     } catch (err) {
+      if ((err as ApiError).code === 'REQUEST_CANCELED') return
       const apiError = err as ApiError
       setError(apiError.message ?? 'Erro ao carregar suas organizações.')
       throw err
@@ -122,12 +145,17 @@ export function useOrganization(): UseOrganizationResult {
   }
 
   async function getMembers(id: string): Promise<void> {
+    abortControllerRef.current?.abort()
+    const controller = new AbortController()
+    abortControllerRef.current = controller
+
     setIsLoading(true)
     setError(null)
     try {
-      const data = await getOrgMembersRequest(id)
+      const data = await getOrgMembersRequest(id, controller.signal)
       setMembers(data)
     } catch (err) {
+      if ((err as ApiError).code === 'REQUEST_CANCELED') return
       const apiError = err as ApiError
       setError(apiError.message ?? 'Erro ao carregar membros.')
       throw err

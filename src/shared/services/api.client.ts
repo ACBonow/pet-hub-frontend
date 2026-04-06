@@ -80,6 +80,12 @@ export function requestInterceptor(config: InternalAxiosRequestConfig): Internal
 
 // --- Response error interceptor (exported for unit testing) ---
 export function responseErrorInterceptor(error: unknown): Promise<never> {
+  // Canceled requests (AbortController.abort()) must be swallowed silently by callers.
+  if (axios.isCancel(error)) {
+    const apiError: ApiError = { code: 'REQUEST_CANCELED', message: 'canceled' }
+    return Promise.reject(apiError)
+  }
+
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const err = error as any
 

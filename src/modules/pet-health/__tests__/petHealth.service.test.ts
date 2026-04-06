@@ -24,7 +24,7 @@ describe('petHealth.service — listVaccinationsRequest', () => {
   it('should GET /api/v1/pet-health/:petId/vaccination-card', async () => {
     mockApi.get.mockResolvedValueOnce({ data: { success: true, data: [] } })
     await listVaccinationsRequest('pet-1')
-    expect(mockApi.get).toHaveBeenCalledWith('/api/v1/pet-health/pet-1/vaccination-card')
+    expect(mockApi.get).toHaveBeenCalledWith('/api/v1/pet-health/pet-1/vaccination-card', { signal: undefined })
   })
 })
 
@@ -45,7 +45,7 @@ describe('petHealth.service — listExamFilesRequest', () => {
   it('should GET /api/v1/pet-health/:petId/exams', async () => {
     mockApi.get.mockResolvedValueOnce({ data: { success: true, data: [] } })
     await listExamFilesRequest('pet-1')
-    expect(mockApi.get).toHaveBeenCalledWith('/api/v1/pet-health/pet-1/exams')
+    expect(mockApi.get).toHaveBeenCalledWith('/api/v1/pet-health/pet-1/exams', { signal: undefined })
   })
 })
 
