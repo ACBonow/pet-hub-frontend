@@ -133,7 +133,7 @@ Fotos de pets, orgs e serviços são enviadas sem compressão. Usuários mobile 
 | ID           | TECH-FE-005 |
 | Categoria    | Qualidade |
 | Prioridade   | Média |
-| Status       | Pendente |
+| Status       | Concluída |
 
 **Problema**  
 Erros de runtime em qualquer componente derrubam a árvore inteira sem mensagem amigável. Não há nenhuma Error Boundary configurada.

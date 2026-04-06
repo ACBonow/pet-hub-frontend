@@ -5,6 +5,7 @@ import { useAuthStore } from './modules/auth/store/authSlice'
 import { refreshTokenRequest } from './modules/auth/services/auth.service'
 import { STORAGE_REFRESH_KEY, STORAGE_USER_KEY } from './modules/auth/hooks/useAuth'
 import { setRefreshHandlers } from './shared/services/api.client'
+import ErrorBoundary from './shared/components/ui/ErrorBoundary'
 import type { AuthUser } from './modules/auth/types'
 
 // Configure the 401 auto-refresh handler once at module load.
@@ -73,5 +74,9 @@ export default function App() {
     )
   }
 
-  return <RouterProvider router={router} />
+  return (
+    <ErrorBoundary>
+      <RouterProvider router={router} />
+    </ErrorBoundary>
+  )
 }
