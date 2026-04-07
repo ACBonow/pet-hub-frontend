@@ -22,6 +22,7 @@ import ResetPasswordPage from '@/modules/auth/pages/ResetPasswordPage'
 
 // ── PUBLIC ────────────────────────────────────────────────────────────────────
 const LandingPage = lazy(() => import('@/pages/LandingPage'))
+const NotFoundPage = lazy(() => import('@/pages/NotFoundPage'))
 const AdoptionListPage = lazy(() => import('@/modules/adoption/pages/AdoptionListPage'))
 const AdoptionDetailPage = lazy(() => import('@/modules/adoption/pages/AdoptionDetailPage'))
 const LostFoundListPage = lazy(() => import('@/modules/lost-found/pages/LostFoundListPage'))
@@ -98,4 +99,5 @@ export const router = createBrowserRouter([
       { path: ROUTES.PROFILE,                  element: <S><ProfilePage /></S> },
     ],
   },
+  { path: '*', element: <S><NotFoundPage /></S> },
 ])
