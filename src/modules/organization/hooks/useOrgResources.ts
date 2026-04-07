@@ -64,8 +64,8 @@ export function useOrgResources() {
 
     setState(s => ({ ...s, isLoading: true, error: null }))
     try {
-      const adoptions = await listAdoptionsRequest({ organizationId: orgId }, controller.signal)
-      setState(s => ({ ...s, adoptions, isLoading: false }))
+      const result = await listAdoptionsRequest({ organizationId: orgId }, controller.signal)
+      setState(s => ({ ...s, adoptions: result.data, isLoading: false }))
     } catch (err) {
       if ((err as ApiError).code === 'REQUEST_CANCELED') return
       setState(s => ({ ...s, isLoading: false, error: 'Erro ao carregar adoções.' }))
@@ -79,8 +79,8 @@ export function useOrgResources() {
 
     setState(s => ({ ...s, isLoading: true, error: null }))
     try {
-      const reports = await listReportsRequest({ organizationId: orgId }, controller.signal)
-      setState(s => ({ ...s, reports, isLoading: false }))
+      const result = await listReportsRequest({ organizationId: orgId }, controller.signal)
+      setState(s => ({ ...s, reports: result.data, isLoading: false }))
     } catch (err) {
       if ((err as ApiError).code === 'REQUEST_CANCELED') return
       setState(s => ({ ...s, isLoading: false, error: 'Erro ao carregar achados/perdidos.' }))

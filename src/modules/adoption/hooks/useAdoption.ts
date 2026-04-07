@@ -20,6 +20,8 @@ interface UseAdoptionResult {
   listings: AdoptionListing[]
   isLoading: boolean
   error: string | null
+  currentPage: number
+  totalPages: number
   listAdoptions: (filters?: AdoptionFilters) => Promise<void>
   getAdoption: (id: string) => Promise<void>
   createAdoption: (data: CreateAdoptionData) => Promise<void>
@@ -32,6 +34,8 @@ export function useAdoption(): UseAdoptionResult {
   const [listings, setListings] = useState<AdoptionListing[]>([])
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  const [currentPage, setCurrentPage] = useState(1)
+  const [totalPages, setTotalPages] = useState(1)
 
   const abortControllerRef = useRef<AbortController | null>(null)
 
@@ -49,8 +53,10 @@ export function useAdoption(): UseAdoptionResult {
     setIsLoading(true)
     setError(null)
     try {
-      const data = await listAdoptionsRequest(filters, controller.signal)
-      setListings(data)
+      const result = await listAdoptionsRequest(filters, controller.signal)
+      setListings(result.data)
+      setCurrentPage(result.meta.page)
+      setTotalPages(result.meta.totalPages)
     } catch (err) {
       if ((err as ApiError).code === 'REQUEST_CANCELED') return
       const apiError = err as ApiError
@@ -126,5 +132,5 @@ export function useAdoption(): UseAdoptionResult {
     }
   }
 
-  return { listing, listings, isLoading, error, listAdoptions, getAdoption, createAdoption, updateAdoption, updateAdoptionStatus }
+  return { listing, listings, isLoading, error, currentPage, totalPages, listAdoptions, getAdoption, createAdoption, updateAdoption, updateAdoptionStatus }
 }

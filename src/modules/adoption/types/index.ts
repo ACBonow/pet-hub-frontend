@@ -37,6 +37,18 @@ export interface AdoptionFilters {
   species?: string
   status?: AdoptionStatus
   organizationId?: string
+  page?: number
+  pageSize?: number
+}
+
+export interface PaginatedAdoptionListings {
+  data: AdoptionListing[]
+  meta: {
+    page: number
+    pageSize: number
+    total: number
+    totalPages: number
+  }
 }
 
 export interface CreateAdoptionData {

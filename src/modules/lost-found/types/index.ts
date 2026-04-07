@@ -42,6 +42,18 @@ export interface LostFoundFilters {
   status?: LostFoundStatus
   species?: string
   organizationId?: string
+  page?: number
+  pageSize?: number
+}
+
+export interface PaginatedLostFoundReports {
+  data: LostFoundReport[]
+  meta: {
+    page: number
+    pageSize: number
+    total: number
+    totalPages: number
+  }
 }
 
 export interface CreateLostFoundData {

@@ -13,20 +13,27 @@ import { useLostFound } from '@/modules/lost-found/hooks/useLostFound'
 import LostFoundCard from '@/modules/lost-found/components/LostFoundCard'
 import LostFoundFiltersBar from '@/modules/lost-found/components/LostFoundFilters'
 import { useAuthStore } from '@/modules/auth/store/authSlice'
+import Pagination from '@/shared/components/ui/Pagination'
 import type { LostFoundFilters } from '@/modules/lost-found/types'
 
+const PAGE_SIZE = 12
+
 export default function LostFoundListPage() {
-  const { reports, isLoading, error, listReports } = useLostFound()
+  const { reports, isLoading, error, currentPage, totalPages, listReports } = useLostFound()
   const { isAuthenticated } = useAuthStore()
   const [filters, setFilters] = useState<LostFoundFilters>({})
 
   useEffect(() => {
-    listReports(filters)
+    listReports({ ...filters, pageSize: PAGE_SIZE })
   }, [])
 
   const handleFiltersChange = (newFilters: LostFoundFilters) => {
     setFilters(newFilters)
-    listReports(newFilters)
+    listReports({ ...newFilters, page: 1, pageSize: PAGE_SIZE })
+  }
+
+  const handlePageChange = (page: number) => {
+    listReports({ ...filters, page, pageSize: PAGE_SIZE })
   }
 
   return (
@@ -60,6 +67,15 @@ export default function LostFoundListPage() {
             <LostFoundCard key={report.id} report={report} />
           ))}
         </ul>
+
+        {totalPages > 1 && (
+          <Pagination
+            page={currentPage}
+            totalPages={totalPages}
+            onPrev={() => handlePageChange(currentPage - 1)}
+            onNext={() => handlePageChange(currentPage + 1)}
+          />
+        )}
       </PageWrapper>
     </PublicLayout>
   )

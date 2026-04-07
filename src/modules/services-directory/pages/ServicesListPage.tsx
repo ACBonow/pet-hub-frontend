@@ -12,38 +12,44 @@ import { useAuthStore } from '@/modules/auth/store/authSlice'
 import ServiceCard from '@/modules/services-directory/components/ServiceCard'
 import ServiceFiltersBar from '@/modules/services-directory/components/ServiceFilters'
 import { ROUTES } from '@/routes/routes.config'
+import Pagination from '@/shared/components/ui/Pagination'
 import type { ServiceFilters } from '@/modules/services-directory/types'
 
 const DEBOUNCE_MS = 400
+const PAGE_SIZE = 12
 
 export default function ServicesListPage() {
-  const { services, serviceTypes, isLoading, error, listServices, listServiceTypes } = useServicesDirectory()
+  const { services, serviceTypes, isLoading, error, currentPage, totalPages, listServices, listServiceTypes } = useServicesDirectory()
   const { isAuthenticated } = useAuthStore()
   const [filters, setFilters] = useState<ServiceFilters>({})
   const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null)
 
   useEffect(() => {
-    listServices(filters)
+    listServices({ ...filters, pageSize: PAGE_SIZE })
     listServiceTypes()
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   function handleTypeChange(type: string | undefined) {
-    const next = { ...filters, type }
+    const next: ServiceFilters = { ...filters, type, page: 1, pageSize: PAGE_SIZE }
     if (!type) delete next.type
-    setFilters(next)
+    setFilters({ ...filters, type })
     listServices(next)
   }
 
   function handleNameChange(name: string) {
-    const next = { ...filters, name: name || undefined }
+    const next: ServiceFilters = { ...filters, name: name || undefined, page: 1, pageSize: PAGE_SIZE }
     if (!name) delete next.name
-    setFilters(next)
+    setFilters({ ...filters, name: name || undefined })
 
     if (debounceRef.current) clearTimeout(debounceRef.current)
     debounceRef.current = setTimeout(() => {
       listServices(next)
     }, DEBOUNCE_MS)
+  }
+
+  function handlePageChange(page: number) {
+    listServices({ ...filters, page, pageSize: PAGE_SIZE })
   }
 
   return (
@@ -94,6 +100,15 @@ export default function ServicesListPage() {
               </li>
             ))}
           </ul>
+        )}
+
+        {totalPages > 1 && (
+          <Pagination
+            page={currentPage}
+            totalPages={totalPages}
+            onPrev={() => handlePageChange(currentPage - 1)}
+            onNext={() => handlePageChange(currentPage + 1)}
+          />
         )}
       </main>
     </PublicLayout>

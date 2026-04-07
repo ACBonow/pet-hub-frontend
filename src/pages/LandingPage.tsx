@@ -67,12 +67,12 @@ export default function LandingPage() {
   const [services, setServices] = useState<ServiceListing[]>([])
 
   useEffect(() => {
-    listAdoptionsRequest({ status: 'AVAILABLE' })
-      .then((data) => setAdoptions(data.slice(0, CAROUSEL_LIMIT)))
+    listAdoptionsRequest({ status: 'AVAILABLE', pageSize: CAROUSEL_LIMIT })
+      .then((result) => setAdoptions(result.data))
       .catch(() => {})
 
-    listReportsRequest({ status: 'OPEN' })
-      .then((data) => setReports(data.slice(0, CAROUSEL_LIMIT)))
+    listReportsRequest({ status: 'OPEN', pageSize: CAROUSEL_LIMIT })
+      .then((result) => setReports(result.data))
       .catch(() => {})
 
     listServicesRequest({ pageSize: CAROUSEL_LIMIT })

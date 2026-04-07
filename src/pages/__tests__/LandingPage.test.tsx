@@ -23,26 +23,32 @@ const mockListAdoptions = listAdoptionsRequest as jest.MockedFunction<typeof lis
 const mockListReports = listReportsRequest as jest.MockedFunction<typeof listReportsRequest>
 const mockListServices = listServicesRequest as jest.MockedFunction<typeof listServicesRequest>
 
-const mockAdoptions = [
-  {
-    id: '1', petId: 'p1', petName: 'Rex', species: 'dog', breed: null,
-    photoUrl: null, gender: null, castrated: null,
-    description: 'Cãozinho amigável', status: 'AVAILABLE' as const,
-    contactEmail: null, contactPhone: null, contactWhatsapp: null, personId: null, organizationId: null,
-    createdAt: '2024-01-01', updatedAt: '2024-01-01',
-  },
-]
+const mockAdoptions = {
+  data: [
+    {
+      id: '1', petId: 'p1', petName: 'Rex', species: 'dog', breed: null,
+      photoUrl: null, gender: null, castrated: null,
+      description: 'Cãozinho amigável', status: 'AVAILABLE' as const,
+      contactEmail: null, contactPhone: null, contactWhatsapp: null, personId: null, organizationId: null,
+      createdAt: '2024-01-01', updatedAt: '2024-01-01',
+    },
+  ],
+  meta: { page: 1, pageSize: 6, total: 1, totalPages: 1 },
+}
 
-const mockReports = [
-  {
-    id: '1', type: 'LOST' as const, status: 'OPEN' as const, petName: 'Bolinha',
-    species: 'cat', description: 'Gato perdido no centro', location: 'Centro', photoUrl: null,
-    addressStreet: null, addressNeighborhood: null, addressNumber: null,
-    addressCep: null, addressCity: null, addressState: null, addressNotes: null,
-    contactEmail: 'a@b.com', contactPhone: null, reporterId: 'u1',
-    createdAt: '2024-01-01', updatedAt: '2024-01-01',
-  },
-]
+const mockReports = {
+  data: [
+    {
+      id: '1', type: 'LOST' as const, status: 'OPEN' as const, petName: 'Bolinha',
+      species: 'cat', description: 'Gato perdido no centro', location: 'Centro', photoUrl: null,
+      addressStreet: null, addressNeighborhood: null, addressNumber: null,
+      addressCep: null, addressCity: null, addressState: null, addressNotes: null,
+      contactEmail: 'a@b.com', contactPhone: null, reporterId: 'u1',
+      createdAt: '2024-01-01', updatedAt: '2024-01-01',
+    },
+  ],
+  meta: { page: 1, pageSize: 6, total: 1, totalPages: 1 },
+}
 
 const mockServices = {
   data: [
@@ -60,7 +66,7 @@ const mockServices = {
       createdAt: '2024-01-01', updatedAt: '2024-01-01',
     },
   ],
-  total: 1, page: 1, pageSize: 6,
+  meta: { page: 1, pageSize: 6, total: 1, totalPages: 1 },
 }
 
 const renderWithRouter = (ui: React.ReactElement) => render(<MemoryRouter>{ui}</MemoryRouter>)
@@ -117,8 +123,8 @@ describe('LandingPage', () => {
   it('should call services with correct filters on mount', async () => {
     renderWithRouter(<LandingPage />)
     await waitFor(() => {
-      expect(mockListAdoptions).toHaveBeenCalledWith({ status: 'AVAILABLE' })
-      expect(mockListReports).toHaveBeenCalledWith({ status: 'OPEN' })
+      expect(mockListAdoptions).toHaveBeenCalledWith({ status: 'AVAILABLE', pageSize: 6 })
+      expect(mockListReports).toHaveBeenCalledWith({ status: 'OPEN', pageSize: 6 })
       expect(mockListServices).toHaveBeenCalledWith({ pageSize: 6 })
     })
   })

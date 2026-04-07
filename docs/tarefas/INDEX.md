@@ -84,6 +84,6 @@ TASK-FE-001 → TASK-FE-002 → TASK-FE-003
 | TASK-FE-041  | Atualização de status: adoção e lost-found  | Alta       | FE-008, FE-009            | Concluída |
 | TASK-FE-042  | Editar anúncio de serviço                   | Alta       | FE-020                    | Concluída |
 | TASK-FE-043  | Página 404 Not Found                        | Média      | —                         | Concluída |
-| TASK-FE-044  | Controles de paginação nas listagens        | Média      | —                         | Pendente  |
+| TASK-FE-044  | Controles de paginação nas listagens        | Média      | —                         | Concluída |
 | TASK-FE-045  | Editar anúncio de adoção                    | Média      | FE-041, BE-031            | Pendente  |
 | TASK-FE-046  | Editar relatório de achado/perdido          | Média      | BE-032                    | Pendente  |

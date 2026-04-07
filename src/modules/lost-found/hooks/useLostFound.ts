@@ -20,6 +20,8 @@ interface UseLostFoundResult {
   reports: LostFoundReport[]
   isLoading: boolean
   error: string | null
+  currentPage: number
+  totalPages: number
   listReports: (filters?: LostFoundFilters) => Promise<void>
   getReport: (id: string) => Promise<void>
   createReport: (data: CreateLostFoundData) => Promise<LostFoundReport>
@@ -32,6 +34,8 @@ export function useLostFound(): UseLostFoundResult {
   const [reports, setReports] = useState<LostFoundReport[]>([])
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  const [currentPage, setCurrentPage] = useState(1)
+  const [totalPages, setTotalPages] = useState(1)
 
   const abortControllerRef = useRef<AbortController | null>(null)
 
@@ -49,8 +53,10 @@ export function useLostFound(): UseLostFoundResult {
     setIsLoading(true)
     setError(null)
     try {
-      const data = await listReportsRequest(filters, controller.signal)
-      setReports(data)
+      const result = await listReportsRequest(filters, controller.signal)
+      setReports(result.data)
+      setCurrentPage(result.meta.page)
+      setTotalPages(result.meta.totalPages)
     } catch (err) {
       if ((err as ApiError).code === 'REQUEST_CANCELED') return
       const apiError = err as ApiError
@@ -126,5 +132,5 @@ export function useLostFound(): UseLostFoundResult {
     }
   }
 
-  return { report, reports, isLoading, error, listReports, getReport, createReport, updateStatus, uploadPhoto }
+  return { report, reports, isLoading, error, currentPage, totalPages, listReports, getReport, createReport, updateStatus, uploadPhoto }
 }

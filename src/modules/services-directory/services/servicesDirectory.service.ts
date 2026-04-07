@@ -29,12 +29,9 @@ export async function listServicesRequest(
   const response = await api.get<{
     success: true
     data: ServiceListing[]
-    meta: { total: number; page: number; pageSize: number }
+    meta: { page: number; pageSize: number; total: number; totalPages: number }
   }>('/api/v1/services-directory', { params: filters, signal })
-  return {
-    data: response.data.data,
-    ...response.data.meta,
-  }
+  return { data: response.data.data, meta: response.data.meta }
 }
 
 export async function getServiceRequest(id: string, signal?: AbortSignal): Promise<ServiceListing> {

@@ -60,9 +60,12 @@ export interface ServiceFilters {
 
 export interface PaginatedServiceListings {
   data: ServiceListing[]
-  total: number
-  page: number
-  pageSize: number
+  meta: {
+    page: number
+    pageSize: number
+    total: number
+    totalPages: number
+  }
 }
 
 export interface CreateServiceData {

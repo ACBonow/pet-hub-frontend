@@ -5,11 +5,15 @@
  */
 
 import api from '@/shared/services/api.client'
-import type { AdoptionListing, AdoptionFilters, AdoptionStatus, CreateAdoptionData, UpdateAdoptionData } from '@/modules/adoption/types'
+import type { AdoptionListing, AdoptionFilters, AdoptionStatus, CreateAdoptionData, UpdateAdoptionData, PaginatedAdoptionListings } from '@/modules/adoption/types'
 
-export async function listAdoptionsRequest(filters?: AdoptionFilters, signal?: AbortSignal): Promise<AdoptionListing[]> {
-  const response = await api.get<{ success: true; data: AdoptionListing[] }>('/api/v1/adoptions', { params: filters, signal })
-  return response.data.data
+export async function listAdoptionsRequest(filters?: AdoptionFilters, signal?: AbortSignal): Promise<PaginatedAdoptionListings> {
+  const response = await api.get<{
+    success: true
+    data: AdoptionListing[]
+    meta: { page: number; pageSize: number; total: number; totalPages: number }
+  }>('/api/v1/adoptions', { params: filters, signal })
+  return { data: response.data.data, meta: response.data.meta }
 }
 
 export async function getAdoptionRequest(id: string, signal?: AbortSignal): Promise<AdoptionListing> {

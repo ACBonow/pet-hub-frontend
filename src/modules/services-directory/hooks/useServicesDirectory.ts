@@ -29,6 +29,8 @@ interface UseServicesDirectoryState {
   serviceTypes: ServiceTypeRecord[]
   isLoading: boolean
   error: string | null
+  currentPage: number
+  totalPages: number
 }
 
 export function useServicesDirectory() {
@@ -38,6 +40,8 @@ export function useServicesDirectory() {
     serviceTypes: [],
     isLoading: false,
     error: null,
+    currentPage: 1,
+    totalPages: 1,
   })
 
   const abortControllerRef = useRef<AbortController | null>(null)
@@ -70,7 +74,13 @@ export function useServicesDirectory() {
     setState((prev) => ({ ...prev, isLoading: true, error: null }))
     try {
       const result = await listServicesRequest(filters, controller.signal)
-      setState((prev) => ({ ...prev, services: result.data, isLoading: false }))
+      setState((prev) => ({
+        ...prev,
+        services: result.data,
+        currentPage: result.meta.page,
+        totalPages: result.meta.totalPages,
+        isLoading: false,
+      }))
     } catch (err) {
       if ((err as ApiError).code === 'REQUEST_CANCELED') return
       setState((prev) => ({

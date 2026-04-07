@@ -5,11 +5,15 @@
  */
 
 import api from '@/shared/services/api.client'
-import type { LostFoundReport, LostFoundFilters, LostFoundStatus, CreateLostFoundData } from '@/modules/lost-found/types'
+import type { LostFoundReport, LostFoundFilters, LostFoundStatus, CreateLostFoundData, PaginatedLostFoundReports } from '@/modules/lost-found/types'
 
-export async function listReportsRequest(filters?: LostFoundFilters, signal?: AbortSignal): Promise<LostFoundReport[]> {
-  const response = await api.get<{ success: true; data: LostFoundReport[] }>('/api/v1/lost-found', { params: filters, signal })
-  return response.data.data
+export async function listReportsRequest(filters?: LostFoundFilters, signal?: AbortSignal): Promise<PaginatedLostFoundReports> {
+  const response = await api.get<{
+    success: true
+    data: LostFoundReport[]
+    meta: { page: number; pageSize: number; total: number; totalPages: number }
+  }>('/api/v1/lost-found', { params: filters, signal })
+  return { data: response.data.data, meta: response.data.meta }
 }
 
 export async function getReportRequest(id: string, signal?: AbortSignal): Promise<LostFoundReport> {

@@ -39,7 +39,7 @@ describe('useAdoption', () => {
 
   describe('listAdoptions', () => {
     it('should fetch and return adoption listings', async () => {
-      mockAdoptionService.listAdoptionsRequest.mockResolvedValueOnce([mockAdoptionListing])
+      mockAdoptionService.listAdoptionsRequest.mockResolvedValueOnce({ data: [mockAdoptionListing], meta: { page: 1, pageSize: 20, total: 1, totalPages: 1 } })
 
       const { result } = renderHook(() => useAdoption())
 
@@ -53,7 +53,7 @@ describe('useAdoption', () => {
     })
 
     it('should filter by species when provided', async () => {
-      mockAdoptionService.listAdoptionsRequest.mockResolvedValueOnce([mockAdoptionListing])
+      mockAdoptionService.listAdoptionsRequest.mockResolvedValueOnce({ data: [mockAdoptionListing], meta: { page: 1, pageSize: 20, total: 1, totalPages: 1 } })
 
       const { result } = renderHook(() => useAdoption())
 
@@ -65,7 +65,7 @@ describe('useAdoption', () => {
     })
 
     it('should set isLoading true during fetch', async () => {
-      let resolvePromise!: (v: typeof mockAdoptionListing[]) => void
+      let resolvePromise!: (v: { data: typeof mockAdoptionListing[]; meta: { page: number; pageSize: number; total: number; totalPages: number } }) => void
       mockAdoptionService.listAdoptionsRequest.mockReturnValueOnce(
         new Promise((resolve) => { resolvePromise = resolve }),
       )
@@ -79,7 +79,7 @@ describe('useAdoption', () => {
       expect(result.current.isLoading).toBe(true)
 
       await act(async () => {
-        resolvePromise([mockAdoptionListing])
+        resolvePromise({ data: [mockAdoptionListing], meta: { page: 1, pageSize: 20, total: 1, totalPages: 1 } })
       })
 
       expect(result.current.isLoading).toBe(false)

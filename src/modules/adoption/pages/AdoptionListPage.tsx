@@ -13,20 +13,27 @@ import AdoptionCard from '@/modules/adoption/components/AdoptionCard'
 import AdoptionFiltersBar from '@/modules/adoption/components/AdoptionFilters'
 import { useAuthStore } from '@/modules/auth/store/authSlice'
 import { ROUTES } from '@/routes/routes.config'
+import Pagination from '@/shared/components/ui/Pagination'
 import type { AdoptionFilters } from '@/modules/adoption/types'
 
+const PAGE_SIZE = 12
+
 export default function AdoptionListPage() {
-  const { listings, isLoading, error, listAdoptions } = useAdoption()
+  const { listings, isLoading, error, currentPage, totalPages, listAdoptions } = useAdoption()
   const { isAuthenticated } = useAuthStore()
   const [filters, setFilters] = useState<AdoptionFilters>({})
 
   useEffect(() => {
-    listAdoptions(filters)
+    listAdoptions({ ...filters, pageSize: PAGE_SIZE })
   }, [])
 
   const handleFiltersChange = (newFilters: AdoptionFilters) => {
     setFilters(newFilters)
-    listAdoptions(newFilters)
+    listAdoptions({ ...newFilters, page: 1, pageSize: PAGE_SIZE })
+  }
+
+  const handlePageChange = (page: number) => {
+    listAdoptions({ ...filters, page, pageSize: PAGE_SIZE })
   }
 
   return (
@@ -59,6 +66,15 @@ export default function AdoptionListPage() {
             <AdoptionCard key={listing.id} listing={listing} />
           ))}
         </ul>
+
+        {totalPages > 1 && (
+          <Pagination
+            page={currentPage}
+            totalPages={totalPages}
+            onPrev={() => handlePageChange(currentPage - 1)}
+            onNext={() => handlePageChange(currentPage + 1)}
+          />
+        )}
       </PageWrapper>
     </PublicLayout>
   )
