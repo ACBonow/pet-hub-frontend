@@ -27,11 +27,13 @@ export const ROUTES = {
     LIST: '/adocao',
     CREATE: '/adocao/novo',
     DETAIL: (id: string) => `/adocao/${id}`,
+    EDIT: (id: string) => `/adocao/${id}/editar`,
   },
   LOST_FOUND: {
     LIST: '/achados-perdidos',
     CREATE: '/achados-perdidos/novo',
     DETAIL: (id: string) => `/achados-perdidos/${id}`,
+    EDIT: (id: string) => `/achados-perdidos/${id}/editar`,
   },
   AUTH: {
     VERIFY_EMAIL: '/verificar-email',

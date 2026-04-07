@@ -5,7 +5,8 @@
  */
 
 import { useEffect } from 'react'
-import { useParams } from 'react-router-dom'
+import { useParams, Link } from 'react-router-dom'
+import { ROUTES } from '@/routes/routes.config'
 import PublicLayout from '@/shared/components/layout/PublicLayout'
 import PageWrapper from '@/shared/components/layout/PageWrapper'
 import ContactGate from '@/shared/components/ui/ContactGate'
@@ -141,14 +142,24 @@ export default function LostFoundDetailPage() {
               </div>
             </div>
 
-            {isCreator && report.status === 'OPEN' && (
-              <button
-                onClick={() => updateStatus(report.id, 'RESOLVED')}
-                disabled={isLoading}
-                className="w-full py-2 px-4 rounded-[--radius-lg] border border-green-500 text-green-700 font-medium hover:bg-green-50 transition-colors text-sm disabled:opacity-50"
-              >
-                Marcar como resolvido
-              </button>
+            {isCreator && (
+              <div className="flex items-center justify-between gap-2">
+                {report.status === 'OPEN' && (
+                  <button
+                    onClick={() => updateStatus(report.id, 'RESOLVED')}
+                    disabled={isLoading}
+                    className="flex-1 py-2 px-4 rounded-[--radius-lg] border border-green-500 text-green-700 font-medium hover:bg-green-50 transition-colors text-sm disabled:opacity-50"
+                  >
+                    Marcar como resolvido
+                  </button>
+                )}
+                <Link
+                  to={ROUTES.LOST_FOUND.EDIT(report.id)}
+                  className="text-sm text-[--color-primary] hover:underline shrink-0"
+                >
+                  Editar
+                </Link>
+              </div>
             )}
           </div>
         )}

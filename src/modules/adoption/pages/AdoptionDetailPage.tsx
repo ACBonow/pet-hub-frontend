@@ -145,7 +145,15 @@ export default function AdoptionDetailPage() {
 
             {isCreator && (
               <div className="bg-white rounded-[--radius-lg] border border-gray-200 p-4">
-                <p className="text-sm font-semibold text-gray-700 mb-3">Atualizar status</p>
+                <div className="flex items-center justify-between mb-3">
+                  <p className="text-sm font-semibold text-gray-700">Atualizar status</p>
+                  <Link
+                    to={ROUTES.ADOPTION.EDIT(listing.id)}
+                    className="text-sm text-[--color-primary] hover:underline"
+                  >
+                    Editar
+                  </Link>
+                </div>
                 <div className="flex flex-wrap gap-2">
                   {STATUS_UPDATE_SEQUENCE.map(({ status, label }) => (
                     <button

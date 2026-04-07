@@ -64,5 +64,6 @@ export interface UpdateAdoptionData {
   description?: string | null
   contactEmail?: string | null
   contactPhone?: string | null
+  contactWhatsapp?: string | null
   status?: AdoptionStatus
 }

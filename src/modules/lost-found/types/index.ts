@@ -56,6 +56,22 @@ export interface PaginatedLostFoundReports {
   }
 }
 
+export interface UpdateLostFoundData {
+  petName?: string | null
+  species?: string | null
+  description?: string
+  location?: string | null
+  addressStreet?: string | null
+  addressNeighborhood?: string | null
+  addressNumber?: string | null
+  addressCep?: string | null
+  addressCity?: string | null
+  addressState?: string | null
+  addressNotes?: string | null
+  contactEmail?: string
+  contactPhone?: string | null
+}
+
 export interface CreateLostFoundData {
   type: LostFoundType
   petName?: string | null

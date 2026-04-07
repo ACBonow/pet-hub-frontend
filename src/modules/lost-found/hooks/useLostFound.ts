@@ -9,10 +9,11 @@ import {
   listReportsRequest,
   getReportRequest,
   createReportRequest,
+  updateReportRequest,
   updateLostFoundStatusRequest,
   uploadLostFoundPhotoRequest,
 } from '@/modules/lost-found/services/lostFound.service'
-import type { LostFoundReport, LostFoundFilters, LostFoundStatus, CreateLostFoundData } from '@/modules/lost-found/types'
+import type { LostFoundReport, LostFoundFilters, LostFoundStatus, CreateLostFoundData, UpdateLostFoundData } from '@/modules/lost-found/types'
 import type { ApiError } from '@/shared/types'
 
 interface UseLostFoundResult {
@@ -25,6 +26,7 @@ interface UseLostFoundResult {
   listReports: (filters?: LostFoundFilters) => Promise<void>
   getReport: (id: string) => Promise<void>
   createReport: (data: CreateLostFoundData) => Promise<LostFoundReport>
+  updateReport: (id: string, data: UpdateLostFoundData) => Promise<void>
   updateStatus: (id: string, status: LostFoundStatus) => Promise<void>
   uploadPhoto: (reportId: string, file: File) => Promise<void>
 }
@@ -103,6 +105,21 @@ export function useLostFound(): UseLostFoundResult {
     }
   }
 
+  async function updateReport(id: string, data: UpdateLostFoundData): Promise<void> {
+    setIsLoading(true)
+    setError(null)
+    try {
+      const updated = await updateReportRequest(id, data)
+      setReport(updated)
+    } catch (err) {
+      const apiError = err as ApiError
+      setError(apiError.message ?? 'Erro ao atualizar relatório.')
+      throw err
+    } finally {
+      setIsLoading(false)
+    }
+  }
+
   async function updateStatus(id: string, status: LostFoundStatus): Promise<void> {
     setIsLoading(true)
     setError(null)
@@ -132,5 +149,5 @@ export function useLostFound(): UseLostFoundResult {
     }
   }
 
-  return { report, reports, isLoading, error, currentPage, totalPages, listReports, getReport, createReport, updateStatus, uploadPhoto }
+  return { report, reports, isLoading, error, currentPage, totalPages, listReports, getReport, createReport, updateReport, updateStatus, uploadPhoto }
 }
