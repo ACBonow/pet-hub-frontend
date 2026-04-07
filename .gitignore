@@ -38,3 +38,4 @@ playwright-report
 test-results
 .auth
 dist-e2e
+.vercel

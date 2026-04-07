@@ -66,12 +66,24 @@ TASK-FE-001 → TASK-FE-002 → TASK-FE-003
 | TASK-FE-023  | Pet: upload de foto                         | Média      | FE-007, BE-016            | Concluída |
 | TASK-FE-024  | AdoptionForm: WhatsApp + org picker         | Média      | FE-008, BE-017            | Concluída |
 | TASK-FE-025  | PetForm: gender + castrated                 | Baixa      | FE-007, BE-018            | Concluída |
-| TASK-FE-026  | ContactGate nas páginas de Lost & Found     | Alta       | FE-009, BE-011            | Pendente  |
-| TASK-FE-027  | ContactGate nas páginas de Services         | Alta       | FE-011, BE-013            | Pendente  |
-| TASK-FE-028  | Papéis de org na UI (OWNER/MGR/MBR)         | Alta       | FE-006, BE-020            | Pendente  |
-| TASK-FE-029  | Contexto "Agindo Como" no frontend          | Alta       | FE-028, BE-021            | Pendente  |
-| TASK-FE-030  | Foto de organização: UI e upload            | Média      | FE-028, BE-022            | Pendente  |
-| TASK-FE-031  | Foto de serviço: UI e upload                | Média      | FE-011, BE-023            | Pendente  |
-| TASK-FE-032  | Gerenciamento de membros da org: UI         | Alta       | FE-028, BE-024            | Pendente  |
-| TASK-FE-033  | Painel da organização                       | Média      | FE-028, FE-030, FE-032    | Pendente  |
-| TASK-FE-034  | Indicador de proprietário nos cards         | Baixa      | FE-029, BE-021            | Pendente  |
+| TASK-FE-026  | ContactGate nas páginas de Lost & Found     | Alta       | FE-009, BE-011            | Concluída |
+| TASK-FE-027  | ContactGate nas páginas de Services         | Alta       | FE-011, BE-013            | Concluída |
+| TASK-FE-028  | Papéis de org na UI (OWNER/MGR/MBR)         | Alta       | FE-006, BE-020            | Concluída |
+| TASK-FE-029  | Contexto "Agindo Como" no frontend          | Alta       | FE-028, BE-021            | Concluída |
+| TASK-FE-030  | Foto de organização: UI e upload            | Média      | FE-028, BE-022            | Concluída |
+| TASK-FE-031  | Foto de serviço: UI e upload                | Média      | FE-011, BE-023            | Concluída |
+| TASK-FE-032  | Gerenciamento de membros da org: UI         | Alta       | FE-028, BE-024            | Concluída |
+| TASK-FE-033  | Painel da organização                       | Média      | FE-028, FE-030, FE-032    | Concluída |
+| TASK-FE-034  | Indicador de proprietário nos cards         | Baixa      | FE-029, BE-021            | Concluída |
+| TASK-FE-035  | GET /organizations/:orgId/pets no frontend  | Média      | FE-033, BE-027            | Concluída |
+| TASK-FE-036  | Co-tutores reais no PetDetailPage           | Média      | FE-007, BE-029            | Concluída |
+| TASK-FE-037  | Delete exam file UI                         | Média      | FE-010                    | Concluída |
+| TASK-FE-038  | Delete vaccination UI                       | Média      | FE-010, BE-030            | Concluída |
+| TASK-FE-039  | Alinhamento tipos/URLs pet-health           | Alta       | FE-010                    | Concluída |
+| TASK-FE-040  | PetHealthPage testes completos              | Média      | FE-010                    | Concluída |
+| TASK-FE-041  | Atualização de status: adoção e lost-found  | Alta       | FE-008, FE-009            | Concluída |
+| TASK-FE-042  | Editar anúncio de serviço                   | Alta       | FE-020                    | Pendente  |
+| TASK-FE-043  | Página 404 Not Found                        | Média      | —                         | Pendente  |
+| TASK-FE-044  | Controles de paginação nas listagens        | Média      | —                         | Pendente  |
+| TASK-FE-045  | Editar anúncio de adoção                    | Média      | FE-041, BE-031            | Pendente  |
+| TASK-FE-046  | Editar relatório de achado/perdido          | Média      | BE-032                    | Pendente  |
