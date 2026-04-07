@@ -26,6 +26,7 @@ const mockAdoptionListing = {
   contactEmail: 'contato@petcare.com',
   contactPhone: null,
   contactWhatsapp: null,
+  personId: null,
   organizationId: null,
   createdAt: '2026-03-01T00:00:00.000Z',
   updatedAt: '2026-03-01T00:00:00.000Z',

@@ -23,6 +23,7 @@ const BASE_LISTING: AdoptionListing = {
   contactEmail: null,
   contactPhone: null,
   contactWhatsapp: null,
+  personId: null,
   organizationId: null,
   createdAt: '2026-01-01T00:00:00.000Z',
   updatedAt: '2026-01-01T00:00:00.000Z',
