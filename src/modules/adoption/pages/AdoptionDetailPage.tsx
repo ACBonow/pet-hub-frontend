@@ -11,6 +11,7 @@ import PageWrapper from '@/shared/components/layout/PageWrapper'
 import ContactGate from '@/shared/components/ui/ContactGate'
 import { useAdoption } from '@/modules/adoption/hooks/useAdoption'
 import { useAuthStore } from '@/modules/auth/store/authSlice'
+import type { AdoptionStatus } from '@/modules/adoption/types'
 import { ROUTES } from '@/routes/routes.config'
 
 const SPECIES_LABELS: Record<string, string> = {
@@ -38,11 +39,19 @@ const GENDER_LABELS: Record<string, string> = {
   F: 'Fêmea',
 }
 
+const STATUS_UPDATE_SEQUENCE: { status: AdoptionStatus; label: string }[] = [
+  { status: 'AVAILABLE', label: 'Disponível' },
+  { status: 'RESERVED', label: 'Reservado' },
+  { status: 'ADOPTED', label: 'Adotado' },
+]
+
 export default function AdoptionDetailPage() {
   const { id } = useParams<{ id: string }>()
-  const { listing, isLoading, error, getAdoption } = useAdoption()
-  const { isAuthenticated } = useAuthStore()
+  const { listing, isLoading, error, getAdoption, updateAdoptionStatus } = useAdoption()
+  const { isAuthenticated, user } = useAuthStore()
   const location = useLocation()
+
+  const isCreator = !!(user?.personId && listing?.personId && user.personId === listing.personId)
 
   useEffect(() => {
     if (id) getAdoption(id)
@@ -133,6 +142,28 @@ export default function AdoptionDetailPage() {
                 </div>
               )}
             </div>
+
+            {isCreator && (
+              <div className="bg-white rounded-[--radius-lg] border border-gray-200 p-4">
+                <p className="text-sm font-semibold text-gray-700 mb-3">Atualizar status</p>
+                <div className="flex flex-wrap gap-2">
+                  {STATUS_UPDATE_SEQUENCE.map(({ status, label }) => (
+                    <button
+                      key={status}
+                      onClick={() => updateAdoptionStatus(listing.id, status)}
+                      disabled={listing.status === status || isLoading}
+                      className={`text-sm px-3 py-1.5 rounded-full border font-medium transition-colors ${
+                        listing.status === status
+                          ? 'bg-[--color-primary] text-white border-[--color-primary]'
+                          : 'border-gray-300 text-gray-700 hover:bg-gray-50 disabled:opacity-50'
+                      }`}
+                    >
+                      {label}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            )}
           </div>
         )}
       </PageWrapper>

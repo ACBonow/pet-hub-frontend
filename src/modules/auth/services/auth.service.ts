@@ -15,14 +15,34 @@ import type {
   ResetPasswordData,
 } from '@/modules/auth/types'
 
+type BackendAuthData = {
+  accessToken: string
+  refreshToken: string
+  user: { id: string; email: string }
+  person: { id: string; name: string; cpf: string } | null
+}
+
+function mapBackendAuth(data: BackendAuthData): AuthResponse {
+  return {
+    accessToken: data.accessToken,
+    refreshToken: data.refreshToken,
+    user: {
+      id: data.user.id,
+      email: data.user.email,
+      name: data.person?.name ?? '',
+      personId: data.person?.id ?? null,
+    },
+  }
+}
+
 export async function loginRequest(credentials: LoginCredentials): Promise<AuthResponse> {
-  const response = await api.post<{ success: true; data: AuthResponse }>('/api/v1/auth/login', credentials)
-  return response.data.data
+  const response = await api.post<{ success: true; data: BackendAuthData }>('/api/v1/auth/login', credentials)
+  return mapBackendAuth(response.data.data)
 }
 
 export async function registerRequest(data: RegisterData): Promise<AuthResponse> {
-  const response = await api.post<{ success: true; data: AuthResponse }>('/api/v1/auth/register', data)
-  return response.data.data
+  const response = await api.post<{ success: true; data: BackendAuthData }>('/api/v1/auth/register', data)
+  return mapBackendAuth(response.data.data)
 }
 
 export async function refreshTokenRequest(data: { refreshToken: string }): Promise<{ accessToken: string; refreshToken: string }> {

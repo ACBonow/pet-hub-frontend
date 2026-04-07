@@ -5,7 +5,7 @@
  * loading/error states, address display, status badge.
  */
 
-import { render, screen, waitFor } from '@testing-library/react'
+import { render, screen, fireEvent, waitFor } from '@testing-library/react'
 import { MemoryRouter, Route, Routes } from 'react-router-dom'
 import LostFoundDetailPage from '@/modules/lost-found/pages/LostFoundDetailPage'
 import type { LostFoundReport } from '@/modules/lost-found/types'
@@ -13,6 +13,7 @@ import type { LostFoundReport } from '@/modules/lost-found/types'
 // ─── Mocks ───────────────────────────────────────────────────────────────────
 
 const mockGetReport = jest.fn()
+const mockUpdateStatus = jest.fn()
 
 jest.mock('@/modules/lost-found/hooks/useLostFound', () => ({
   useLostFound: () => ({
@@ -23,6 +24,7 @@ jest.mock('@/modules/lost-found/hooks/useLostFound', () => ({
     getReport: mockGetReport,
     createReport: jest.fn(),
     uploadPhoto: jest.fn(),
+    updateStatus: mockUpdateStatus,
   }),
 }))
 
@@ -96,7 +98,8 @@ describe('LostFoundDetailPage', () => {
     mockIsLoading = false
     mockError = null
     mockGetReport.mockResolvedValue(undefined)
-    mockUseAuthStore.mockReturnValue({ isAuthenticated: false } as any)
+    mockUpdateStatus.mockResolvedValue(undefined)
+    mockUseAuthStore.mockReturnValue({ isAuthenticated: false, user: null } as any)
   })
 
   it('should call getReport with the id from params on mount', async () => {
@@ -219,6 +222,56 @@ describe('LostFoundDetailPage', () => {
       mockUseAuthStore.mockReturnValue({ isAuthenticated: true } as any)
       renderAt()
       expect(screen.queryByRole('link', { name: /fazer login/i })).not.toBeInTheDocument()
+    })
+  })
+
+  describe('status update — creator', () => {
+    beforeEach(() => {
+      mockReport = MOCK_REPORT  // status OPEN, reporterId 'person-1'
+      mockUseAuthStore.mockReturnValue({
+        isAuthenticated: true,
+        user: { id: 'user-1', email: 'a@b.com', name: 'A', personId: 'person-1' },
+      } as any)
+    })
+
+    it('shows "Marcar como resolvido" button when creator and status is OPEN', () => {
+      renderAt()
+      expect(screen.getByRole('button', { name: /marcar como resolvido/i })).toBeInTheDocument()
+    })
+
+    it('calls updateStatus with RESOLVED when button is clicked', async () => {
+      renderAt()
+      fireEvent.click(screen.getByRole('button', { name: /marcar como resolvido/i }))
+      await waitFor(() => {
+        expect(mockUpdateStatus).toHaveBeenCalledWith('report-1', 'RESOLVED')
+      })
+    })
+
+    it('does not show button when status is already RESOLVED', () => {
+      mockReport = MOCK_RESOLVED_REPORT
+      renderAt()
+      expect(screen.queryByRole('button', { name: /marcar como resolvido/i })).not.toBeInTheDocument()
+    })
+  })
+
+  describe('status update — non-creator', () => {
+    beforeEach(() => {
+      mockReport = MOCK_REPORT
+    })
+
+    it('does not show button when user is not authenticated', () => {
+      mockUseAuthStore.mockReturnValue({ isAuthenticated: false, user: null } as any)
+      renderAt()
+      expect(screen.queryByRole('button', { name: /marcar como resolvido/i })).not.toBeInTheDocument()
+    })
+
+    it('does not show button when user has different personId', () => {
+      mockUseAuthStore.mockReturnValue({
+        isAuthenticated: true,
+        user: { id: 'user-2', email: 'b@c.com', name: 'B', personId: 'person-2' },
+      } as any)
+      renderAt()
+      expect(screen.queryByRole('button', { name: /marcar como resolvido/i })).not.toBeInTheDocument()
     })
   })
 })

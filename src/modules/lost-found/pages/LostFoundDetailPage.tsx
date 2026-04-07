@@ -10,6 +10,7 @@ import PublicLayout from '@/shared/components/layout/PublicLayout'
 import PageWrapper from '@/shared/components/layout/PageWrapper'
 import ContactGate from '@/shared/components/ui/ContactGate'
 import { useLostFound } from '@/modules/lost-found/hooks/useLostFound'
+import { useAuthStore } from '@/modules/auth/store/authSlice'
 import type { LostFoundReport } from '@/modules/lost-found/types'
 
 function buildMapsUrl(report: LostFoundReport): string | null {
@@ -38,11 +39,14 @@ function formatAddress(report: LostFoundReport): string | null {
 
 export default function LostFoundDetailPage() {
   const { id } = useParams<{ id: string }>()
-  const { report, isLoading, error, getReport } = useLostFound()
+  const { report, isLoading, error, getReport, updateStatus } = useLostFound()
+  const { user } = useAuthStore()
 
   useEffect(() => {
     if (id) getReport(id)
   }, [id])
+
+  const isCreator = !!(user?.personId && report?.reporterId && user.personId === report.reporterId)
 
   const isLost = report?.type === 'LOST'
   const formattedAddress = report ? formatAddress(report) : null
@@ -136,6 +140,16 @@ export default function LostFoundDetailPage() {
                 />
               </div>
             </div>
+
+            {isCreator && report.status === 'OPEN' && (
+              <button
+                onClick={() => updateStatus(report.id, 'RESOLVED')}
+                disabled={isLoading}
+                className="w-full py-2 px-4 rounded-[--radius-lg] border border-green-500 text-green-700 font-medium hover:bg-green-50 transition-colors text-sm disabled:opacity-50"
+              >
+                Marcar como resolvido
+              </button>
+            )}
           </div>
         )}
       </PageWrapper>

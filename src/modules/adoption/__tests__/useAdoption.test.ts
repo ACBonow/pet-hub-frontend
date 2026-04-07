@@ -131,4 +131,36 @@ describe('useAdoption', () => {
       expect(result.current.listing).toEqual(mockAdoptionListing)
     })
   })
+
+  describe('updateAdoptionStatus', () => {
+    it('should update the listing status and set listing state', async () => {
+      const updated = { ...mockAdoptionListing, status: 'RESERVED' as const }
+      mockAdoptionService.updateAdoptionStatusRequest.mockResolvedValueOnce(updated)
+
+      const { result } = renderHook(() => useAdoption())
+
+      await act(async () => {
+        await result.current.updateAdoptionStatus('adoption-1', 'RESERVED')
+      })
+
+      expect(mockAdoptionService.updateAdoptionStatusRequest).toHaveBeenCalledWith('adoption-1', 'RESERVED')
+      expect(result.current.listing?.status).toBe('RESERVED')
+      expect(result.current.isLoading).toBe(false)
+    })
+
+    it('should set error when update fails', async () => {
+      mockAdoptionService.updateAdoptionStatusRequest.mockRejectedValueOnce({
+        code: 'INTERNAL_ERROR',
+        message: 'Erro ao atualizar status.',
+      })
+
+      const { result } = renderHook(() => useAdoption())
+
+      await act(async () => {
+        await result.current.updateAdoptionStatus('adoption-1', 'ADOPTED').catch(() => {})
+      })
+
+      expect(result.current.error).toBe('Erro ao atualizar status.')
+    })
+  })
 })

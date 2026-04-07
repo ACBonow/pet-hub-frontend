@@ -10,8 +10,9 @@ import {
   getAdoptionRequest,
   createAdoptionRequest,
   updateAdoptionRequest,
+  updateAdoptionStatusRequest,
 } from '@/modules/adoption/services/adoption.service'
-import type { AdoptionListing, AdoptionFilters, CreateAdoptionData, UpdateAdoptionData } from '@/modules/adoption/types'
+import type { AdoptionListing, AdoptionFilters, AdoptionStatus, CreateAdoptionData, UpdateAdoptionData } from '@/modules/adoption/types'
 import type { ApiError } from '@/shared/types'
 
 interface UseAdoptionResult {
@@ -23,6 +24,7 @@ interface UseAdoptionResult {
   getAdoption: (id: string) => Promise<void>
   createAdoption: (data: CreateAdoptionData) => Promise<void>
   updateAdoption: (id: string, data: UpdateAdoptionData) => Promise<void>
+  updateAdoptionStatus: (id: string, status: AdoptionStatus) => Promise<void>
 }
 
 export function useAdoption(): UseAdoptionResult {
@@ -109,5 +111,20 @@ export function useAdoption(): UseAdoptionResult {
     }
   }
 
-  return { listing, listings, isLoading, error, listAdoptions, getAdoption, createAdoption, updateAdoption }
+  async function updateAdoptionStatus(id: string, status: AdoptionStatus): Promise<void> {
+    setIsLoading(true)
+    setError(null)
+    try {
+      const updated = await updateAdoptionStatusRequest(id, status)
+      setListing(updated)
+    } catch (err) {
+      const apiError = err as ApiError
+      setError(apiError.message ?? 'Erro ao atualizar status.')
+      throw err
+    } finally {
+      setIsLoading(false)
+    }
+  }
+
+  return { listing, listings, isLoading, error, listAdoptions, getAdoption, createAdoption, updateAdoption, updateAdoptionStatus }
 }

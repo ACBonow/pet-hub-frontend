@@ -9,9 +9,10 @@ import {
   listReportsRequest,
   getReportRequest,
   createReportRequest,
+  updateLostFoundStatusRequest,
   uploadLostFoundPhotoRequest,
 } from '@/modules/lost-found/services/lostFound.service'
-import type { LostFoundReport, LostFoundFilters, CreateLostFoundData } from '@/modules/lost-found/types'
+import type { LostFoundReport, LostFoundFilters, LostFoundStatus, CreateLostFoundData } from '@/modules/lost-found/types'
 import type { ApiError } from '@/shared/types'
 
 interface UseLostFoundResult {
@@ -22,6 +23,7 @@ interface UseLostFoundResult {
   listReports: (filters?: LostFoundFilters) => Promise<void>
   getReport: (id: string) => Promise<void>
   createReport: (data: CreateLostFoundData) => Promise<LostFoundReport>
+  updateStatus: (id: string, status: LostFoundStatus) => Promise<void>
   uploadPhoto: (reportId: string, file: File) => Promise<void>
 }
 
@@ -95,6 +97,21 @@ export function useLostFound(): UseLostFoundResult {
     }
   }
 
+  async function updateStatus(id: string, status: LostFoundStatus): Promise<void> {
+    setIsLoading(true)
+    setError(null)
+    try {
+      const updated = await updateLostFoundStatusRequest(id, status)
+      setReport(updated)
+    } catch (err) {
+      const apiError = err as ApiError
+      setError(apiError.message ?? 'Erro ao atualizar status.')
+      throw err
+    } finally {
+      setIsLoading(false)
+    }
+  }
+
   async function uploadPhoto(reportId: string, file: File): Promise<void> {
     setIsLoading(true)
     setError(null)
@@ -109,5 +126,5 @@ export function useLostFound(): UseLostFoundResult {
     }
   }
 
-  return { report, reports, isLoading, error, listReports, getReport, createReport, uploadPhoto }
+  return { report, reports, isLoading, error, listReports, getReport, createReport, updateStatus, uploadPhoto }
 }

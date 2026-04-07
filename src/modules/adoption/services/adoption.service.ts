@@ -5,7 +5,7 @@
  */
 
 import api from '@/shared/services/api.client'
-import type { AdoptionListing, AdoptionFilters, CreateAdoptionData, UpdateAdoptionData } from '@/modules/adoption/types'
+import type { AdoptionListing, AdoptionFilters, AdoptionStatus, CreateAdoptionData, UpdateAdoptionData } from '@/modules/adoption/types'
 
 export async function listAdoptionsRequest(filters?: AdoptionFilters, signal?: AbortSignal): Promise<AdoptionListing[]> {
   const response = await api.get<{ success: true; data: AdoptionListing[] }>('/api/v1/adoptions', { params: filters, signal })
@@ -24,5 +24,10 @@ export async function createAdoptionRequest(data: CreateAdoptionData): Promise<A
 
 export async function updateAdoptionRequest(id: string, data: UpdateAdoptionData): Promise<AdoptionListing> {
   const response = await api.put<{ success: true; data: AdoptionListing }>(`/api/v1/adoptions/${id}`, data)
+  return response.data.data
+}
+
+export async function updateAdoptionStatusRequest(id: string, status: AdoptionStatus): Promise<AdoptionListing> {
+  const response = await api.patch<{ success: true; data: AdoptionListing }>(`/api/v1/adoptions/${id}/status`, { status })
   return response.data.data
 }

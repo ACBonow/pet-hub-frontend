@@ -26,6 +26,7 @@ export interface AdoptionListing {
   contactEmail: string | null
   contactPhone: string | null
   contactWhatsapp: string | null
+  personId: string | null
   organizationId: string | null
   createdBy?: CreatorInfo
   createdAt: string
