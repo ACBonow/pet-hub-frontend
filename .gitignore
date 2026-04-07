@@ -32,3 +32,9 @@ dist-ssr
 
 # Coverage
 coverage
+
+# Playwright
+playwright-report
+test-results
+.auth
+dist-e2e

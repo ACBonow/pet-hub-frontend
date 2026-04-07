@@ -12,6 +12,7 @@ import PageWrapper from '@/shared/components/layout/PageWrapper'
 import OrganizationForm from '@/modules/organization/components/OrganizationForm'
 import { useOrganization } from '@/modules/organization/hooks/useOrganization'
 import type { OrganizationFormSubmitData } from '@/modules/organization/components/OrganizationForm'
+import { compressImage } from '@/shared/utils/image'
 
 export default function OrganizationFormPage() {
   const navigate = useNavigate()
@@ -23,7 +24,8 @@ export default function OrganizationFormPage() {
       cnpj: data.cnpj || null,
     })
     if (data.photoFile) {
-      await uploadOrgPhoto(org.id, data.photoFile)
+      const photo = await compressImage(data.photoFile)
+      await uploadOrgPhoto(org.id, photo)
     }
     navigate(ROUTES.ORGANIZATION.LIST)
   }

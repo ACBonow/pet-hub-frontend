@@ -16,6 +16,7 @@ import type { CreateServiceData } from '@/modules/services-directory/types'
 
 import ActingAsSelector from '@/shared/components/ui/ActingAsSelector'
 import { useActingAs } from '@/shared/hooks/useActingAs'
+import { compressImage } from '@/shared/utils/image'
 
 export default function ServiceFormPage() {
   const navigate = useNavigate()
@@ -34,7 +35,8 @@ export default function ServiceFormPage() {
     })
     if (result) {
       if (photoFile) {
-        await uploadServicePhoto(result.id, photoFile)
+        const photo = await compressImage(photoFile)
+        await uploadServicePhoto(result.id, photo)
       }
       navigate(ROUTES.SERVICES.DETAIL(result.id))
     }

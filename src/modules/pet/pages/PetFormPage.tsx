@@ -13,6 +13,7 @@ import PetForm from '@/modules/pet/components/PetForm'
 import { usePet } from '@/modules/pet/hooks/usePet'
 import ActingAsSelector from '@/shared/components/ui/ActingAsSelector'
 import { useActingAs } from '@/shared/hooks/useActingAs'
+import { compressImage } from '@/shared/utils/image'
 
 export default function PetFormPage() {
   const navigate = useNavigate()
@@ -32,7 +33,8 @@ export default function PetFormPage() {
       organizationId: context.type === 'org' ? context.organizationId ?? null : null,
     })
     if (data.photoFile) {
-      await uploadPhoto(pet.id, data.photoFile)
+      const photo = await compressImage(data.photoFile)
+      await uploadPhoto(pet.id, photo)
     }
     navigate(ROUTES.PET.LIST)
   }

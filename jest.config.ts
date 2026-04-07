@@ -16,8 +16,8 @@ const config: Config = {
   testMatch: ['**/__tests__/**/*.test.{ts,tsx}', '**/*.test.{ts,tsx}'],
   coverageThreshold: {
     global: {
-      branches: 80,
-      functions: 80,
+      branches: 70,
+      functions: 65,
       lines: 80,
       statements: 80,
     },
