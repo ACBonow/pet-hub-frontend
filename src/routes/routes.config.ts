@@ -45,5 +45,6 @@ export const ROUTES = {
     LIST: '/servicos',
     DETAIL: (id: string) => `/servicos/${id}`,
     CREATE: '/servicos/novo',
+    EDIT: (id: string) => `/servicos/${id}/editar`,
   },
 } as const

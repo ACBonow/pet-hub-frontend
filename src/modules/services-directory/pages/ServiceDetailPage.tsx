@@ -6,12 +6,13 @@
  */
 
 import { useEffect, useRef } from 'react'
-import { useParams } from 'react-router-dom'
+import { useParams, Link } from 'react-router-dom'
 import PublicLayout from '@/shared/components/layout/PublicLayout'
 import PageWrapper from '@/shared/components/layout/PageWrapper'
 import ContactGate from '@/shared/components/ui/ContactGate'
 import { useServicesDirectory } from '@/modules/services-directory/hooks/useServicesDirectory'
 import { useAuth } from '@/modules/auth/hooks/useAuth'
+import { ROUTES } from '@/routes/routes.config'
 
 export default function ServiceDetailPage() {
   const { id } = useParams<{ id: string }>()
@@ -86,12 +87,20 @@ export default function ServiceDetailPage() {
                   onChange={handlePhotoChange}
                   aria-label="Alterar foto do serviço"
                 />
-                <button
-                  onClick={() => fileInputRef.current?.click()}
-                  className="text-sm text-[--color-primary] underline self-start"
-                >
-                  Alterar foto
-                </button>
+                <div className="flex gap-4 items-center">
+                  <button
+                    onClick={() => fileInputRef.current?.click()}
+                    className="text-sm text-[--color-primary] underline self-start"
+                  >
+                    Alterar foto
+                  </button>
+                  <Link
+                    to={ROUTES.SERVICES.EDIT(service.id)}
+                    className="text-sm text-[--color-primary] underline self-start"
+                  >
+                    Editar
+                  </Link>
+                </div>
               </>
             )}
 

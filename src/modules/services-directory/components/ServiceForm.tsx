@@ -43,9 +43,11 @@ interface ServiceFormProps {
   onSubmit: (data: CreateServiceData & { photoFile?: File | null }) => Promise<void>
   isLoading: boolean
   serviceTypes: ServiceTypeRecord[]
+  defaultValues?: Partial<FormData>
+  submitLabel?: string
 }
 
-export default function ServiceForm({ onSubmit, isLoading, serviceTypes }: ServiceFormProps) {
+export default function ServiceForm({ onSubmit, isLoading, serviceTypes, defaultValues, submitLabel }: ServiceFormProps) {
   const [photoFile, setPhotoFile] = useState<File | null>(null)
   const [photoPreview, setPhotoPreview] = useState<string | null>(null)
   const fileInputRef = useRef<HTMLInputElement>(null)
@@ -54,7 +56,7 @@ export default function ServiceForm({ onSubmit, isLoading, serviceTypes }: Servi
     register,
     handleSubmit,
     formState: { errors },
-  } = useForm<FormData>({ resolver: zodResolver(schema) })
+  } = useForm<FormData>({ resolver: zodResolver(schema), defaultValues })
 
   const handlePhotoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0] ?? null
@@ -396,7 +398,7 @@ export default function ServiceForm({ onSubmit, isLoading, serviceTypes }: Servi
       </div>
 
       <Button type="submit" loading={isLoading} className="w-full mt-2">
-        Cadastrar serviço
+        {submitLabel ?? 'Cadastrar serviço'}
       </Button>
     </form>
   )

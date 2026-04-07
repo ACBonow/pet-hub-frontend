@@ -94,6 +94,7 @@ export const router = createBrowserRouter([
       { path: ROUTES.ORGANIZATION.EDIT(':id'), element: <S><OrganizationFormPage /></S> },
       { path: ROUTES.ORGANIZATION.DASHBOARD(':id'), element: <S><OrganizationDashboardPage /></S> },
       { path: ROUTES.SERVICES.CREATE,          element: <S><ServiceFormPage /></S> },
+      { path: ROUTES.SERVICES.EDIT(':id'),     element: <S><ServiceFormPage /></S> },
       { path: ROUTES.PROFILE,                  element: <S><ProfilePage /></S> },
     ],
   },
