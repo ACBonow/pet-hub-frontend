@@ -4,8 +4,8 @@
  * @description Page for viewing a single lost or found report.
  */
 
-import { useEffect } from 'react'
-import { useParams, Link } from 'react-router-dom'
+import { useEffect, useState } from 'react'
+import { useParams, Link, useNavigate } from 'react-router-dom'
 import { ROUTES } from '@/routes/routes.config'
 import PublicLayout from '@/shared/components/layout/PublicLayout'
 import PageWrapper from '@/shared/components/layout/PageWrapper'
@@ -40,14 +40,22 @@ function formatAddress(report: LostFoundReport): string | null {
 
 export default function LostFoundDetailPage() {
   const { id } = useParams<{ id: string }>()
-  const { report, isLoading, error, getReport, updateStatus } = useLostFound()
+  const navigate = useNavigate()
+  const { report, isLoading, error, getReport, updateStatus, deleteReport } = useLostFound()
   const { user } = useAuthStore()
+  const [confirmDelete, setConfirmDelete] = useState(false)
 
   useEffect(() => {
     if (id) getReport(id)
   }, [id])
 
   const isCreator = !!(user?.personId && report?.reporterId && user.personId === report.reporterId)
+
+  const handleDelete = async () => {
+    if (!report) return
+    await deleteReport(report.id)
+    navigate(ROUTES.LOST_FOUND.LIST)
+  }
 
   const isLost = report?.type === 'LOST'
   const formattedAddress = report ? formatAddress(report) : null
@@ -143,22 +151,48 @@ export default function LostFoundDetailPage() {
             </div>
 
             {isCreator && (
-              <div className="flex items-center justify-between gap-2">
-                {report.status === 'OPEN' && (
-                  <button
-                    onClick={() => updateStatus(report.id, 'RESOLVED')}
-                    disabled={isLoading}
-                    className="flex-1 py-2 px-4 rounded-[--radius-lg] border border-green-500 text-green-700 font-medium hover:bg-green-50 transition-colors text-sm disabled:opacity-50"
+              <div className="flex flex-col gap-2">
+                <div className="flex items-center gap-3">
+                  {report.status === 'OPEN' && (
+                    <button
+                      onClick={() => updateStatus(report.id, 'RESOLVED')}
+                      disabled={isLoading}
+                      className="flex-1 py-2 px-4 rounded-[--radius-lg] border border-green-500 text-green-700 font-medium hover:bg-green-50 transition-colors text-sm disabled:opacity-50"
+                    >
+                      Marcar como resolvido
+                    </button>
+                  )}
+                  <Link
+                    to={ROUTES.LOST_FOUND.EDIT(report.id)}
+                    className="text-sm text-[--color-primary] hover:underline shrink-0"
                   >
-                    Marcar como resolvido
-                  </button>
-                )}
-                <Link
-                  to={ROUTES.LOST_FOUND.EDIT(report.id)}
-                  className="text-sm text-[--color-primary] hover:underline shrink-0"
-                >
-                  Editar
-                </Link>
+                    Editar
+                  </Link>
+                  {!confirmDelete ? (
+                    <button
+                      onClick={() => setConfirmDelete(true)}
+                      className="text-sm text-[--color-danger] hover:underline shrink-0"
+                    >
+                      Excluir
+                    </button>
+                  ) : (
+                    <div className="flex gap-2 items-center">
+                      <button
+                        onClick={handleDelete}
+                        disabled={isLoading}
+                        className="text-sm font-medium text-white bg-[--color-danger] px-2 py-0.5 rounded disabled:opacity-50"
+                      >
+                        Confirmar exclusão
+                      </button>
+                      <button
+                        onClick={() => setConfirmDelete(false)}
+                        className="text-sm text-gray-500 hover:underline"
+                      >
+                        Cancelar
+                      </button>
+                    </div>
+                  )}
+                </div>
               </div>
             )}
           </div>

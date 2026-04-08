@@ -9,6 +9,7 @@ import {
   listReportsRequest,
   getReportRequest,
   createReportRequest,
+  deleteReportRequest,
   updateReportRequest,
   updateLostFoundStatusRequest,
   uploadLostFoundPhotoRequest,
@@ -26,6 +27,7 @@ interface UseLostFoundResult {
   listReports: (filters?: LostFoundFilters) => Promise<void>
   getReport: (id: string) => Promise<void>
   createReport: (data: CreateLostFoundData) => Promise<LostFoundReport>
+  deleteReport: (id: string) => Promise<void>
   updateReport: (id: string, data: UpdateLostFoundData) => Promise<void>
   updateStatus: (id: string, status: LostFoundStatus) => Promise<void>
   uploadPhoto: (reportId: string, file: File) => Promise<void>
@@ -105,6 +107,21 @@ export function useLostFound(): UseLostFoundResult {
     }
   }
 
+  async function deleteReport(id: string): Promise<void> {
+    setIsLoading(true)
+    setError(null)
+    try {
+      await deleteReportRequest(id)
+      setReport(null)
+    } catch (err) {
+      const apiError = err as ApiError
+      setError(apiError.message ?? 'Erro ao excluir relatório.')
+      throw err
+    } finally {
+      setIsLoading(false)
+    }
+  }
+
   async function updateReport(id: string, data: UpdateLostFoundData): Promise<void> {
     setIsLoading(true)
     setError(null)
@@ -149,5 +166,5 @@ export function useLostFound(): UseLostFoundResult {
     }
   }
 
-  return { report, reports, isLoading, error, currentPage, totalPages, listReports, getReport, createReport, updateReport, updateStatus, uploadPhoto }
+  return { report, reports, isLoading, error, currentPage, totalPages, listReports, getReport, createReport, deleteReport, updateReport, updateStatus, uploadPhoto }
 }

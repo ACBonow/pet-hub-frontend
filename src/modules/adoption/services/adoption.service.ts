@@ -31,6 +31,10 @@ export async function updateAdoptionRequest(id: string, data: UpdateAdoptionData
   return response.data.data
 }
 
+export async function deleteAdoptionRequest(id: string): Promise<void> {
+  await api.delete(`/api/v1/adoptions/${id}`)
+}
+
 export async function updateAdoptionStatusRequest(id: string, status: AdoptionStatus): Promise<AdoptionListing> {
   const response = await api.patch<{ success: true; data: AdoptionListing }>(`/api/v1/adoptions/${id}/status`, { status })
   return response.data.data

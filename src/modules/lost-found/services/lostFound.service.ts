@@ -26,6 +26,10 @@ export async function createReportRequest(data: CreateLostFoundData): Promise<Lo
   return response.data.data
 }
 
+export async function deleteReportRequest(id: string): Promise<void> {
+  await api.delete(`/api/v1/lost-found/${id}`)
+}
+
 export async function updateReportRequest(id: string, data: UpdateLostFoundData): Promise<LostFoundReport> {
   const response = await api.patch<{ success: true; data: LostFoundReport }>(`/api/v1/lost-found/${id}`, data)
   return response.data.data

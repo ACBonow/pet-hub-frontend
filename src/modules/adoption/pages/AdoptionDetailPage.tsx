@@ -4,8 +4,8 @@
  * @description Page for viewing a single adoption listing.
  */
 
-import { useEffect } from 'react'
-import { useParams, useLocation, Link } from 'react-router-dom'
+import { useEffect, useState } from 'react'
+import { useParams, useLocation, Link, useNavigate } from 'react-router-dom'
 import PublicLayout from '@/shared/components/layout/PublicLayout'
 import PageWrapper from '@/shared/components/layout/PageWrapper'
 import ContactGate from '@/shared/components/ui/ContactGate'
@@ -47,11 +47,19 @@ const STATUS_UPDATE_SEQUENCE: { status: AdoptionStatus; label: string }[] = [
 
 export default function AdoptionDetailPage() {
   const { id } = useParams<{ id: string }>()
-  const { listing, isLoading, error, getAdoption, updateAdoptionStatus } = useAdoption()
+  const navigate = useNavigate()
+  const { listing, isLoading, error, getAdoption, updateAdoptionStatus, deleteAdoption } = useAdoption()
   const { isAuthenticated, user } = useAuthStore()
   const location = useLocation()
+  const [confirmDelete, setConfirmDelete] = useState(false)
 
   const isCreator = !!(user?.personId && listing?.personId && user.personId === listing.personId)
+
+  const handleDelete = async () => {
+    if (!listing) return
+    await deleteAdoption(listing.id)
+    navigate(ROUTES.ADOPTION.LIST)
+  }
 
   useEffect(() => {
     if (id) getAdoption(id)
@@ -147,12 +155,38 @@ export default function AdoptionDetailPage() {
               <div className="bg-white rounded-[--radius-lg] border border-gray-200 p-4">
                 <div className="flex items-center justify-between mb-3">
                   <p className="text-sm font-semibold text-gray-700">Atualizar status</p>
-                  <Link
-                    to={ROUTES.ADOPTION.EDIT(listing.id)}
-                    className="text-sm text-[--color-primary] hover:underline"
-                  >
-                    Editar
-                  </Link>
+                  <div className="flex gap-3 items-center">
+                    <Link
+                      to={ROUTES.ADOPTION.EDIT(listing.id)}
+                      className="text-sm text-[--color-primary] hover:underline"
+                    >
+                      Editar
+                    </Link>
+                    {!confirmDelete ? (
+                      <button
+                        onClick={() => setConfirmDelete(true)}
+                        className="text-sm text-[--color-danger] hover:underline"
+                      >
+                        Excluir
+                      </button>
+                    ) : (
+                      <div className="flex gap-2 items-center">
+                        <button
+                          onClick={handleDelete}
+                          disabled={isLoading}
+                          className="text-sm font-medium text-white bg-[--color-danger] px-2 py-0.5 rounded disabled:opacity-50"
+                        >
+                          Confirmar exclusão
+                        </button>
+                        <button
+                          onClick={() => setConfirmDelete(false)}
+                          className="text-sm text-gray-500 hover:underline"
+                        >
+                          Cancelar
+                        </button>
+                      </div>
+                    )}
+                  </div>
                 </div>
                 <div className="flex flex-wrap gap-2">
                   {STATUS_UPDATE_SEQUENCE.map(({ status, label }) => (

@@ -10,6 +10,7 @@ import {
   getAdoptionRequest,
   createAdoptionRequest,
   updateAdoptionRequest,
+  deleteAdoptionRequest,
   updateAdoptionStatusRequest,
 } from '@/modules/adoption/services/adoption.service'
 import type { AdoptionListing, AdoptionFilters, AdoptionStatus, CreateAdoptionData, UpdateAdoptionData } from '@/modules/adoption/types'
@@ -26,6 +27,7 @@ interface UseAdoptionResult {
   getAdoption: (id: string) => Promise<void>
   createAdoption: (data: CreateAdoptionData) => Promise<void>
   updateAdoption: (id: string, data: UpdateAdoptionData) => Promise<void>
+  deleteAdoption: (id: string) => Promise<void>
   updateAdoptionStatus: (id: string, status: AdoptionStatus) => Promise<void>
 }
 
@@ -117,6 +119,21 @@ export function useAdoption(): UseAdoptionResult {
     }
   }
 
+  async function deleteAdoption(id: string): Promise<void> {
+    setIsLoading(true)
+    setError(null)
+    try {
+      await deleteAdoptionRequest(id)
+      setListing(null)
+    } catch (err) {
+      const apiError = err as ApiError
+      setError(apiError.message ?? 'Erro ao excluir anúncio.')
+      throw err
+    } finally {
+      setIsLoading(false)
+    }
+  }
+
   async function updateAdoptionStatus(id: string, status: AdoptionStatus): Promise<void> {
     setIsLoading(true)
     setError(null)
@@ -132,5 +149,5 @@ export function useAdoption(): UseAdoptionResult {
     }
   }
 
-  return { listing, listings, isLoading, error, currentPage, totalPages, listAdoptions, getAdoption, createAdoption, updateAdoption, updateAdoptionStatus }
+  return { listing, listings, isLoading, error, currentPage, totalPages, listAdoptions, getAdoption, createAdoption, updateAdoption, deleteAdoption, updateAdoptionStatus }
 }

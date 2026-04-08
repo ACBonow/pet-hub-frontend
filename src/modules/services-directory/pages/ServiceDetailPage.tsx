@@ -5,8 +5,8 @@
  * Contact info requires authentication via ContactGate.
  */
 
-import { useEffect, useRef } from 'react'
-import { useParams, Link } from 'react-router-dom'
+import { useEffect, useRef, useState } from 'react'
+import { useParams, Link, useNavigate } from 'react-router-dom'
 import PublicLayout from '@/shared/components/layout/PublicLayout'
 import PageWrapper from '@/shared/components/layout/PageWrapper'
 import ContactGate from '@/shared/components/ui/ContactGate'
@@ -16,11 +16,19 @@ import { ROUTES } from '@/routes/routes.config'
 
 export default function ServiceDetailPage() {
   const { id } = useParams<{ id: string }>()
-  const { service, isLoading, error, getService, uploadServicePhoto } = useServicesDirectory()
+  const navigate = useNavigate()
+  const { service, isLoading, error, getService, uploadServicePhoto, deleteService } = useServicesDirectory()
   const { user } = useAuth()
   const fileInputRef = useRef<HTMLInputElement>(null)
+  const [confirmDelete, setConfirmDelete] = useState(false)
 
   const isOwner = !!user && !!service && user.id === service.createdByUserId
+
+  const handleDelete = async () => {
+    if (!service) return
+    await deleteService(service.id)
+    navigate(ROUTES.SERVICES.LIST)
+  }
 
   const handlePhotoChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
@@ -87,7 +95,7 @@ export default function ServiceDetailPage() {
                   onChange={handlePhotoChange}
                   aria-label="Alterar foto do serviço"
                 />
-                <div className="flex gap-4 items-center">
+                <div className="flex gap-4 items-center flex-wrap">
                   <button
                     onClick={() => fileInputRef.current?.click()}
                     className="text-sm text-[--color-primary] underline self-start"
@@ -100,6 +108,30 @@ export default function ServiceDetailPage() {
                   >
                     Editar
                   </Link>
+                  {!confirmDelete ? (
+                    <button
+                      onClick={() => setConfirmDelete(true)}
+                      className="text-sm text-[--color-danger] underline self-start"
+                    >
+                      Excluir
+                    </button>
+                  ) : (
+                    <div className="flex gap-2 items-center">
+                      <button
+                        onClick={handleDelete}
+                        disabled={isLoading}
+                        className="text-sm font-medium text-white bg-[--color-danger] px-2 py-0.5 rounded disabled:opacity-50"
+                      >
+                        Confirmar exclusão
+                      </button>
+                      <button
+                        onClick={() => setConfirmDelete(false)}
+                        className="text-sm text-gray-500 hover:underline"
+                      >
+                        Cancelar
+                      </button>
+                    </div>
+                  )}
                 </div>
               </>
             )}
