@@ -68,6 +68,7 @@ function makeUsePetReturn(overrides = {}) {
     uploadPhoto: jest.fn(),
     addCoTutor: jest.fn(),
     removeCoTutor: jest.fn(),
+    deletePet: jest.fn(),
     ...overrides,
   }
 }
