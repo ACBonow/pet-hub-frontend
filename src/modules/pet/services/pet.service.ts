@@ -68,3 +68,7 @@ export async function addCoTutorRequest(petId: string, cpf: string): Promise<CoT
 export async function removeCoTutorRequest(petId: string, coTutorId: string): Promise<void> {
   await api.delete(`/api/v1/pets/${petId}/co-tutors/${coTutorId}`)
 }
+
+export async function deletePetRequest(id: string): Promise<void> {
+  await api.delete(`/api/v1/pets/${id}`)
+}

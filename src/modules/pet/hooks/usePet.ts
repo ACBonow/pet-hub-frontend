@@ -15,6 +15,7 @@ import {
   uploadPetPhotoRequest,
   addCoTutorRequest,
   removeCoTutorRequest,
+  deletePetRequest,
 } from '@/modules/pet/services/pet.service'
 import type { Pet, CoTutor, CreatePetData, UpdatePetData, TransferTutorshipData, TutorshipHistoryEntry } from '@/modules/pet/types'
 import type { ApiError } from '@/shared/types'
@@ -29,6 +30,7 @@ interface UsePetResult {
   listPets: () => Promise<void>
   createPet: (data: CreatePetData) => Promise<Pet>
   updatePet: (id: string, data: UpdatePetData) => Promise<void>
+  deletePet: (id: string) => Promise<void>
   transferTutorship: (petId: string, data: TransferTutorshipData) => Promise<void>
   getTutorshipHistory: (petId: string) => Promise<void>
   uploadPhoto: (petId: string, file: File) => Promise<Pet>
@@ -204,5 +206,20 @@ export function usePet(): UsePetResult {
     }
   }
 
-  return { pet, pets, tutorshipHistory, isLoading, error, getPet, listPets, createPet, updatePet, transferTutorship, getTutorshipHistory, uploadPhoto, addCoTutor, removeCoTutor }
+  async function deletePet(id: string): Promise<void> {
+    setIsLoading(true)
+    setError(null)
+    try {
+      await deletePetRequest(id)
+      setPet(null)
+    } catch (err) {
+      const apiError = err as ApiError
+      setError(apiError.message ?? 'Erro ao excluir pet.')
+      throw err
+    } finally {
+      setIsLoading(false)
+    }
+  }
+
+  return { pet, pets, tutorshipHistory, isLoading, error, getPet, listPets, createPet, updatePet, deletePet, transferTutorship, getTutorshipHistory, uploadPhoto, addCoTutor, removeCoTutor }
 }

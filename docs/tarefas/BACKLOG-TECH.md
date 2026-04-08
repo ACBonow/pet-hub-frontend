@@ -26,17 +26,17 @@ Não são features de produto — são melhorias de engenharia.
 | ID           | TECH-FE-001 |
 | Categoria    | Segurança |
 | Prioridade   | **Crítica** |
-| Status       | Pendente |
+| Status       | Concluída |
 
 **Problema**  
-O refresh token retornado pelo login não está sendo persistido. Após reload da página, o usuário perde a sessão e precisa fazer login novamente.
+O refresh token retornado pelo login não estava sendo persistido. Após reload da página, o usuário perdia a sessão.
 
-**Fix**
-1. Salvar `refreshToken` em `localStorage` com chave `pethub:refresh_token`
-2. Em `main.tsx` (ou `App.tsx`), ao inicializar, verificar `localStorage` por refresh token
-3. Se encontrar, chamar `authService.refresh(refreshToken)` para obter novo access token
-4. Popular o Zustand store com o resultado antes de renderizar rotas protegidas
-5. Se refresh falhar (token expirado), limpar storage e exibir tela de login normalmente
+**Fix implementado**  
+`App.tsx` lê `pethub:refresh_token` do localStorage ao montar, chama `refreshTokenRequest` para restaurar a sessão e popula o Zustand store antes de renderizar rotas protegidas. Falha silenciosa redireciona ao login.
+
+**Arquivos**
+- `src/modules/auth/store/authSlice.ts`
+- `src/App.tsx`
 
 **Arquivos**
 - `src/modules/auth/store/authSlice.ts`
@@ -81,19 +81,16 @@ Quando o access token expira, todas as requisições retornam `401` e o usuário
 | ID           | TECH-FE-003 |
 | Categoria    | Performance |
 | Prioridade   | Alta |
-| Status       | Pendente |
+| Status       | Concluída |
 
 **Problema**  
-Quando um componente é desmontado enquanto uma requisição está em andamento (ex: usuário navega para outra página), a resposta tenta atualizar estado de componente desmontado, gerando warnings e potencial memory leak.
+Componentes desmontados enquanto requisições estavam em andamento causavam warnings de atualização de estado e potencial memory leak.
 
-**Fix**
-1. Nos hooks de dados, criar `AbortController` dentro do `useEffect`
-2. Passar `signal` para as chamadas axios: `api.get('/...', { signal: controller.signal })`
-3. Cancelar no cleanup: `return () => controller.abort()`
-4. Tratar `CanceledError` como caso silencioso (não exibir erro)
+**Fix implementado**  
+Todos os hooks de dados usam `useRef<AbortController>` + limpeza no `useEffect`. O `api.client` detecta `axios.isCancel` e lança `REQUEST_CANCELED`, que é silenciado nos hooks. Mutações (POST/PUT/DELETE) intencionalmente não recebem `signal` — devem completar.
 
 **Arquivos**  
-Todos os hooks de dados em `src/modules/*/hooks/` — `useAdoptions`, `usePets`, `useOrganizations`, `useLostFound`, `useServices`, etc.
+`src/shared/services/api.client.ts` + todos os hooks em `src/modules/*/hooks/`.
 
 ---
 

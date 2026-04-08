@@ -5,12 +5,13 @@
  */
 
 import { useEffect, useRef, useState } from 'react'
-import { useParams, Link } from 'react-router-dom'
+import { useNavigate, useParams, Link } from 'react-router-dom'
 import AppShell from '@/shared/components/layout/AppShell'
 import Header from '@/shared/components/layout/Header'
 import PageWrapper from '@/shared/components/layout/PageWrapper'
 import { ROUTES } from '@/routes/routes.config'
 import { usePet } from '@/modules/pet/hooks/usePet'
+import { useAuthStore } from '@/modules/auth/store/authSlice'
 import TutorshipInfo from '@/modules/pet/components/TutorshipInfo'
 import TutorshipTransfer from '@/modules/pet/components/TutorshipTransfer'
 import CoTutorsList from '@/modules/pet/components/CoTutorsList'
@@ -38,10 +39,15 @@ interface AddCoTutorForm {
 
 export default function PetDetailPage() {
   const { id } = useParams<{ id: string }>()
-  const { pet, tutorshipHistory, isLoading, error, getPet, getTutorshipHistory, transferTutorship, uploadPhoto, addCoTutor, removeCoTutor } = usePet()
+  const navigate = useNavigate()
+  const { pet, tutorshipHistory, isLoading, error, getPet, getTutorshipHistory, transferTutorship, uploadPhoto, addCoTutor, removeCoTutor, deletePet } = usePet()
+  const { user } = useAuthStore()
   const photoInputRef = useRef<HTMLInputElement>(null)
   const [showAddCoTutor, setShowAddCoTutor] = useState(false)
+  const [confirmDelete, setConfirmDelete] = useState(false)
   const { control, handleSubmit, reset, formState: { errors } } = useForm<AddCoTutorForm>()
+
+  const isTutor = !!user?.personId && !!pet && user.personId === pet.primaryTutorId
 
   useEffect(() => {
     if (id) {
@@ -71,6 +77,12 @@ export default function PetDetailPage() {
   const handleRemoveCoTutor = async (coTutorId: string) => {
     if (!id) return
     await removeCoTutor(id, coTutorId)
+  }
+
+  const handleDelete = async () => {
+    if (!id) return
+    await deletePet(id)
+    navigate(ROUTES.PET.LIST)
   }
 
   return (
@@ -133,18 +145,48 @@ export default function PetDetailPage() {
                 </div>
               </div>
               <div className="flex flex-col items-end gap-2 shrink-0">
-                <Link
-                  to={ROUTES.PET.EDIT(pet.id)}
-                  className="text-sm font-medium text-[--color-primary] hover:underline"
-                >
-                  Editar
-                </Link>
+                {isTutor && (
+                  <Link
+                    to={ROUTES.PET.EDIT(pet.id)}
+                    className="text-sm font-medium text-[--color-primary] hover:underline"
+                  >
+                    Editar
+                  </Link>
+                )}
                 <Link
                   to={ROUTES.PET.HEALTH(pet.id)}
                   className="text-sm font-medium text-[--color-primary] hover:underline"
                 >
                   Saúde
                 </Link>
+                {isTutor && !confirmDelete && (
+                  <button
+                    type="button"
+                    onClick={() => setConfirmDelete(true)}
+                    className="text-sm font-medium text-[--color-danger] hover:underline"
+                  >
+                    Excluir
+                  </button>
+                )}
+                {isTutor && confirmDelete && (
+                  <div className="flex flex-col items-end gap-1">
+                    <button
+                      type="button"
+                      onClick={handleDelete}
+                      disabled={isLoading}
+                      className="text-sm font-medium text-white bg-[--color-danger] px-2 py-1 rounded-[--radius-sm] disabled:opacity-50"
+                    >
+                      Confirmar exclusão
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setConfirmDelete(false)}
+                      className="text-sm text-gray-500 hover:underline"
+                    >
+                      Cancelar
+                    </button>
+                  </div>
+                )}
               </div>
             </div>
 
