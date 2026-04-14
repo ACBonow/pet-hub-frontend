@@ -11,7 +11,7 @@ import { PRIMARY_AUTH_FILE, PRIMARY_USER, SECONDARY_USER } from './fixtures'
 import { loginUser, createOrganization } from './helpers/api'
 
 // Valid CNPJ for tests: 12.345.678/0001-95
-const TEST_CNPJ = '12345678000195'
+const _TEST_CNPJ = '12345678000195'
 const TEST_CNPJ_FORMATTED = '12.345.678/0001-95'
 
 test.use({ storageState: PRIMARY_AUTH_FILE })
