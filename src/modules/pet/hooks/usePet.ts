@@ -45,18 +45,22 @@ export function usePet(): UsePetResult {
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
-  const abortControllerRef = useRef<AbortController | null>(null)
+  const getPetAbortRef = useRef<AbortController | null>(null)
+  const listPetsAbortRef = useRef<AbortController | null>(null)
+  const historyAbortRef = useRef<AbortController | null>(null)
 
   useEffect(() => {
     return () => {
-      abortControllerRef.current?.abort()
+      getPetAbortRef.current?.abort()
+      listPetsAbortRef.current?.abort()
+      historyAbortRef.current?.abort()
     }
   }, [])
 
   async function getPet(id: string): Promise<void> {
-    abortControllerRef.current?.abort()
+    getPetAbortRef.current?.abort()
     const controller = new AbortController()
-    abortControllerRef.current = controller
+    getPetAbortRef.current = controller
 
     setIsLoading(true)
     setError(null)
@@ -74,9 +78,9 @@ export function usePet(): UsePetResult {
   }
 
   async function listPets(): Promise<void> {
-    abortControllerRef.current?.abort()
+    listPetsAbortRef.current?.abort()
     const controller = new AbortController()
-    abortControllerRef.current = controller
+    listPetsAbortRef.current = controller
 
     setIsLoading(true)
     setError(null)
@@ -140,9 +144,9 @@ export function usePet(): UsePetResult {
   }
 
   async function getTutorshipHistory(petId: string): Promise<void> {
-    abortControllerRef.current?.abort()
+    historyAbortRef.current?.abort()
     const controller = new AbortController()
-    abortControllerRef.current = controller
+    historyAbortRef.current = controller
 
     setIsLoading(true)
     setError(null)

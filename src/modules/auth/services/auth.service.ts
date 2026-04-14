@@ -19,7 +19,7 @@ type BackendAuthData = {
   accessToken: string
   refreshToken: string
   user: { id: string; email: string }
-  person: { id: string; name: string; cpf: string } | null
+  person: { id: string; name: string } | null
 }
 
 function mapBackendAuth(data: BackendAuthData): AuthResponse {
