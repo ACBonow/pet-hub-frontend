@@ -15,6 +15,8 @@ const mockService = petHealthService as jest.Mocked<typeof petHealthService>
 const VACCINATION_FIXTURE = {
   id: 'vac-1',
   petId: 'pet-1',
+  templateId: null,
+  doseNumber: null,
   vaccineName: 'Antirrábica',
   manufacturer: null,
   batchNumber: null,

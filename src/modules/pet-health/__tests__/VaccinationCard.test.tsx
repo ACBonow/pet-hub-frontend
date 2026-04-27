@@ -19,6 +19,8 @@ const mockVaccinations = [
   {
     id: 'vac-1',
     petId: 'pet-1',
+    templateId: null,
+    doseNumber: null,
     vaccineName: 'Antirrábica',
     manufacturer: null,
     batchNumber: null,
@@ -33,6 +35,8 @@ const mockVaccinations = [
   {
     id: 'vac-2',
     petId: 'pet-1',
+    templateId: null,
+    doseNumber: null,
     vaccineName: 'V10',
     manufacturer: null,
     batchNumber: null,
@@ -47,6 +51,8 @@ const mockVaccinations = [
   {
     id: 'vac-3',
     petId: 'pet-1',
+    templateId: null,
+    doseNumber: null,
     vaccineName: 'Giárdia',
     manufacturer: null,
     batchNumber: null,
