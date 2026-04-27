@@ -69,8 +69,7 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
           className="flex items-center gap-2.5 px-2 pb-4 mb-1 border-b border-line shrink-0"
           aria-label="Tchê PetHub — página inicial"
         >
-          <img src="/logo.png" alt="" className="h-8 w-auto" aria-hidden="true" />
-          <LogoMark size={18} />
+          <LogoMark size={20} />
         </Link>
 
         {/* Explorar */}
