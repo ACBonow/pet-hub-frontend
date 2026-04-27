@@ -1,17 +1,20 @@
 /**
  * @module pet-health
  * @file VaccinationForm.tsx
- * @description Form for registering a new vaccination.
+ * @description Form for registering a new vaccination with optional catalog selector.
  */
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useForm } from 'react-hook-form'
 import Button from '@/shared/components/ui/Button'
-import type { CreateVaccinationData } from '@/modules/pet-health/types'
+import VaccineCatalogSelector from './VaccineCatalogSelector'
+import type { CreateVaccinationData, VaccineTemplate } from '@/modules/pet-health/types'
 
 interface VaccinationFormProps {
   onSubmit: (data: CreateVaccinationData) => Promise<void>
   isLoading?: boolean
+  catalogTemplates?: VaccineTemplate[]
+  catalogLoading?: boolean
 }
 
 interface VaccinationFormValues {
@@ -21,21 +24,37 @@ interface VaccinationFormValues {
   notes: string
 }
 
-export default function VaccinationForm({ onSubmit, isLoading }: VaccinationFormProps) {
+export default function VaccinationForm({
+  onSubmit,
+  isLoading,
+  catalogTemplates = [],
+  catalogLoading,
+}: VaccinationFormProps) {
   const [apiError, setApiError] = useState<string | null>(null)
+  const [selectedTemplateId, setSelectedTemplateId] = useState('')
 
   const {
     register,
     handleSubmit,
+    setValue,
     formState: { errors },
   } = useForm<VaccinationFormValues>({
     defaultValues: { vaccineName: '', applicationDate: '', nextDueDate: '', notes: '' },
   })
 
+  useEffect(() => {
+    if (!selectedTemplateId) return
+    const tmpl = catalogTemplates.find((t) => t.id === selectedTemplateId)
+    if (tmpl) {
+      setValue('vaccineName', tmpl.name)
+    }
+  }, [selectedTemplateId, catalogTemplates, setValue])
+
   const handleFormSubmit = async (data: VaccinationFormValues) => {
     setApiError(null)
     try {
       await onSubmit({
+        templateId: selectedTemplateId || undefined,
         vaccineName: data.vaccineName,
         applicationDate: data.applicationDate,
         nextDueDate: data.nextDueDate || null,
@@ -50,6 +69,13 @@ export default function VaccinationForm({ onSubmit, isLoading }: VaccinationForm
   return (
     <form onSubmit={handleSubmit(handleFormSubmit)} noValidate>
       <div className="flex flex-col gap-4">
+        <VaccineCatalogSelector
+          templates={catalogTemplates}
+          value={selectedTemplateId}
+          onChange={setSelectedTemplateId}
+          isLoading={catalogLoading}
+        />
+
         <div className="flex flex-col gap-1">
           <label htmlFor="vac-name" className="text-sm font-medium text-gray-700">
             Nome da vacina
@@ -83,7 +109,7 @@ export default function VaccinationForm({ onSubmit, isLoading }: VaccinationForm
 
         <div className="flex flex-col gap-1">
           <label htmlFor="nextDueDate" className="text-sm font-medium text-gray-700">
-            Próxima dose (opcional)
+            Próxima dose (opcional — calculada automaticamente se usar catálogo)
           </label>
           <input
             id="nextDueDate"

@@ -12,13 +12,27 @@ import {
   uploadExamFileRequest,
   deleteExamFileRequest,
   deleteVaccinationRequest,
+  getVaccineStatusRequest,
+  listPreventivesRequest,
+  createPreventiveRequest,
+  deletePreventiveRequest,
 } from '@/modules/pet-health/services/petHealth.service'
-import type { Vaccination, CreateVaccinationData, ExamFile, UploadExamData } from '@/modules/pet-health/types'
+import type {
+  CreatePreventiveData,
+  CreateVaccinationData,
+  ExamFile,
+  PreventiveRecord,
+  UploadExamData,
+  Vaccination,
+  VaccineStatusEntry,
+} from '@/modules/pet-health/types'
 import type { ApiError } from '@/shared/types'
 
 interface UsePetHealthResult {
   vaccinations: Vaccination[]
   examFiles: ExamFile[]
+  vaccineStatus: VaccineStatusEntry[]
+  preventives: PreventiveRecord[]
   isLoading: boolean
   error: string | null
   listVaccinations: (petId: string) => Promise<void>
@@ -27,11 +41,17 @@ interface UsePetHealthResult {
   listExamFiles: (petId: string) => Promise<void>
   uploadExamFile: (petId: string, data: UploadExamData) => Promise<void>
   deleteExamFile: (petId: string, examId: string) => Promise<void>
+  loadVaccineStatus: (petId: string) => Promise<void>
+  listPreventives: (petId: string) => Promise<void>
+  addPreventive: (petId: string, data: CreatePreventiveData) => Promise<void>
+  deletePreventive: (petId: string, preventiveId: string) => Promise<void>
 }
 
 export function usePetHealth(): UsePetHealthResult {
   const [vaccinations, setVaccinations] = useState<Vaccination[]>([])
   const [examFiles, setExamFiles] = useState<ExamFile[]>([])
+  const [vaccineStatus, setVaccineStatus] = useState<VaccineStatusEntry[]>([])
+  const [preventives, setPreventives] = useState<PreventiveRecord[]>([])
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
@@ -143,5 +163,87 @@ export function usePetHealth(): UsePetHealthResult {
     }
   }
 
-  return { vaccinations, examFiles, isLoading, error, listVaccinations, createVaccination, deleteVaccination, listExamFiles, uploadExamFile, deleteExamFile }
+  async function loadVaccineStatus(petId: string): Promise<void> {
+    abortControllerRef.current?.abort()
+    const controller = new AbortController()
+    abortControllerRef.current = controller
+
+    setIsLoading(true)
+    setError(null)
+    try {
+      const data = await getVaccineStatusRequest(petId, controller.signal)
+      setVaccineStatus(data)
+    } catch (err) {
+      if ((err as ApiError).code === 'REQUEST_CANCELED') return
+      const apiError = err as ApiError
+      setError(apiError.message ?? 'Erro ao carregar status vacinal.')
+      throw err
+    } finally {
+      setIsLoading(false)
+    }
+  }
+
+  async function listPreventives(petId: string): Promise<void> {
+    setIsLoading(true)
+    setError(null)
+    try {
+      const data = await listPreventivesRequest(petId)
+      setPreventives(data)
+    } catch (err) {
+      const apiError = err as ApiError
+      setError(apiError.message ?? 'Erro ao carregar preventivos.')
+      throw err
+    } finally {
+      setIsLoading(false)
+    }
+  }
+
+  async function addPreventive(petId: string, data: CreatePreventiveData): Promise<void> {
+    setIsLoading(true)
+    setError(null)
+    try {
+      const created = await createPreventiveRequest(petId, data)
+      setPreventives((prev) => [created, ...prev])
+    } catch (err) {
+      const apiError = err as ApiError
+      setError(apiError.message ?? 'Erro ao registrar preventivo.')
+      throw err
+    } finally {
+      setIsLoading(false)
+    }
+  }
+
+  async function deletePreventive(petId: string, preventiveId: string): Promise<void> {
+    setIsLoading(true)
+    setError(null)
+    try {
+      await deletePreventiveRequest(petId, preventiveId)
+      setPreventives((prev) => prev.filter((p) => p.id !== preventiveId))
+    } catch (err) {
+      const apiError = err as ApiError
+      setError(apiError.message ?? 'Erro ao remover preventivo.')
+      throw err
+    } finally {
+      setIsLoading(false)
+    }
+  }
+
+  return {
+    vaccinations,
+    examFiles,
+    vaccineStatus,
+    preventives,
+    isLoading,
+    error,
+    listVaccinations,
+    createVaccination,
+    deleteVaccination,
+    listExamFiles,
+    uploadExamFile,
+    deleteExamFile,
+    loadVaccineStatus,
+    listPreventives,
+    addPreventive,
+    deletePreventive,
+  }
 }
