@@ -47,19 +47,19 @@ describe('Button', () => {
   it('should apply primary variant classes by default', () => {
     render(<Button>Primário</Button>)
     const button = screen.getByRole('button')
-    expect(button.className).toContain('primary')
+    expect(button.className).toContain('bg-green text-white')
   })
 
   it('should apply secondary variant classes', () => {
     render(<Button variant="secondary">Secundário</Button>)
     const button = screen.getByRole('button')
-    expect(button.className).toContain('secondary')
+    expect(button.className).toContain('border-green text-green')
   })
 
   it('should apply danger variant classes', () => {
     render(<Button variant="danger">Excluir</Button>)
     const button = screen.getByRole('button')
-    expect(button.className).toContain('danger')
+    expect(button.className).toContain('bg-red')
   })
 
   it('should merge additional className', () => {

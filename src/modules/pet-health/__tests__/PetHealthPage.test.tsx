@@ -28,6 +28,12 @@ jest.mock('react-router-dom', () => ({
   useParams: () => ({ id: 'pet-1' }),
 }))
 
+// ─── Service mock ─────────────────────────────────────────────────────────────
+
+jest.mock('@/modules/pet-health/services/petHealth.service', () => ({
+  listVaccineCatalogRequest: jest.fn().mockResolvedValue([]),
+}))
+
 // ─── Child component mocks ────────────────────────────────────────────────────
 
 jest.mock('@/modules/pet-health/components/VaccinationCard', () => ({
@@ -87,6 +93,54 @@ jest.mock('@/modules/pet-health/components/ExamFileList', () => ({
   ),
 }))
 
+jest.mock('@/modules/pet-health/components/VaccineStatusPanel', () => ({
+  default: ({ entries }: { entries: unknown[] }) => (
+    <div>
+      <p>VaccineStatusPanel</p>
+      <span data-testid="status-count">{entries.length}</span>
+    </div>
+  ),
+}))
+
+jest.mock('@/modules/pet-health/components/PreventiveList', () => ({
+  default: ({
+    records,
+    onDelete,
+  }: {
+    records: unknown[]
+    onDelete?: (id: string) => Promise<void>
+  }) => (
+    <div>
+      <p>PreventiveList</p>
+      <span data-testid="preventive-count">{records.length}</span>
+      {onDelete && (
+        <button type="button" onClick={() => onDelete('prev-1')}>
+          trigger-delete-preventive
+        </button>
+      )}
+    </div>
+  ),
+}))
+
+jest.mock('@/modules/pet-health/components/PreventiveForm', () => ({
+  default: ({
+    onSubmit,
+  }: {
+    onSubmit: (data: unknown) => Promise<void>
+    isLoading?: boolean
+  }) => (
+    <div>
+      <p>PreventiveForm</p>
+      <button
+        type="button"
+        onClick={() => onSubmit({ productName: 'Frontline', appliedAt: '2026-01-01' })}
+      >
+        submit-preventive
+      </button>
+    </div>
+  ),
+}))
+
 // ─── Hook mock ────────────────────────────────────────────────────────────────
 
 const mockListVaccinations = jest.fn()
@@ -95,10 +149,16 @@ const mockDeleteVaccination = jest.fn()
 const mockListExamFiles = jest.fn()
 const mockUploadExamFile = jest.fn()
 const mockDeleteExamFile = jest.fn()
+const mockLoadVaccineStatus = jest.fn()
+const mockListPreventives = jest.fn()
+const mockAddPreventive = jest.fn()
+const mockDeletePreventive = jest.fn()
 
 const hookState = {
   vaccinations: [] as unknown[],
   examFiles: [] as unknown[],
+  vaccineStatus: [] as unknown[],
+  preventives: [] as unknown[],
   isLoading: false,
   error: null as string | null,
 }
@@ -107,6 +167,8 @@ jest.mock('@/modules/pet-health/hooks/usePetHealth', () => ({
   usePetHealth: () => ({
     vaccinations: hookState.vaccinations,
     examFiles: hookState.examFiles,
+    vaccineStatus: hookState.vaccineStatus,
+    preventives: hookState.preventives,
     isLoading: hookState.isLoading,
     error: hookState.error,
     listVaccinations: mockListVaccinations,
@@ -115,6 +177,10 @@ jest.mock('@/modules/pet-health/hooks/usePetHealth', () => ({
     listExamFiles: mockListExamFiles,
     uploadExamFile: mockUploadExamFile,
     deleteExamFile: mockDeleteExamFile,
+    loadVaccineStatus: mockLoadVaccineStatus,
+    listPreventives: mockListPreventives,
+    addPreventive: mockAddPreventive,
+    deletePreventive: mockDeletePreventive,
   }),
 }))
 
@@ -134,13 +200,19 @@ describe('PetHealthPage', () => {
     jest.clearAllMocks()
     hookState.vaccinations = []
     hookState.examFiles = []
+    hookState.vaccineStatus = []
+    hookState.preventives = []
     hookState.isLoading = false
     hookState.error = null
     mockListVaccinations.mockResolvedValue(undefined)
     mockListExamFiles.mockResolvedValue(undefined)
+    mockLoadVaccineStatus.mockResolvedValue(undefined)
+    mockListPreventives.mockResolvedValue(undefined)
     mockCreateVaccination.mockResolvedValue(undefined)
     mockDeleteVaccination.mockResolvedValue(undefined)
     mockDeleteExamFile.mockResolvedValue(undefined)
+    mockAddPreventive.mockResolvedValue(undefined)
+    mockDeletePreventive.mockResolvedValue(undefined)
   })
 
   it('should render the page title', () => {
@@ -154,6 +226,12 @@ describe('PetHealthPage', () => {
     expect(mockListExamFiles).toHaveBeenCalledWith('pet-1')
   })
 
+  it('should load vaccine status and preventives on mount', () => {
+    renderPage()
+    expect(mockLoadVaccineStatus).toHaveBeenCalledWith('pet-1')
+    expect(mockListPreventives).toHaveBeenCalledWith('pet-1')
+  })
+
   it('should show VaccinationCard in vaccinations tab by default', () => {
     renderPage()
     expect(screen.getByText('VaccinationCard')).toBeInTheDocument()
@@ -164,6 +242,20 @@ describe('PetHealthPage', () => {
     renderPage()
     await userEvent.click(screen.getByRole('button', { name: /exames/i }))
     expect(screen.getByText('ExamFileList')).toBeInTheDocument()
+    expect(screen.queryByText('VaccinationCard')).not.toBeInTheDocument()
+  })
+
+  it('should show VaccineStatusPanel in Status Vacinal tab', async () => {
+    renderPage()
+    await userEvent.click(screen.getByRole('button', { name: /status vacinal/i }))
+    expect(screen.getByText('VaccineStatusPanel')).toBeInTheDocument()
+    expect(screen.queryByText('VaccinationCard')).not.toBeInTheDocument()
+  })
+
+  it('should show PreventiveList in Preventivos tab', async () => {
+    renderPage()
+    await userEvent.click(screen.getByRole('button', { name: /preventivos/i }))
+    expect(screen.getByText('PreventiveList')).toBeInTheDocument()
     expect(screen.queryByText('VaccinationCard')).not.toBeInTheDocument()
   })
 
@@ -213,5 +305,38 @@ describe('PetHealthPage', () => {
     await userEvent.click(screen.getByRole('button', { name: /exames/i }))
     await userEvent.click(screen.getByRole('button', { name: /trigger-delete-exam/i }))
     expect(mockDeleteExamFile).toHaveBeenCalledWith('pet-1', 'exam-1')
+  })
+
+  it('should show "+ Registrar preventivo" in Preventivos tab', async () => {
+    renderPage()
+    await userEvent.click(screen.getByRole('button', { name: /preventivos/i }))
+    expect(screen.getByRole('button', { name: /registrar preventivo/i })).toBeInTheDocument()
+  })
+
+  it('should toggle PreventiveForm when "+ Registrar preventivo" is clicked', async () => {
+    renderPage()
+    await userEvent.click(screen.getByRole('button', { name: /preventivos/i }))
+    expect(screen.queryByText('PreventiveForm')).not.toBeInTheDocument()
+    await userEvent.click(screen.getByRole('button', { name: /registrar preventivo/i }))
+    expect(screen.getByText('PreventiveForm')).toBeInTheDocument()
+  })
+
+  it('should call addPreventive and hide form when PreventiveForm submits', async () => {
+    renderPage()
+    await userEvent.click(screen.getByRole('button', { name: /preventivos/i }))
+    await userEvent.click(screen.getByRole('button', { name: /registrar preventivo/i }))
+    await userEvent.click(screen.getByRole('button', { name: /submit-preventive/i }))
+    expect(mockAddPreventive).toHaveBeenCalledWith('pet-1', {
+      productName: 'Frontline',
+      appliedAt: '2026-01-01',
+    })
+    expect(screen.queryByText('PreventiveForm')).not.toBeInTheDocument()
+  })
+
+  it('should call deletePreventive when PreventiveList triggers onDelete', async () => {
+    renderPage()
+    await userEvent.click(screen.getByRole('button', { name: /preventivos/i }))
+    await userEvent.click(screen.getByRole('button', { name: /trigger-delete-preventive/i }))
+    expect(mockDeletePreventive).toHaveBeenCalledWith('pet-1', 'prev-1')
   })
 })
