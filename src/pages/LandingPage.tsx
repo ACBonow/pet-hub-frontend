@@ -1,9 +1,3 @@
-/**
- * @file LandingPage.tsx
- * @description Public landing page with hero section and three horizontal carousels:
- * adoption listings, lost & found reports, and services directory.
- */
-
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import PublicLayout from '@/shared/components/layout/PublicLayout'
@@ -14,6 +8,8 @@ import ServiceCard from '@/modules/services-directory/components/ServiceCard'
 import { listAdoptionsRequest } from '@/modules/adoption/services/adoption.service'
 import { listReportsRequest } from '@/modules/lost-found/services/lostFound.service'
 import { listServicesRequest } from '@/modules/services-directory/services/servicesDirectory.service'
+import Icon from '@/shared/components/ui/Icon'
+import LogoMark from '@/shared/components/ui/LogoMark'
 import type { AdoptionListing } from '@/modules/adoption/types'
 import type { LostFoundReport } from '@/modules/lost-found/types'
 import type { ServiceListing } from '@/modules/services-directory/types'
@@ -21,38 +17,33 @@ import { ROUTES } from '@/routes/routes.config'
 
 const CAROUSEL_LIMIT = 6
 
-interface CarouselSectionProps {
+interface SectionProps {
   title: string
-  emoji: string
   viewAllTo: string
-  accentClass: string
+  accentColor: string
   children: React.ReactNode
   isEmpty: boolean
   emptyMessage: string
 }
 
-function CarouselSection({ title, emoji, viewAllTo, accentClass, children, isEmpty, emptyMessage }: CarouselSectionProps) {
+function Section({ title, viewAllTo, accentColor, children, isEmpty, emptyMessage }: SectionProps) {
   return (
-    <section className="py-6">
-      <div className="flex items-center justify-between px-4 mb-4">
-        <div className="flex items-center gap-2">
-          <span className={`text-2xl w-10 h-10 flex items-center justify-center rounded-xl ${accentClass}`}>
-            {emoji}
-          </span>
-          <h2 className="text-lg font-bold text-gray-900">{title}</h2>
-        </div>
+    <section className="py-7">
+      <div className="flex items-center justify-between px-4 lg:px-8 mb-4">
+        <h2 className="text-lg font-extrabold text-ink">{title}</h2>
         <Link
           to={viewAllTo}
-          className="text-sm font-semibold text-[--color-primary] hover:underline"
+          className="text-sm font-semibold flex items-center gap-1 hover:opacity-80 transition-opacity"
+          style={{ color: accentColor }}
           aria-label={`Ver todos de ${title}`}
         >
-          Ver todos →
+          Ver todos <Icon name="arrow" size={13} color={accentColor} />
         </Link>
       </div>
       {isEmpty ? (
-        <p className="px-4 text-sm text-gray-400 italic">{emptyMessage}</p>
+        <p className="px-4 lg:px-8 text-sm text-muted italic">{emptyMessage}</p>
       ) : (
-        <div className="overflow-x-auto px-4 pb-2 scrollbar-none">
+        <div className="overflow-x-auto px-4 lg:px-8 pb-2">
           {children}
         </div>
       )}
@@ -78,83 +69,96 @@ export default function LandingPage() {
     listServicesRequest({ pageSize: CAROUSEL_LIMIT })
       .then((data) => setServices(data?.data ?? []))
       .catch(() => {})
-  }, [])
+  }, []) // eslint-disable-line react-hooks/exhaustive-deps
 
   return (
     <PublicLayout>
       {/* Hero */}
-      <div className="bg-gradient-to-br from-[--color-primary] to-violet-600 text-white px-6 py-12">
-        <div className="max-w-lg mx-auto text-center">
-          <div className="text-7xl mb-4 drop-shadow-lg">🐾</div>
-          <h1 className="text-3xl font-extrabold mb-3 drop-shadow">Bem-vindo ao PetHUB</h1>
-          <p className="text-base text-white/80 mb-8 leading-relaxed">
-            O lar digital dos seus pets. Adote, encontre e cuide de quem você ama.
+      <div
+        className="relative overflow-hidden px-6 py-14 lg:py-20"
+        style={{ background: 'linear-gradient(135deg, var(--green) 0%, var(--green-dark) 100%)' }}
+      >
+        {/* Pampa grid texture */}
+        <svg className="absolute inset-0 w-full h-full opacity-[0.04]" aria-hidden="true">
+          <defs>
+            <pattern id="pampa" width="20" height="20" patternUnits="userSpaceOnUse">
+              <rect width="20" height="20" fill="transparent"/>
+              <path d="M0 10 H20 M10 0 V20" stroke="#fff" strokeWidth="1"/>
+              <rect x="0" y="0" width="10" height="10" fill="#fff"/>
+              <rect x="10" y="10" width="10" height="10" fill="#fff"/>
+            </pattern>
+          </defs>
+          <rect width="100%" height="100%" fill="url(#pampa)"/>
+        </svg>
+
+        <div className="relative max-w-2xl mx-auto text-center text-white">
+          <div className="flex justify-center mb-4">
+            <LogoMark size={36} className="[&>span]:text-white [&>span:first-child]:text-yellow [&>span:nth-child(2)]:text-white/80 [&>span:last-child]:text-white/80" />
+          </div>
+          <h1 className="font-fraunces font-black text-4xl lg:text-5xl leading-tight tracking-tight mb-4">
+            O lar digital<br />dos seus pets
+          </h1>
+          <p className="text-white/85 text-base lg:text-lg mb-8 leading-relaxed max-w-md mx-auto">
+            Adote, encontre animais perdidos e conecte-se com clínicas, pet shops e ONGs da sua região.
           </p>
           <div className="flex flex-col sm:flex-row gap-3 justify-center">
             <Link
               to={ROUTES.ADOPTION.LIST}
-              className="bg-white text-[var(--color-primary)] font-bold px-6 py-3 rounded-full shadow hover:bg-gray-50 transition-colors text-sm"
+              className="inline-flex items-center justify-center gap-2 px-6 py-3 rounded-xl font-semibold text-sm bg-white text-green-dark hover:opacity-90 transition-opacity"
             >
-              ❤️ Ver pets para adoção
+              <Icon name="heart" size={16} color="var(--red)" /> Ver pets para adoção
             </Link>
             <Link
-              to={isAuthenticated ? ROUTES.DASHBOARD : ROUTES.LOGIN}
-              className="border-2 border-white/60 text-white font-bold px-6 py-3 rounded-full hover:bg-white/10 transition-colors text-sm"
+              to={isAuthenticated ? ROUTES.PET.CREATE : ROUTES.LOGIN}
+              className="inline-flex items-center justify-center gap-2 px-6 py-3 rounded-xl font-semibold text-sm border-2 border-white/50 text-white hover:bg-white/10 transition-colors"
             >
-              Cadastrar meu pet
+              <Icon name="plus" size={16} color="#fff" /> Cadastrar meu pet
             </Link>
           </div>
         </div>
       </div>
 
       {/* Quick links */}
-      <div className="grid grid-cols-3 gap-3 px-4 py-5 max-w-screen-xl mx-auto">
-        <Link
-          to={ROUTES.ADOPTION.LIST}
-          className="flex flex-col items-center gap-2 bg-pink-50 border border-pink-100 rounded-2xl py-4 px-2 hover:bg-pink-100 transition-colors"
-        >
-          <span className="text-3xl">🐶</span>
-          <span className="text-xs font-semibold text-pink-700 text-center">Adoção</span>
-        </Link>
-        <Link
-          to={ROUTES.LOST_FOUND.LIST}
-          className="flex flex-col items-center gap-2 bg-amber-50 border border-amber-100 rounded-2xl py-4 px-2 hover:bg-amber-100 transition-colors"
-        >
-          <span className="text-3xl">🔍</span>
-          <span className="text-xs font-semibold text-amber-700 text-center">Achados e Perdidos</span>
-        </Link>
-        <Link
-          to={ROUTES.SERVICES.LIST}
-          className="flex flex-col items-center gap-2 bg-blue-50 border border-blue-100 rounded-2xl py-4 px-2 hover:bg-blue-100 transition-colors"
-        >
-          <span className="text-3xl">🏥</span>
-          <span className="text-xs font-semibold text-blue-700 text-center">Serviços</span>
-        </Link>
+      <div className="grid grid-cols-3 gap-3 px-4 lg:px-8 py-5 max-w-screen-xl mx-auto">
+        {[
+          { to: ROUTES.ADOPTION.LIST, icon: 'heart' as const, label: 'Adoção', color: 'var(--red)', bg: 'var(--green-light)' },
+          { to: ROUTES.LOST_FOUND.LIST, icon: 'search' as const, label: 'Achados e Perdidos', color: 'var(--yellow-dark)', bg: '#FEF9E7' },
+          { to: ROUTES.SERVICES.LIST, icon: 'stethoscope' as const, label: 'Serviços', color: 'var(--info)', bg: '#EBF5FB' },
+        ].map((item) => (
+          <Link
+            key={item.to}
+            to={item.to}
+            className="flex flex-col items-center gap-2 rounded-2xl py-4 px-2 hover:opacity-90 transition-opacity border border-line"
+            style={{ background: item.bg }}
+          >
+            <div className="w-10 h-10 rounded-xl flex items-center justify-center" style={{ background: `${item.color}18` }}>
+              <Icon name={item.icon} size={20} color={item.color} />
+            </div>
+            <span className="text-xs font-semibold text-center text-body">{item.label}</span>
+          </Link>
+        ))}
       </div>
 
-      <div className="max-w-screen-xl mx-auto divide-y divide-gray-100">
-        {/* Adoption carousel */}
-        <CarouselSection
+      {/* Sections */}
+      <div className="max-w-screen-xl mx-auto divide-y divide-line">
+        <Section
           title="Adoção"
-          emoji="❤️"
           viewAllTo={ROUTES.ADOPTION.LIST}
-          accentClass="bg-pink-100"
+          accentColor="var(--red)"
           isEmpty={adoptions.length === 0}
           emptyMessage="Nenhum pet disponível no momento."
         >
-          <ul className="flex gap-3 w-max [&>li]:w-48 [&>li]:shrink-0">
+          <ul className="flex gap-3 w-max [&>li]:w-52 [&>li]:shrink-0">
             {adoptions.map((listing) => (
               <AdoptionCard key={listing.id} listing={listing} />
             ))}
           </ul>
-        </CarouselSection>
+        </Section>
 
-        {/* Lost & found carousel */}
-        <CarouselSection
+        <Section
           title="Achados e Perdidos"
-          emoji="🔍"
           viewAllTo={ROUTES.LOST_FOUND.LIST}
-          accentClass="bg-amber-100"
+          accentColor="var(--yellow-dark)"
           isEmpty={reports.length === 0}
           emptyMessage="Nenhum relatório aberto no momento."
         >
@@ -163,14 +167,12 @@ export default function LandingPage() {
               <LostFoundCard key={report.id} report={report} />
             ))}
           </ul>
-        </CarouselSection>
+        </Section>
 
-        {/* Services carousel */}
-        <CarouselSection
+        <Section
           title="Serviços"
-          emoji="🏥"
           viewAllTo={ROUTES.SERVICES.LIST}
-          accentClass="bg-blue-100"
+          accentColor="var(--info)"
           isEmpty={services.length === 0}
           emptyMessage="Nenhum serviço cadastrado no momento."
         >
@@ -181,12 +183,12 @@ export default function LandingPage() {
               </li>
             ))}
           </ul>
-        </CarouselSection>
+        </Section>
       </div>
 
       {/* Footer */}
-      <footer className="text-center text-xs text-gray-400 py-6 pb-24 lg:pb-6">
-        PetHUB — Cuidar de quem você ama 🐾
+      <footer className="text-center text-xs text-muted py-6">
+        Tchê PetHub — Cuidar de quem você ama 🐾
       </footer>
     </PublicLayout>
   )

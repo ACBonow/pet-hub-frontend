@@ -1,9 +1,3 @@
-/**
- * @module shared
- * @file Button.tsx
- * @description Shared button component with variants, loading and disabled states.
- */
-
 import Spinner from './Spinner'
 
 type ButtonVariant = 'primary' | 'secondary' | 'danger' | 'ghost'
@@ -15,14 +9,10 @@ interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
 }
 
 const variantClasses: Record<ButtonVariant, string> = {
-  primary:
-    'bg-blue-500 hover:bg-blue-600 text-white button-primary',
-  secondary:
-    'bg-transparent border border-blue-500 text-blue-500 hover:bg-blue-50 button-secondary',
-  danger:
-    'bg-red-500 hover:opacity-90 text-white button-danger',
-  ghost:
-    'bg-transparent hover:bg-gray-100 text-gray-700 button-ghost',
+  primary:   'bg-green text-white hover:opacity-90',
+  secondary: 'bg-transparent border border-green text-green hover:bg-green-light',
+  danger:    'bg-red text-white hover:opacity-90',
+  ghost:     'bg-transparent hover:bg-soft text-body',
 }
 
 export default function Button({
@@ -44,8 +34,8 @@ export default function Button({
       className={[
         'inline-flex items-center justify-center gap-2',
         'min-h-[44px] min-w-[44px] px-4 py-2',
-        'rounded-[--radius-md] font-medium text-sm',
-        'transition-colors duration-150',
+        'rounded-xl font-semibold text-sm',
+        'transition-all duration-150',
         'disabled:opacity-50 disabled:cursor-not-allowed',
         variantClasses[variant],
         className,

@@ -128,7 +128,7 @@ describe('ServicesListPage', () => {
   it('should search by name with debounce', async () => {
     renderWithRouter(<ServicesListPage />)
 
-    const searchInput = screen.getByPlaceholderText(/buscar/i)
+    const searchInput = screen.getByPlaceholderText(/buscar serviço/i)
     await userEvent.type(searchInput, 'Pet')
 
     await waitFor(

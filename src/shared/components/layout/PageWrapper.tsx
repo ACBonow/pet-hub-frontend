@@ -1,9 +1,3 @@
-/**
- * @module shared
- * @file PageWrapper.tsx
- * @description Wraps page content with safe-area padding for BottomNav.
- */
-
 interface PageWrapperProps {
   children: React.ReactNode
   className?: string
@@ -11,7 +5,7 @@ interface PageWrapperProps {
 
 export default function PageWrapper({ children, className = '' }: PageWrapperProps) {
   return (
-    <main className={`px-4 pt-4 pb-24 lg:pb-4 max-w-2xl mx-auto w-full ${className}`}>
+    <main className={`px-4 py-6 lg:px-8 lg:py-7 pb-12 ${className}`}>
       {children}
     </main>
   )

@@ -1,23 +1,38 @@
-/* Design tokens — custom properties usadas em toda a aplicação */
+/* Design tokens — custom properties disponíveis para inline styles e componentes */
 
 :root {
-  /* Colors */
-  --color-primary: #3b82f6;
-  --color-primary-dark: #2563eb;
-  --color-secondary: #10b981;
-  --color-danger: #ef4444;
-  --color-warning: #f59e0b;
+  /* Paleta principal */
+  --green: #107C41;
+  --green-dark: #0A5A2F;
+  --green-light: #E8F3EC;
+  --yellow: #F6CF3D;
+  --yellow-dark: #D4A91E;
+  --red: #E43B2C;
+  --red-dark: #B8241A;
+
+  /* Neutros quentes */
+  --ink: #1F1B16;
+  --body: #2B2620;
+  --muted: #7A7168;
+  --line: #E8E2D8;
+  --line-strong: #D6CEC0;
+  --bg-warm: #FAF6EE;
+  --card: #FFFFFF;
+  --soft: #F3ECDD;
+
+  /* Suporte */
+  --info: #2F6EA8;
 
   /* Radius */
   --radius-sm: 0.375rem;
   --radius-md: 0.5rem;
   --radius-lg: 0.75rem;
-
-  /* Spacing */
-  --spacing-bottom-nav: 4rem;
+  --radius-xl: 1rem;
+  --radius-2xl: 1.25rem;
 
   /* Z-index */
-  --z-bottom-nav: 50;
-  --z-modal: 100;
-  --z-toast: 200;
+  --z-sidebar: 100;
+  --z-scrim: 99;
+  --z-modal: 200;
+  --z-toast: 300;
 }

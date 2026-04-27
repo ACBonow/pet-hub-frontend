@@ -1,12 +1,8 @@
-/**
- * @module lost-found
- * @file LostFoundCard.tsx
- * @description Card component for displaying a lost or found report with visual distinction.
- */
-
 import { Link } from 'react-router-dom'
 import { ROUTES } from '@/routes/routes.config'
 import CreatorBadge from '@/shared/components/ui/CreatorBadge'
+import Chip from '@/shared/components/ui/Chip'
+import Icon from '@/shared/components/ui/Icon'
 import type { LostFoundReport } from '@/modules/lost-found/types'
 
 interface LostFoundCardProps {
@@ -16,61 +12,69 @@ interface LostFoundCardProps {
 export default function LostFoundCard({ report }: LostFoundCardProps) {
   const isLost = report.type === 'LOST'
   const isResolved = report.status === 'RESOLVED'
+  const accentColor = isResolved ? 'var(--muted)' : isLost ? 'var(--red)' : 'var(--green)'
+  const location =
+    [report.addressNeighborhood, report.addressCity].filter(Boolean).join(', ') ||
+    report.location
 
   return (
     <li
-      className={[
-        'bg-white rounded-[--radius-lg] border p-4',
-        isResolved ? 'border-gray-200 opacity-60' : isLost ? 'border-red-200' : 'border-green-200',
-      ].join(' ')}
+      className="bg-card rounded-2xl border border-line overflow-hidden"
+      style={{ borderLeft: `4px solid ${accentColor}` }}
     >
-      <Link to={ROUTES.LOST_FOUND.DETAIL(report.id)} className="block">
-        <div className="flex items-start gap-3">
-          {report.photoUrl && (
-            <img
-              src={report.photoUrl}
-              alt={report.petName ?? 'Animal'}
-              className="w-16 h-16 rounded-lg object-cover shrink-0 border border-gray-200"
-            />
-          )}
-          <div className="flex-1 min-w-0">
-            <p className="font-semibold text-gray-900">{report.petName ?? 'Animal sem nome'}</p>
-            {(report.addressCity || report.addressNeighborhood || report.location) && (
-              <p className="text-xs text-gray-500 mt-0.5">
-                {[report.addressNeighborhood, report.addressCity].filter(Boolean).join(', ') || report.location}
-              </p>
-            )}
-            {report.description && (
-              <p className="text-sm text-gray-600 mt-1 line-clamp-2">{report.description}</p>
-            )}
-          </div>
-          <div className="flex flex-col items-end gap-1 shrink-0">
-            <span
-              className={[
-                'text-xs font-semibold px-2 py-1 rounded-full',
-                isLost
-                  ? 'bg-red-100 text-red-700'
-                  : 'bg-green-100 text-green-700',
-              ].join(' ')}
-            >
-              {isLost ? 'Perdido' : 'Achado'}
-            </span>
-            {isResolved && (
-              <span className="text-xs font-medium px-2 py-1 rounded-full bg-gray-100 text-gray-500">
-                Resolvido
-              </span>
-            )}
-          </div>
-        </div>
-        {report.createdBy && (
-          <div className="mt-2 pt-2 border-t border-gray-100">
-            <CreatorBadge
-              type={report.createdBy.type}
-              name={report.createdBy.name}
-              photoUrl={report.createdBy.photoUrl}
-            />
+      <Link to={ROUTES.LOST_FOUND.DETAIL(report.id)} className="flex gap-4 p-4">
+        {/* Photo / placeholder */}
+        {report.photoUrl ? (
+          <img
+            src={report.photoUrl}
+            alt={report.petName ?? 'Animal'}
+            className="w-24 h-24 rounded-xl object-cover shrink-0 border border-line"
+          />
+        ) : (
+          <div
+            className="w-24 h-24 rounded-xl shrink-0 flex items-center justify-center"
+            style={{
+              background: `repeating-linear-gradient(135deg, ${accentColor}12, ${accentColor}12 6px, ${accentColor}08 6px, ${accentColor}08 12px)`,
+              border: `1px dashed ${accentColor}44`,
+            }}
+          >
+            <Icon name="paw" size={28} color={accentColor} />
           </div>
         )}
+
+        {/* Content */}
+        <div className="flex-1 min-w-0">
+          <div className="flex items-center gap-2 flex-wrap mb-1.5">
+            <Chip color={accentColor}>
+              {isLost ? 'Perdido' : 'Achado'}
+            </Chip>
+            {isResolved && (
+              <Chip color="var(--muted)" variant="outline">Resolvido</Chip>
+            )}
+          </div>
+          <p className="font-bold text-body">{report.petName ?? 'Animal sem nome'}</p>
+          {report.species && (
+            <p className="text-xs text-muted mt-0.5 capitalize">{report.species}</p>
+          )}
+          {report.description && (
+            <p className="text-sm text-body mt-1 line-clamp-2 leading-relaxed">{report.description}</p>
+          )}
+          {location && (
+            <p className="text-xs text-muted mt-2 flex items-center gap-1">
+              <Icon name="pin" size={11} color="var(--muted)" />
+              {location}
+            </p>
+          )}
+          {report.createdBy && (
+            <div className="mt-2 pt-2 border-t border-line">
+              <CreatorBadge
+                type={report.createdBy.type}
+                name={report.createdBy.name}
+                photoUrl={report.createdBy.photoUrl}
+              />
+            </div>
+          )}
+        </div>
       </Link>
     </li>
   )

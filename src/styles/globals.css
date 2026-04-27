@@ -1,15 +1,62 @@
 @import "tailwindcss";
 
 @theme {
-  --color-primary: #3b82f6;
-  --color-primary-dark: #2563eb;
-  --color-secondary: #10b981;
-  --color-danger: #ef4444;
-  --color-warning: #f59e0b;
+  /* Paleta principal — logo verde bandeira, amarelo milho, vermelho */
+  --color-green: #107C41;
+  --color-green-dark: #0A5A2F;
+  --color-green-light: #E8F3EC;
+  --color-yellow: #F6CF3D;
+  --color-yellow-dark: #D4A91E;
+  --color-red: #E43B2C;
+  --color-red-dark: #B8241A;
 
-  --font-sans: "Inter", system-ui, sans-serif;
+  /* Neutros quentes (terra / pampa) */
+  --color-ink: #1F1B16;
+  --color-body: #2B2620;
+  --color-muted: #7A7168;
+  --color-line: #E8E2D8;
+  --color-line-strong: #D6CEC0;
+  --color-bg-warm: #FAF6EE;
+  --color-card: #FFFFFF;
+  --color-soft: #F3ECDD;
 
+  /* Suporte */
+  --color-info: #2F6EA8;
+
+  /* Fontes */
+  --font-fraunces: "Fraunces", Georgia, serif;
+  --font-jakarta: "Plus Jakarta Sans", system-ui, sans-serif;
+  --font-sans: "Plus Jakarta Sans", system-ui, sans-serif;
+
+  /* Radius */
   --radius-sm: 0.375rem;
   --radius-md: 0.5rem;
   --radius-lg: 0.75rem;
+  --radius-xl: 1rem;
+  --radius-2xl: 1.25rem;
 }
+
+/* Base */
+html, body {
+  background-color: #FAF6EE;
+  color: #2B2620;
+  font-family: "Plus Jakarta Sans", system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  min-height: 100svh;
+}
+
+::-webkit-scrollbar { width: 8px; height: 8px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: #D6CEC0; border-radius: 4px; }
+
+/* Page / component entry animations */
+@keyframes fadeIn  { from { opacity: 0; }                              to { opacity: 1; } }
+@keyframes slideUp { from { transform: translateY(12px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+@keyframes modalIn { from { transform: translateY(16px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+
+.animate-fade-in  { animation: fadeIn  0.2s  ease-out both; }
+.animate-slide-up { animation: slideUp 0.22s ease-out both; }
+.animate-modal-in { animation: modalIn 0.22s ease-out both; }
+
+/* Utility: rotate */
+.rotate-180 { transform: rotate(180deg); }

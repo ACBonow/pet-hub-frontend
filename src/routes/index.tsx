@@ -50,8 +50,8 @@ const ProfilePage = lazy(() => import('@/modules/person/pages/ProfilePage'))
 
 function PageLoader() {
   return (
-    <div className="flex items-center justify-center min-h-screen">
-      <div className="animate-spin w-8 h-8 border-4 border-[--color-primary] border-t-transparent rounded-full" />
+    <div className="flex items-center justify-center min-h-svh bg-bg-warm">
+      <div className="animate-spin w-8 h-8 border-4 border-green border-t-transparent rounded-full" />
     </div>
   )
 }

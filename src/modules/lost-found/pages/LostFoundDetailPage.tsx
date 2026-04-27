@@ -1,15 +1,10 @@
-/**
- * @module lost-found
- * @file LostFoundDetailPage.tsx
- * @description Page for viewing a single lost or found report.
- */
-
 import { useEffect, useState } from 'react'
 import { useParams, Link, useNavigate } from 'react-router-dom'
 import { ROUTES } from '@/routes/routes.config'
 import PublicLayout from '@/shared/components/layout/PublicLayout'
-import PageWrapper from '@/shared/components/layout/PageWrapper'
 import ContactGate from '@/shared/components/ui/ContactGate'
+import Chip from '@/shared/components/ui/Chip'
+import Icon from '@/shared/components/ui/Icon'
 import { useLostFound } from '@/modules/lost-found/hooks/useLostFound'
 import { useAuthStore } from '@/modules/auth/store/authSlice'
 import type { LostFoundReport } from '@/modules/lost-found/types'
@@ -47,9 +42,14 @@ export default function LostFoundDetailPage() {
 
   useEffect(() => {
     if (id) getReport(id)
-  }, [id])
+  }, [id]) // eslint-disable-line react-hooks/exhaustive-deps
 
   const isCreator = !!(user?.personId && report?.reporterId && user.personId === report.reporterId)
+  const isLost = report?.type === 'LOST'
+  const isResolved = report?.status === 'RESOLVED'
+  const accentColor = isResolved ? 'var(--muted)' : isLost ? 'var(--red)' : 'var(--green)'
+  const formattedAddress = report ? formatAddress(report) : null
+  const mapsUrl = report ? buildMapsUrl(report) : null
 
   const handleDelete = async () => {
     if (!report) return
@@ -57,88 +57,92 @@ export default function LostFoundDetailPage() {
     navigate(ROUTES.LOST_FOUND.LIST)
   }
 
-  const isLost = report?.type === 'LOST'
-  const formattedAddress = report ? formatAddress(report) : null
-  const mapsUrl = report ? buildMapsUrl(report) : null
-
   return (
     <PublicLayout>
-      <header className="sticky top-0 z-30 bg-white border-b border-gray-200 px-4 py-4">
-        <h1 className="text-xl font-bold text-gray-900">🔍 Achados e Perdidos</h1>
-      </header>
-      <PageWrapper>
-        {isLoading && <p className="text-sm text-gray-500">Carregando...</p>}
-        {error && <p role="alert" className="text-sm text-[--color-danger]">{error}</p>}
+      <div className="px-4 py-6 lg:px-8 lg:py-7 pb-12 max-w-[1400px]">
+
+        {/* Back */}
+        <Link
+          to={ROUTES.LOST_FOUND.LIST}
+          className="inline-flex items-center gap-1.5 text-sm text-muted hover:text-body transition-colors mb-6"
+        >
+          <Icon name="arrow" size={14} color="currentColor" className="rotate-180" />
+          Voltar para Perdidos &amp; Achados
+        </Link>
+
+        {isLoading && <p className="text-sm text-muted">Carregando...</p>}
+        {error && <p role="alert" className="text-sm text-red">{error}</p>}
 
         {report && (
-          <div className="flex flex-col gap-4">
+          <div className="flex flex-col gap-5 max-w-2xl">
+
             {/* Photo */}
             {report.photoUrl && (
               <img
                 src={report.photoUrl}
                 alt={report.petName ?? 'Animal'}
-                className="w-full max-h-72 object-cover rounded-[--radius-lg] border border-gray-200"
+                className="w-full max-h-80 object-cover rounded-2xl border border-line"
               />
             )}
 
             {/* Main info */}
             <div
-              className={[
-                'rounded-[--radius-lg] border p-4',
-                isLost ? 'bg-red-50 border-red-200' : 'bg-green-50 border-green-200',
-              ].join(' ')}
+              className="bg-card rounded-2xl border border-line overflow-hidden"
+              style={{ borderLeft: `4px solid ${accentColor}` }}
             >
-              <div className="flex items-center gap-2 mb-2">
-                <span
-                  className={[
-                    'text-xs font-semibold px-2 py-1 rounded-full',
-                    isLost ? 'bg-red-100 text-red-700' : 'bg-green-100 text-green-700',
-                  ].join(' ')}
-                >
-                  {isLost ? 'Perdido' : 'Achado'}
-                </span>
-                {report.status === 'RESOLVED' && (
-                  <span className="text-xs font-medium px-2 py-1 rounded-full bg-gray-100 text-gray-500">
-                    Resolvido
-                  </span>
+              <div className="p-5">
+                {/* Badges */}
+                <div className="flex items-center gap-2 flex-wrap mb-4">
+                  <Chip color={accentColor}>
+                    {isLost ? 'Perdido' : 'Achado'}
+                  </Chip>
+                  {isResolved && (
+                    <Chip color="var(--muted)" variant="outline">Resolvido</Chip>
+                  )}
+                </div>
+
+                {/* Name */}
+                <h1 className="font-fraunces font-black text-4xl text-ink leading-none tracking-tight">
+                  {report.petName ?? 'Animal sem nome'}
+                </h1>
+
+                {/* Location */}
+                {formattedAddress && (
+                  <div className="mt-4 flex items-start gap-2">
+                    <Icon name="pin" size={16} color="var(--muted)" className="shrink-0 mt-0.5" />
+                    <div>
+                      <p className="text-sm text-body">{formattedAddress}</p>
+                      {report.addressNotes && (
+                        <p className="text-xs text-muted mt-1">{report.addressNotes}</p>
+                      )}
+                      {mapsUrl && (
+                        <a
+                          href={mapsUrl}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-xs font-semibold text-green hover:underline mt-1.5 inline-flex items-center gap-1"
+                        >
+                          Ver no Google Maps <Icon name="arrow" size={11} color="var(--green)" />
+                        </a>
+                      )}
+                    </div>
+                  </div>
+                )}
+
+                {/* Description */}
+                {report.description && (
+                  <div className="mt-4 pt-4 border-t border-line">
+                    <p className="text-[10px] font-bold uppercase tracking-widest text-muted mb-2">Descrição</p>
+                    <p className="text-sm text-body leading-relaxed">{report.description}</p>
+                  </div>
                 )}
               </div>
-
-              <p className="text-xl font-bold text-gray-900">
-                {report.petName ?? 'Animal sem nome'}
-              </p>
-
-              {formattedAddress && (
-                <div className="mt-2 flex items-start gap-1">
-                  <span className="text-sm">📍</span>
-                  <div className="flex-1">
-                    <p className="text-sm text-gray-600">{formattedAddress}</p>
-                    {report.addressNotes && (
-                      <p className="text-xs text-gray-500 mt-0.5">{report.addressNotes}</p>
-                    )}
-                    {mapsUrl && (
-                      <a
-                        href={mapsUrl}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="text-xs text-[--color-primary] hover:underline mt-1 inline-block"
-                      >
-                        Ver no Google Maps
-                      </a>
-                    )}
-                  </div>
-                </div>
-              )}
-
-              {report.description && (
-                <p className="text-sm text-gray-700 mt-3">{report.description}</p>
-              )}
             </div>
 
             {/* Contact */}
-            <div className="bg-white rounded-[--radius-lg] border border-gray-200 p-4">
-              <p className="text-sm font-semibold text-gray-700 mb-2">Contato</p>
-              <div className="flex flex-col gap-1">
+            <div className="bg-card rounded-2xl border border-line p-5">
+              <p className="text-[10px] font-bold uppercase tracking-widest text-muted mb-3">Contato</p>
+              <div className="flex flex-col gap-2">
                 <ContactGate
                   value={report.contactEmail}
                   href={report.contactEmail ? `mailto:${report.contactEmail}` : undefined}
@@ -150,54 +154,60 @@ export default function LostFoundDetailPage() {
               </div>
             </div>
 
+            {/* Creator controls */}
             {isCreator && (
-              <div className="flex flex-col gap-2">
-                <div className="flex items-center gap-3">
-                  {report.status === 'OPEN' && (
-                    <button
-                      onClick={() => updateStatus(report.id, 'RESOLVED')}
-                      disabled={isLoading}
-                      className="flex-1 py-2 px-4 rounded-[--radius-lg] border border-green-500 text-green-700 font-medium hover:bg-green-50 transition-colors text-sm disabled:opacity-50"
-                    >
-                      Marcar como resolvido
-                    </button>
-                  )}
-                  <Link
-                    to={ROUTES.LOST_FOUND.EDIT(report.id)}
-                    className="text-sm text-[--color-primary] hover:underline shrink-0"
-                  >
-                    Editar
-                  </Link>
-                  {!confirmDelete ? (
-                    <button
-                      onClick={() => setConfirmDelete(true)}
-                      className="text-sm text-[--color-danger] hover:underline shrink-0"
-                    >
-                      Excluir
-                    </button>
-                  ) : (
-                    <div className="flex gap-2 items-center">
+              <div className="bg-card rounded-2xl border border-line p-5">
+                <div className="flex items-center justify-between flex-wrap gap-3">
+                  <div className="flex items-center gap-3">
+                    {!isResolved && (
                       <button
-                        onClick={handleDelete}
+                        onClick={() => updateStatus(report.id, 'RESOLVED')}
                         disabled={isLoading}
-                        className="text-sm font-medium text-white bg-[--color-danger] px-2 py-0.5 rounded disabled:opacity-50"
+                        className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl border border-green text-green font-semibold text-sm hover:bg-green-light transition-colors disabled:opacity-50"
                       >
-                        Confirmar exclusão
+                        <Icon name="check" size={14} color="var(--green)" />
+                        Marcar como resolvido
                       </button>
+                    )}
+                  </div>
+                  <div className="flex items-center gap-4">
+                    <Link
+                      to={ROUTES.LOST_FOUND.EDIT(report.id)}
+                      className="text-sm font-medium text-green hover:underline flex items-center gap-1"
+                    >
+                      <Icon name="edit" size={13} color="var(--green)" /> Editar
+                    </Link>
+                    {!confirmDelete ? (
                       <button
-                        onClick={() => setConfirmDelete(false)}
-                        className="text-sm text-gray-500 hover:underline"
+                        onClick={() => setConfirmDelete(true)}
+                        className="text-sm font-medium text-red hover:underline"
                       >
-                        Cancelar
+                        Excluir
                       </button>
-                    </div>
-                  )}
+                    ) : (
+                      <div className="flex gap-2 items-center">
+                        <button
+                          onClick={handleDelete}
+                          disabled={isLoading}
+                          className="text-sm font-medium text-white bg-red px-2.5 py-1 rounded-lg disabled:opacity-50"
+                        >
+                          Confirmar exclusão
+                        </button>
+                        <button
+                          onClick={() => setConfirmDelete(false)}
+                          className="text-sm text-muted hover:underline"
+                        >
+                          Cancelar
+                        </button>
+                      </div>
+                    )}
+                  </div>
                 </div>
               </div>
             )}
           </div>
         )}
-      </PageWrapper>
+      </div>
     </PublicLayout>
   )
 }

@@ -1,42 +1,26 @@
-/**
- * @module adoption
- * @file AdoptionDetailPage.tsx
- * @description Page for viewing a single adoption listing.
- */
-
 import { useEffect, useState } from 'react'
 import { useParams, useLocation, Link, useNavigate } from 'react-router-dom'
 import PublicLayout from '@/shared/components/layout/PublicLayout'
-import PageWrapper from '@/shared/components/layout/PageWrapper'
 import ContactGate from '@/shared/components/ui/ContactGate'
+import Chip from '@/shared/components/ui/Chip'
+import Icon from '@/shared/components/ui/Icon'
 import { useAdoption } from '@/modules/adoption/hooks/useAdoption'
 import { useAuthStore } from '@/modules/auth/store/authSlice'
 import type { AdoptionStatus } from '@/modules/adoption/types'
 import { ROUTES } from '@/routes/routes.config'
 
 const SPECIES_LABELS: Record<string, string> = {
-  dog: 'Cão',
-  cat: 'Gato',
-  bird: 'Ave',
-  rabbit: 'Coelho',
-  other: 'Outro',
+  dog: 'Cão', cat: 'Gato', bird: 'Ave', rabbit: 'Coelho', other: 'Outro',
 }
-
 const STATUS_LABELS: Record<string, string> = {
-  AVAILABLE: 'Disponível',
-  RESERVED: 'Reservado',
-  ADOPTED: 'Adotado',
+  AVAILABLE: 'Disponível', RESERVED: 'Reservado', ADOPTED: 'Adotado',
 }
+const GENDER_LABELS: Record<string, string> = { M: 'Macho', F: 'Fêmea' }
 
-const STATUS_COLORS: Record<string, string> = {
-  AVAILABLE: 'bg-green-100 text-green-800',
-  RESERVED: 'bg-yellow-100 text-yellow-800',
-  ADOPTED: 'bg-gray-100 text-gray-500',
-}
-
-const GENDER_LABELS: Record<string, string> = {
-  M: 'Macho',
-  F: 'Fêmea',
+const STATUS_CHIP_COLORS: Record<string, string> = {
+  AVAILABLE: 'var(--green)',
+  RESERVED: 'var(--yellow-dark)',
+  ADOPTED: 'var(--muted)',
 }
 
 const STATUS_UPDATE_SEQUENCE: { status: AdoptionStatus; label: string }[] = [
@@ -54,6 +38,8 @@ export default function AdoptionDetailPage() {
   const [confirmDelete, setConfirmDelete] = useState(false)
 
   const isCreator = !!(user?.personId && listing?.personId && user.personId === listing.personId)
+  const returnTo = encodeURIComponent(location.pathname + location.search)
+  const hasContact = listing && (listing.contactEmail || listing.contactPhone || listing.contactWhatsapp)
 
   const handleDelete = async () => {
     if (!listing) return
@@ -63,63 +49,100 @@ export default function AdoptionDetailPage() {
 
   useEffect(() => {
     if (id) getAdoption(id)
-  }, [id])
-
-  const hasContact = listing && (listing.contactEmail || listing.contactPhone || listing.contactWhatsapp)
-  const returnTo = encodeURIComponent(location.pathname + location.search)
+  }, [id]) // eslint-disable-line react-hooks/exhaustive-deps
 
   return (
     <PublicLayout>
-      <header className="sticky top-0 lg:top-16 z-20 bg-white border-b border-gray-200 px-4 py-4">
-        <h1 className="text-xl font-bold text-gray-900">❤️ Adoção</h1>
-      </header>
-      <PageWrapper>
-        {isLoading && <p className="text-sm text-gray-500">Carregando...</p>}
-        {error && <p role="alert" className="text-sm text-[--color-danger]">{error}</p>}
+      <div className="px-4 py-6 lg:px-8 lg:py-7 pb-12 max-w-[1400px]">
+
+        {/* Back */}
+        <Link
+          to={ROUTES.ADOPTION.LIST}
+          className="inline-flex items-center gap-1.5 text-sm text-muted hover:text-body transition-colors mb-6"
+        >
+          <Icon name="arrow" size={14} color="currentColor" className="rotate-180" />
+          Voltar para adoção
+        </Link>
+
+        {isLoading && <p className="text-sm text-muted">Carregando...</p>}
+        {error && <p role="alert" className="text-sm text-red">{error}</p>}
 
         {listing && (
-          <div className="flex flex-col gap-4">
-            {listing.photoUrl ? (
-              <img
-                src={listing.photoUrl}
-                alt={listing.petName}
-                loading="lazy"
-                className="w-full rounded-[--radius-lg] object-cover max-h-72"
-              />
-            ) : (
-              <div className="w-full h-48 bg-gray-100 rounded-[--radius-lg] flex items-center justify-center">
-                <span className="text-5xl">🐾</span>
-              </div>
-            )}
+          <div className="grid grid-cols-1 lg:grid-cols-[1.3fr_1fr] gap-7 adopt-detail-grid">
 
-            <div className="bg-white rounded-[--radius-lg] border border-gray-200 p-4 flex flex-col gap-3">
-              <div className="flex items-start justify-between gap-2">
-                <p className="text-xl font-bold text-gray-900">{listing.petName}</p>
-                <span
-                  className={`shrink-0 text-xs font-semibold px-2 py-1 rounded-full ${STATUS_COLORS[listing.status] ?? 'bg-gray-100 text-gray-500'}`}
+            {/* Photo column */}
+            <div>
+              {listing.photoUrl ? (
+                <img
+                  src={listing.photoUrl}
+                  alt={listing.petName}
+                  loading="lazy"
+                  className="w-full h-[420px] object-cover rounded-2xl"
+                />
+              ) : (
+                <div
+                  className="w-full h-[420px] rounded-2xl flex items-center justify-center"
+                  style={{ background: 'repeating-linear-gradient(135deg, var(--soft), var(--soft) 8px, var(--line) 8px, var(--line) 16px)' }}
                 >
+                  <Icon name="paw" size={64} color="var(--muted)" />
+                </div>
+              )}
+            </div>
+
+            {/* Data column */}
+            <div>
+              {/* Chips */}
+              <div className="flex gap-2 flex-wrap mb-4">
+                <Chip color={STATUS_CHIP_COLORS[listing.status] ?? 'var(--muted)'}>
                   {STATUS_LABELS[listing.status] ?? listing.status}
-                </span>
+                </Chip>
+                <Chip color="var(--green)" variant="outline">
+                  {SPECIES_LABELS[listing.species] ?? listing.species}
+                </Chip>
               </div>
 
-              <div className="flex flex-wrap gap-2 text-sm text-gray-600">
-                <span>{SPECIES_LABELS[listing.species] ?? listing.species}</span>
-                {listing.breed && <span>· {listing.breed}</span>}
-                {listing.gender && <span>· {GENDER_LABELS[listing.gender] ?? listing.gender}</span>}
-                {listing.castrated != null && (
-                  <span>· {listing.castrated ? 'Castrado(a)' : 'Não castrado(a)'}</span>
-                )}
-              </div>
+              {/* Name */}
+              <h1 className="font-fraunces font-black text-5xl text-ink leading-none tracking-tight">
+                {listing.petName}
+              </h1>
 
-              {listing.description && (
-                <p className="text-sm text-gray-700">{listing.description}</p>
+              {/* Attributes row */}
+              <p className="text-muted text-base mt-3">
+                {listing.breed && `${listing.breed} · `}
+                {listing.gender ? `${GENDER_LABELS[listing.gender] ?? listing.gender}` : ''}
+                {listing.castrated != null && ` · ${listing.castrated ? 'Castrado(a)' : 'Não castrado(a)'}`}
+              </p>
+
+              {/* Stat mini-cards */}
+              {(listing.breed || listing.gender || listing.castrated != null) && (
+                <div className="grid grid-cols-3 gap-2 mt-5">
+                  {[
+                    { label: 'Espécie', value: SPECIES_LABELS[listing.species] ?? listing.species },
+                    { label: 'Sexo', value: listing.gender ? (GENDER_LABELS[listing.gender] ?? listing.gender) : '—' },
+                    { label: 'Castrado', value: listing.castrated == null ? '—' : listing.castrated ? 'Sim' : 'Não' },
+                  ].map((a) => (
+                    <div key={a.label} className="bg-card border border-line rounded-xl p-3 text-center">
+                      <p className="text-sm font-bold text-body">{a.value}</p>
+                      <p className="text-[10px] text-muted mt-0.5">{a.label}</p>
+                    </div>
+                  ))}
+                </div>
               )}
 
+              {/* Description */}
+              {listing.description && (
+                <div className="mt-6">
+                  <p className="text-[10px] font-bold uppercase tracking-widest text-muted mb-2">Sobre</p>
+                  <p className="text-sm text-body leading-relaxed">{listing.description}</p>
+                </div>
+              )}
+
+              {/* Contact */}
               {hasContact && (
-                <div className="border-t border-gray-100 pt-3 flex flex-col gap-1">
-                  <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide">Contato</p>
+                <div className="mt-6">
+                  <p className="text-[10px] font-bold uppercase tracking-widest text-muted mb-2">Contato</p>
                   {isAuthenticated ? (
-                    <>
+                    <div className="flex flex-col gap-1.5">
                       <ContactGate
                         value={listing.contactEmail}
                         href={listing.contactEmail ? `mailto:${listing.contactEmail}` : undefined}
@@ -133,82 +156,110 @@ export default function AdoptionDetailPage() {
                           href={`https://wa.me/${listing.contactWhatsapp.replace(/\D/g, '')}`}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="text-[--color-primary] hover:underline text-sm"
+                          className="text-sm text-green hover:underline"
                         >
                           WhatsApp: {listing.contactWhatsapp}
                         </a>
                       )}
-                    </>
+                    </div>
                   ) : (
-                    <Link
-                      to={`${ROUTES.LOGIN}?returnTo=${returnTo}`}
-                      className="inline-flex items-center gap-1.5 text-sm font-medium text-[--color-primary] hover:underline"
+                    <div
+                      className="flex items-center gap-2.5 p-3 rounded-xl text-sm"
+                      style={{ background: 'var(--yellow)22', border: '1px dashed var(--yellow-dark)55' }}
                     >
-                      Ver contato — Fazer login
-                    </Link>
+                      <Icon name="lock" size={16} color="var(--yellow-dark)" />
+                      <span className="text-body">
+                        Contato protegido —{' '}
+                        <Link to={`${ROUTES.LOGIN}?returnTo=${returnTo}`} className="font-semibold text-yellow-dark hover:underline">
+                          faça login
+                        </Link>{' '}
+                        para ver.
+                      </span>
+                    </div>
                   )}
                 </div>
               )}
-            </div>
 
-            {isCreator && (
-              <div className="bg-white rounded-[--radius-lg] border border-gray-200 p-4">
-                <div className="flex items-center justify-between mb-3">
-                  <p className="text-sm font-semibold text-gray-700">Atualizar status</p>
-                  <div className="flex gap-3 items-center">
-                    <Link
-                      to={ROUTES.ADOPTION.EDIT(listing.id)}
-                      className="text-sm text-[--color-primary] hover:underline"
-                    >
-                      Editar
-                    </Link>
-                    {!confirmDelete ? (
-                      <button
-                        onClick={() => setConfirmDelete(true)}
-                        className="text-sm text-[--color-danger] hover:underline"
+              {/* CTA buttons */}
+              <div className="flex gap-3 mt-7 flex-wrap">
+                <Link
+                  to={isAuthenticated ? `${ROUTES.LOGIN}?returnTo=${returnTo}` : ROUTES.ADOPTION.LIST}
+                  className="inline-flex items-center gap-2 px-5 py-3 rounded-xl font-semibold text-sm border border-line text-body hover:bg-soft transition-colors"
+                >
+                  <Icon name="chat" size={15} color="currentColor" /> Conversar
+                </Link>
+                <Link
+                  to={isAuthenticated ? `${ROUTES.LOGIN}?returnTo=${returnTo}` : ROUTES.ADOPTION.LIST}
+                  className="flex-1 inline-flex items-center justify-center gap-2 px-5 py-3 rounded-xl font-semibold text-sm bg-red text-white hover:opacity-90 transition-opacity"
+                >
+                  <Icon name="heart" size={15} color="#fff" /> Quero adotar
+                </Link>
+              </div>
+
+              {/* Creator panel */}
+              {isCreator && (
+                <div className="mt-6 bg-card border border-line rounded-2xl p-5">
+                  <div className="flex items-center justify-between mb-4">
+                    <p className="text-sm font-bold text-body">Atualizar status</p>
+                    <div className="flex items-center gap-3">
+                      <Link
+                        to={ROUTES.ADOPTION.EDIT(listing.id)}
+                        className="text-sm font-medium text-green hover:underline flex items-center gap-1"
                       >
-                        Excluir
+                        <Icon name="edit" size={13} color="var(--green)" /> Editar
+                      </Link>
+                      {!confirmDelete ? (
+                        <button
+                          onClick={() => setConfirmDelete(true)}
+                          className="text-sm font-medium text-red hover:underline"
+                        >
+                          Excluir
+                        </button>
+                      ) : (
+                        <div className="flex gap-2 items-center">
+                          <button
+                            onClick={handleDelete}
+                            disabled={isLoading}
+                            className="text-sm font-medium text-white bg-red px-2.5 py-1 rounded-lg disabled:opacity-50"
+                          >
+                            Confirmar exclusão
+                          </button>
+                          <button
+                            onClick={() => setConfirmDelete(false)}
+                            className="text-sm text-muted hover:underline"
+                          >
+                            Cancelar
+                          </button>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                  <div className="flex flex-wrap gap-2">
+                    {STATUS_UPDATE_SEQUENCE.map(({ status, label }) => (
+                      <button
+                        key={status}
+                        onClick={() => updateAdoptionStatus(listing.id, status)}
+                        disabled={listing.status === status || isLoading}
+                        className={`text-sm px-4 py-2 rounded-xl border font-semibold transition-colors ${
+                          listing.status === status
+                            ? 'bg-green text-white border-green'
+                            : 'border-line text-body hover:bg-soft disabled:opacity-50'
+                        }`}
+                      >
+                        {label}
                       </button>
-                    ) : (
-                      <div className="flex gap-2 items-center">
-                        <button
-                          onClick={handleDelete}
-                          disabled={isLoading}
-                          className="text-sm font-medium text-white bg-[--color-danger] px-2 py-0.5 rounded disabled:opacity-50"
-                        >
-                          Confirmar exclusão
-                        </button>
-                        <button
-                          onClick={() => setConfirmDelete(false)}
-                          className="text-sm text-gray-500 hover:underline"
-                        >
-                          Cancelar
-                        </button>
-                      </div>
-                    )}
+                    ))}
                   </div>
                 </div>
-                <div className="flex flex-wrap gap-2">
-                  {STATUS_UPDATE_SEQUENCE.map(({ status, label }) => (
-                    <button
-                      key={status}
-                      onClick={() => updateAdoptionStatus(listing.id, status)}
-                      disabled={listing.status === status || isLoading}
-                      className={`text-sm px-3 py-1.5 rounded-full border font-medium transition-colors ${
-                        listing.status === status
-                          ? 'bg-[--color-primary] text-white border-[--color-primary]'
-                          : 'border-gray-300 text-gray-700 hover:bg-gray-50 disabled:opacity-50'
-                      }`}
-                    >
-                      {label}
-                    </button>
-                  ))}
-                </div>
-              </div>
-            )}
+              )}
+            </div>
           </div>
         )}
-      </PageWrapper>
+      </div>
+
+      <style>{`
+        @media (max-width: 880px) { .adopt-detail-grid { grid-template-columns: 1fr !important; } }
+      `}</style>
     </PublicLayout>
   )
 }

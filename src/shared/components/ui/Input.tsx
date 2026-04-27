@@ -1,9 +1,3 @@
-/**
- * @module shared
- * @file Input.tsx
- * @description Shared text input component.
- */
-
 interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
   label?: string
   error?: string
@@ -21,7 +15,7 @@ export default function Input({
   return (
     <div className="flex flex-col gap-1">
       {label && (
-        <label htmlFor={id} className="text-sm font-medium text-gray-700">
+        <label htmlFor={id} className="text-sm font-medium text-body">
           {label}
         </label>
       )}
@@ -29,11 +23,12 @@ export default function Input({
         id={id}
         className={[
           'w-full min-h-[44px] px-3 py-2',
-          'border rounded-[--radius-md] text-sm',
-          'focus:outline-none focus:ring-2 focus:ring-[--color-primary]',
+          'border rounded-xl text-sm bg-card text-body',
+          'focus:outline-none focus:ring-2 focus:ring-green/40 focus:border-green',
+          'placeholder:text-muted',
           error
-            ? 'border-[--color-danger] focus:ring-[--color-danger]'
-            : 'border-gray-300',
+            ? 'border-red focus:ring-red/40 focus:border-red'
+            : 'border-line',
           className,
         ].join(' ')}
         aria-invalid={!!error}
@@ -41,14 +36,10 @@ export default function Input({
         {...props}
       />
       {hint && !error && (
-        <p id={`${id}-hint`} className="text-xs text-gray-500">
-          {hint}
-        </p>
+        <p id={`${id}-hint`} className="text-xs text-muted">{hint}</p>
       )}
       {error && (
-        <p id={`${id}-error`} role="alert" className="text-xs text-[--color-danger]">
-          {error}
-        </p>
+        <p id={`${id}-error`} role="alert" className="text-xs text-red">{error}</p>
       )}
     </div>
   )

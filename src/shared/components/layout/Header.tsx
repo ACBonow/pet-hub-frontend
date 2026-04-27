@@ -24,19 +24,19 @@ export default function Header({ title, showBack = false, action }: HeaderProps)
   const navigate = useNavigate()
 
   return (
-    <header className="sticky top-0 lg:top-16 z-30 bg-white border-b border-gray-200">
-      <div className="max-w-2xl mx-auto w-full flex items-center h-14 px-4 gap-3">
+    <header className="sticky top-0 z-20 bg-card/90 backdrop-blur-sm border-b border-line">
+      <div className="w-full flex items-center h-14 px-4 lg:px-8 gap-3">
         {showBack && (
           <button
             type="button"
             onClick={() => navigate(-1)}
-            className="min-w-[44px] min-h-[44px] flex items-center justify-center -ml-2 text-gray-700"
+            className="min-w-[44px] min-h-[44px] flex items-center justify-center -ml-2 text-muted hover:text-body transition-colors"
             aria-label="Voltar"
           >
             <BackIcon />
           </button>
         )}
-        <h1 className="flex-1 text-base font-semibold text-gray-900 truncate">{title}</h1>
+        <h1 className="flex-1 text-base font-semibold text-body truncate">{title}</h1>
         {action && <div>{action}</div>}
       </div>
     </header>

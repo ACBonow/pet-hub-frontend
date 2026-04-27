@@ -1,19 +1,13 @@
-/**
- * @module adoption
- * @file AdoptionListPage.tsx
- * @description Public page listing pets available for adoption with filters.
- */
-
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import PublicLayout from '@/shared/components/layout/PublicLayout'
-import PageWrapper from '@/shared/components/layout/PageWrapper'
 import { useAdoption } from '@/modules/adoption/hooks/useAdoption'
 import AdoptionCard from '@/modules/adoption/components/AdoptionCard'
 import AdoptionFiltersBar from '@/modules/adoption/components/AdoptionFilters'
 import { useAuthStore } from '@/modules/auth/store/authSlice'
 import { ROUTES } from '@/routes/routes.config'
 import Pagination from '@/shared/components/ui/Pagination'
+import Icon from '@/shared/components/ui/Icon'
 import type { AdoptionFilters } from '@/modules/adoption/types'
 
 const PAGE_SIZE = 12
@@ -25,7 +19,7 @@ export default function AdoptionListPage() {
 
   useEffect(() => {
     listAdoptions({ ...filters, pageSize: PAGE_SIZE })
-  }, [])
+  }, []) // eslint-disable-line react-hooks/exhaustive-deps
 
   const handleFiltersChange = (newFilters: AdoptionFilters) => {
     setFilters(newFilters)
@@ -38,44 +32,70 @@ export default function AdoptionListPage() {
 
   return (
     <PublicLayout>
-      <header className="sticky top-0 z-30 bg-white border-b border-gray-200 px-4 py-4">
-        <div className="flex items-center justify-between">
-          <h1 className="text-xl font-bold text-gray-900">❤️ Adoção</h1>
+      <div className="px-4 py-6 lg:px-8 lg:py-7 pb-12 max-w-[1400px]">
+
+        {/* Page header */}
+        <div className="flex items-end justify-between gap-4 flex-wrap mb-6">
+          <div>
+            <h1 className="font-fraunces font-black text-4xl text-ink tracking-tight leading-tight">
+              Adoção
+            </h1>
+            <p className="text-sm text-muted mt-1.5">
+              Pets à espera de um lar — encontre o seu companheiro.
+            </p>
+          </div>
           {isAuthenticated && (
             <Link
               to={ROUTES.ADOPTION.CREATE}
-              className="text-sm font-medium text-[--color-primary] hover:underline"
+              className="inline-flex items-center gap-1.5 px-4 py-2.5 rounded-xl font-semibold text-sm bg-green text-white hover:opacity-90 transition-opacity"
             >
-              + Novo anúncio
+              <Icon name="plus" size={14} color="#fff" /> Novo anúncio
             </Link>
           )}
         </div>
-      </header>
-      <PageWrapper>
-        <AdoptionFiltersBar filters={filters} onChange={handleFiltersChange} />
 
-        {isLoading && <p className="text-sm text-gray-500 mt-4">Carregando...</p>}
-        {error && <p role="alert" className="text-sm text-[--color-danger] mt-4">{error}</p>}
+        {/* Filters */}
+        <div className="bg-card border border-line rounded-2xl p-4 mb-6">
+          <AdoptionFiltersBar filters={filters} onChange={handleFiltersChange} />
+        </div>
 
+        {/* States */}
+        {isLoading && (
+          <p className="text-sm text-muted">Carregando...</p>
+        )}
+        {error && (
+          <p role="alert" className="text-sm text-red">{error}</p>
+        )}
         {!isLoading && !error && listings.length === 0 && (
-          <p className="text-sm text-gray-500 mt-4">Nenhum pet disponível para adoção.</p>
+          <div className="text-center py-16">
+            <div className="w-16 h-16 rounded-2xl bg-soft flex items-center justify-center mx-auto mb-4">
+              <Icon name="heart" size={32} color="var(--muted)" />
+            </div>
+            <p className="text-body font-semibold">Nenhum pet disponível para adoção.</p>
+            <p className="text-sm text-muted mt-1">Volte em breve — novos pets chegam todo dia.</p>
+          </div>
         )}
 
-        <ul className="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          {listings.map((listing) => (
-            <AdoptionCard key={listing.id} listing={listing} />
-          ))}
-        </ul>
+        {/* Grid */}
+        {!isLoading && !error && listings.length > 0 && (
+          <ul className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+            {listings.map((listing) => (
+              <AdoptionCard key={listing.id} listing={listing} />
+            ))}
+          </ul>
+        )}
 
         {totalPages > 1 && (
-          <Pagination
-            page={currentPage}
-            totalPages={totalPages}
-            onPrev={() => handlePageChange(currentPage - 1)}
-            onNext={() => handlePageChange(currentPage + 1)}
-          />
+          <div className="mt-6">
+            <Pagination
+              page={currentPage}
+              totalPages={totalPages}
+              onPrev={() => handlePageChange(currentPage - 1)}
+              onNext={() => handlePageChange(currentPage + 1)}
+            />
+          </div>
         )}
-      </PageWrapper>
+      </div>
     </PublicLayout>
   )
 }

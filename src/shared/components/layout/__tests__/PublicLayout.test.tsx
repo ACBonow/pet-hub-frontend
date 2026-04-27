@@ -1,15 +1,13 @@
-/**
- * @module shared
- * @file PublicLayout.test.tsx
- * @description Tests for the public page layout wrapper.
- */
-
 import { render, screen } from '@testing-library/react'
 import { MemoryRouter } from 'react-router-dom'
 import PublicLayout from '@/shared/components/layout/PublicLayout'
 
 jest.mock('@/modules/auth/store/authSlice', () => ({
   useAuthStore: jest.fn(),
+}))
+
+jest.mock('@/modules/auth/hooks/useAuth', () => ({
+  useAuth: () => ({ logout: jest.fn() }),
 }))
 
 import { useAuthStore } from '@/modules/auth/store/authSlice'
@@ -32,13 +30,18 @@ describe('PublicLayout', () => {
     expect(screen.getByText('conteúdo da página')).toBeInTheDocument()
   })
 
-  it('should render the brand name via TopNav', () => {
+  it('should render the brand name in the sidebar', () => {
     renderWithRouter(<PublicLayout><div /></PublicLayout>)
-    expect(screen.getByText('PetHUB')).toBeInTheDocument()
+    expect(screen.getByLabelText(/tchê pethub/i)).toBeInTheDocument()
   })
 
   it('should render navigation elements', () => {
     renderWithRouter(<PublicLayout><div /></PublicLayout>)
     expect(screen.getAllByRole('navigation').length).toBeGreaterThanOrEqual(1)
+  })
+
+  it('should render the Entrar link when not authenticated', () => {
+    renderWithRouter(<PublicLayout><div /></PublicLayout>)
+    expect(screen.getAllByRole('link', { name: /entrar/i }).length).toBeGreaterThanOrEqual(1)
   })
 })
