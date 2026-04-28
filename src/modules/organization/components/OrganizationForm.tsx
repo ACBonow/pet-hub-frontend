@@ -52,15 +52,27 @@ interface OrganizationFormProps {
     name?: string
     type?: OrganizationType
     cnpj?: string | null
+    phone?: string | null
+    email?: string | null
+    website?: string | null
+    instagram?: string | null
+    description?: string | null
+    addressStreet?: string | null
+    addressNumber?: string | null
+    addressNeighborhood?: string | null
+    addressCep?: string | null
+    addressCity?: string | null
+    addressState?: string | null
   }
   isLoading?: boolean
+  submitLabel?: string
 }
 
 const inputClass = 'w-full min-h-[44px] px-3 py-2 border border-gray-300 rounded-[--radius-md] text-sm focus:outline-none focus:ring-2 focus:ring-[--color-primary]'
 const labelClass = 'text-sm font-medium text-gray-700'
 const labelOptClass = 'text-sm text-gray-600'
 
-export default function OrganizationForm({ onSubmit, initialData, isLoading }: OrganizationFormProps) {
+export default function OrganizationForm({ onSubmit, initialData, isLoading, submitLabel }: OrganizationFormProps) {
   const [apiError, setApiError] = useState<string | null>(null)
   const [photoPreview, setPhotoPreview] = useState<string | null>(null)
   const photoFileRef = useRef<File | null>(null)
@@ -77,17 +89,17 @@ export default function OrganizationForm({ onSubmit, initialData, isLoading }: O
       name: initialData?.name ?? '',
       type: initialData?.type ?? 'COMPANY',
       cnpj: initialData?.cnpj ?? '',
-      phone: '',
-      email: '',
-      website: '',
-      instagram: '',
-      description: '',
-      addressStreet: '',
-      addressNumber: '',
-      addressNeighborhood: '',
-      addressCep: '',
-      addressCity: '',
-      addressState: '',
+      phone: initialData?.phone ?? '',
+      email: initialData?.email ?? '',
+      website: initialData?.website ?? '',
+      instagram: initialData?.instagram ?? '',
+      description: initialData?.description ?? '',
+      addressStreet: initialData?.addressStreet ?? '',
+      addressNumber: initialData?.addressNumber ?? '',
+      addressNeighborhood: initialData?.addressNeighborhood ?? '',
+      addressCep: initialData?.addressCep ?? '',
+      addressCity: initialData?.addressCity ?? '',
+      addressState: initialData?.addressState ?? '',
     },
   })
 
@@ -319,7 +331,7 @@ export default function OrganizationForm({ onSubmit, initialData, isLoading }: O
           <p role="alert" className="text-sm text-[--color-danger]">{apiError}</p>
         )}
 
-        <Button type="submit" loading={isLoading}>Salvar</Button>
+        <Button type="submit" loading={isLoading}>{submitLabel ?? 'Salvar'}</Button>
       </div>
     </form>
   )
