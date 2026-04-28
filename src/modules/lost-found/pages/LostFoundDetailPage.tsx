@@ -7,6 +7,7 @@ import Chip from '@/shared/components/ui/Chip'
 import Icon from '@/shared/components/ui/Icon'
 import { useLostFound } from '@/modules/lost-found/hooks/useLostFound'
 import { useAuthStore } from '@/modules/auth/store/authSlice'
+import GoogleMapEmbed from '@/shared/components/ui/GoogleMapEmbed'
 import type { LostFoundReport } from '@/modules/lost-found/types'
 
 function buildMapsUrl(report: LostFoundReport): string | null {
@@ -138,6 +139,11 @@ export default function LostFoundDetailPage() {
                 )}
               </div>
             </div>
+
+            {/* Map */}
+            {formattedAddress && (
+              <GoogleMapEmbed address={formattedAddress} />
+            )}
 
             {/* Contact */}
             <div className="bg-card rounded-2xl border border-line p-5">
