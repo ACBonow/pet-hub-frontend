@@ -44,18 +44,20 @@ export function useServicesDirectory() {
     totalPages: 1,
   })
 
-  const abortControllerRef = useRef<AbortController | null>(null)
+  const listAbortRef = useRef<AbortController | null>(null)
+  const typesAbortRef = useRef<AbortController | null>(null)
 
   useEffect(() => {
     return () => {
-      abortControllerRef.current?.abort()
+      listAbortRef.current?.abort()
+      typesAbortRef.current?.abort()
     }
   }, [])
 
   const listServiceTypes = useCallback(async () => {
-    abortControllerRef.current?.abort()
+    typesAbortRef.current?.abort()
     const controller = new AbortController()
-    abortControllerRef.current = controller
+    typesAbortRef.current = controller
 
     try {
       const types = await listServiceTypesRequest(controller.signal)
@@ -67,9 +69,9 @@ export function useServicesDirectory() {
   }, [])
 
   const listServices = useCallback(async (filters?: ServiceFilters) => {
-    abortControllerRef.current?.abort()
+    listAbortRef.current?.abort()
     const controller = new AbortController()
-    abortControllerRef.current = controller
+    listAbortRef.current = controller
 
     setState((prev) => ({ ...prev, isLoading: true, error: null }))
     try {
@@ -92,9 +94,9 @@ export function useServicesDirectory() {
   }, [])
 
   const getService = useCallback(async (id: string) => {
-    abortControllerRef.current?.abort()
+    listAbortRef.current?.abort()
     const controller = new AbortController()
-    abortControllerRef.current = controller
+    listAbortRef.current = controller
 
     setState((prev) => ({ ...prev, isLoading: true, error: null }))
     try {

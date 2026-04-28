@@ -55,18 +55,22 @@ export function usePetHealth(): UsePetHealthResult {
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
-  const abortControllerRef = useRef<AbortController | null>(null)
+  const vaccinationsAbortRef = useRef<AbortController | null>(null)
+  const examsAbortRef = useRef<AbortController | null>(null)
+  const statusAbortRef = useRef<AbortController | null>(null)
 
   useEffect(() => {
     return () => {
-      abortControllerRef.current?.abort()
+      vaccinationsAbortRef.current?.abort()
+      examsAbortRef.current?.abort()
+      statusAbortRef.current?.abort()
     }
   }, [])
 
   async function listVaccinations(petId: string): Promise<void> {
-    abortControllerRef.current?.abort()
+    vaccinationsAbortRef.current?.abort()
     const controller = new AbortController()
-    abortControllerRef.current = controller
+    vaccinationsAbortRef.current = controller
 
     setIsLoading(true)
     setError(null)
@@ -99,9 +103,9 @@ export function usePetHealth(): UsePetHealthResult {
   }
 
   async function listExamFiles(petId: string): Promise<void> {
-    abortControllerRef.current?.abort()
+    examsAbortRef.current?.abort()
     const controller = new AbortController()
-    abortControllerRef.current = controller
+    examsAbortRef.current = controller
 
     setIsLoading(true)
     setError(null)
@@ -164,9 +168,9 @@ export function usePetHealth(): UsePetHealthResult {
   }
 
   async function loadVaccineStatus(petId: string): Promise<void> {
-    abortControllerRef.current?.abort()
+    statusAbortRef.current?.abort()
     const controller = new AbortController()
-    abortControllerRef.current = controller
+    statusAbortRef.current = controller
 
     setIsLoading(true)
     setError(null)

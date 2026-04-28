@@ -45,18 +45,22 @@ export function useOrganization(): UseOrganizationResult {
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
-  const abortControllerRef = useRef<AbortController | null>(null)
+  const orgAbortRef = useRef<AbortController | null>(null)
+  const membersAbortRef = useRef<AbortController | null>(null)
+  const listAbortRef = useRef<AbortController | null>(null)
 
   useEffect(() => {
     return () => {
-      abortControllerRef.current?.abort()
+      orgAbortRef.current?.abort()
+      membersAbortRef.current?.abort()
+      listAbortRef.current?.abort()
     }
   }, [])
 
   async function getOrganization(id: string): Promise<void> {
-    abortControllerRef.current?.abort()
+    orgAbortRef.current?.abort()
     const controller = new AbortController()
-    abortControllerRef.current = controller
+    orgAbortRef.current = controller
 
     setIsLoading(true)
     setError(null)
@@ -74,9 +78,9 @@ export function useOrganization(): UseOrganizationResult {
   }
 
   async function listOrganizations(): Promise<void> {
-    abortControllerRef.current?.abort()
+    listAbortRef.current?.abort()
     const controller = new AbortController()
-    abortControllerRef.current = controller
+    listAbortRef.current = controller
 
     setIsLoading(true)
     setError(null)
@@ -94,9 +98,9 @@ export function useOrganization(): UseOrganizationResult {
   }
 
   async function listMyOrganizations(): Promise<void> {
-    abortControllerRef.current?.abort()
+    listAbortRef.current?.abort()
     const controller = new AbortController()
-    abortControllerRef.current = controller
+    listAbortRef.current = controller
 
     setIsLoading(true)
     setError(null)
@@ -145,9 +149,9 @@ export function useOrganization(): UseOrganizationResult {
   }
 
   async function getMembers(id: string): Promise<void> {
-    abortControllerRef.current?.abort()
+    membersAbortRef.current?.abort()
     const controller = new AbortController()
-    abortControllerRef.current = controller
+    membersAbortRef.current = controller
 
     setIsLoading(true)
     setError(null)
