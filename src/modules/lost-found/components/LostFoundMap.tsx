@@ -44,9 +44,13 @@ export default function LostFoundMap({ reports, lostCount, foundCount }: Props) 
   useEffect(() => {
     if (!apiKey) return
 
-    setOptions({ key: apiKey, v: 'weekly', libraries: ['geocoding', 'marker'] })
+    setOptions({ key: apiKey, v: 'weekly' })
 
-    importLibrary('maps')
+    Promise.all([
+      importLibrary('maps'),
+      importLibrary('marker'),
+      importLibrary('geocoding'),
+    ])
       .then(() => setReady(true))
       .catch(() => setLoadError(true))
   }, [apiKey])
