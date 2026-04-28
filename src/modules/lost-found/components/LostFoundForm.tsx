@@ -7,6 +7,7 @@
 import { useRef, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import Button from '@/shared/components/ui/Button'
+import { getGoogleMapsKey } from '@/shared/config/googleMaps'
 import type { CreateLostFoundData, LostFoundType } from '@/modules/lost-found/types'
 
 interface LostFoundFormValues {
@@ -34,17 +35,31 @@ interface LostFoundFormProps {
   isLoading?: boolean
 }
 
+interface ReverseGeocodeComponent {
+  long_name: string
+  short_name: string
+  types: string[]
+}
+interface ReverseGeocodeResponse {
+  status: string
+  results: Array<{ address_components: ReverseGeocodeComponent[] }>
+}
+
 const inputClass = 'w-full min-h-[44px] px-3 py-2 border border-gray-300 rounded-[--radius-md] text-sm focus:outline-none focus:ring-2 focus:ring-[--color-primary]'
 
 export default function LostFoundForm({ onSubmit, isLoading }: LostFoundFormProps) {
+  const apiKey = getGoogleMapsKey()
   const [apiError, setApiError] = useState<string | null>(null)
   const [photoPreview, setPhotoPreview] = useState<string | null>(null)
   const [photoFile, setPhotoFile] = useState<File | null>(null)
+  const [geoLoading, setGeoLoading] = useState(false)
+  const [geoStatus, setGeoStatus] = useState<'idle' | 'success' | 'error'>('idle')
   const fileInputRef = useRef<HTMLInputElement>(null)
 
   const {
     register,
     handleSubmit,
+    setValue,
     formState: { errors },
   } = useForm<LostFoundFormValues>({
     defaultValues: {
@@ -72,6 +87,57 @@ export default function LostFoundForm({ onSubmit, isLoading }: LostFoundFormProp
     } else {
       setPhotoPreview(null)
     }
+  }
+
+  const handleUseLocation = () => {
+    if (!navigator.geolocation) {
+      setGeoStatus('error')
+      return
+    }
+    setGeoLoading(true)
+    setGeoStatus('idle')
+
+    navigator.geolocation.getCurrentPosition(
+      async (pos) => {
+        try {
+          const { latitude: lat, longitude: lng } = pos.coords
+
+          if (apiKey) {
+            const url = `https://maps.googleapis.com/maps/api/geocode/json?latlng=${lat},${lng}&key=${apiKey}&language=pt-BR`
+            const res = await fetch(url)
+            const data = await res.json() as ReverseGeocodeResponse
+
+            if (data.status === 'OK' && data.results[0]) {
+              const get = (type: string, short = false) => {
+                const comp = data.results[0].address_components.find((c) => c.types.includes(type))
+                return comp ? (short ? comp.short_name : comp.long_name) : ''
+              }
+              setValue('addressStreet', get('route'))
+              setValue('addressNumber', get('street_number'))
+              setValue('addressNeighborhood', get('sublocality_level_1') || get('neighborhood') || get('sublocality'))
+              setValue('addressCity', get('administrative_area_level_2'))
+              setValue('addressState', get('administrative_area_level_1', true))
+              setValue('addressCep', get('postal_code'))
+              setGeoStatus('success')
+              return
+            }
+          }
+
+          // Fallback: store coordinates as location text
+          setValue('addressNotes', `Coordenadas: ${lat.toFixed(6)}, ${lng.toFixed(6)}`)
+          setGeoStatus('success')
+        } catch {
+          setGeoStatus('error')
+        } finally {
+          setGeoLoading(false)
+        }
+      },
+      () => {
+        setGeoStatus('error')
+        setGeoLoading(false)
+      },
+      { timeout: 8000 },
+    )
   }
 
   const handleFormSubmit = async (data: LostFoundFormValues) => {
@@ -160,9 +226,40 @@ export default function LostFoundForm({ onSubmit, isLoading }: LostFoundFormProp
 
         {/* Endereço */}
         <fieldset className="flex flex-col gap-3 border border-gray-200 rounded-[--radius-md] p-4">
-          <legend className="text-sm font-medium text-gray-700 px-1">
-            Localização (opcional)
-          </legend>
+          <div className="flex items-center justify-between flex-wrap gap-2">
+            <legend className="text-sm font-medium text-gray-700 px-1">
+              Localização (opcional)
+            </legend>
+            <button
+              type="button"
+              onClick={handleUseLocation}
+              disabled={geoLoading}
+              className="inline-flex items-center gap-1.5 text-xs font-medium text-[--color-primary] hover:underline disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              {geoLoading ? (
+                <>
+                  <span className="inline-block w-3 h-3 border-2 border-current border-t-transparent rounded-full animate-spin" />
+                  Obtendo localização...
+                </>
+              ) : (
+                <>
+                  <span>📍</span>
+                  Usar minha localização
+                </>
+              )}
+            </button>
+          </div>
+
+          {geoStatus === 'success' && (
+            <p className="text-xs text-green-600 -mt-1">
+              ✓ Endereço preenchido automaticamente. Confira os campos abaixo.
+            </p>
+          )}
+          {geoStatus === 'error' && (
+            <p className="text-xs text-[--color-danger] -mt-1">
+              Não foi possível obter a localização. Preencha manualmente.
+            </p>
+          )}
 
           {/* Rua + Número */}
           <div className="flex gap-2">
