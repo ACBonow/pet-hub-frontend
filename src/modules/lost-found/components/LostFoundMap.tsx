@@ -163,7 +163,7 @@ export default function LostFoundMap({ reports, lostCount, foundCount }: Props) 
           title: report.petName ?? (isLost ? 'Perdido' : 'Achado'),
         })
 
-        marker.addListener('click', () => {
+        marker.addListener('gmp-click', () => {
           navigate(ROUTES.LOST_FOUND.DETAIL(report.id))
         })
 
