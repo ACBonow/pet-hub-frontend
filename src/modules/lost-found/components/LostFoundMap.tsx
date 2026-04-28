@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { setOptions, importLibrary } from '@googlemaps/js-api-loader'
-import { getGoogleMapsKey } from '@/shared/config/googleMaps'
+import { getGoogleMapsKey, getGoogleMapsMapId } from '@/shared/config/googleMaps'
 import { ROUTES } from '@/routes/routes.config'
 import type { LostFoundReport } from '@/modules/lost-found/types'
 
@@ -31,6 +31,7 @@ function buildGeocodingAddress(report: LostFoundReport): string | null {
 
 export default function LostFoundMap({ reports, lostCount, foundCount }: Props) {
   const apiKey = getGoogleMapsKey()
+  const mapId = getGoogleMapsMapId()
   const mapRef = useRef<HTMLDivElement>(null)
   const mapInstanceRef = useRef<google.maps.Map | null>(null)
   const markersRef = useRef<google.maps.marker.AdvancedMarkerElement[]>([])
@@ -57,7 +58,7 @@ export default function LostFoundMap({ reports, lostCount, foundCount }: Props) 
     mapInstanceRef.current = new window.google.maps.Map(mapRef.current, {
       zoom: 10,
       center: { lat: -30.0346, lng: -51.2177 }, // Porto Alegre as default
-      mapId: 'pethub-lost-found',
+      mapId,
       disableDefaultUI: true,
       zoomControl: true,
       gestureHandling: 'cooperative',
@@ -185,7 +186,7 @@ export default function LostFoundMap({ reports, lostCount, foundCount }: Props) 
     }
   }, [])
 
-  if (!apiKey || loadError) return null
+  if (!apiKey || !mapId || loadError) return null
 
   return (
     <div className="relative rounded-2xl overflow-hidden mb-6 border border-line" style={{ height: 240 }}>
