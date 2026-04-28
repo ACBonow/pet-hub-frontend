@@ -7,6 +7,7 @@
 import { useEffect, useState } from 'react'
 import { Link, useNavigate, useSearchParams } from 'react-router-dom'
 import { useAuth } from '@/modules/auth/hooks/useAuth'
+import LogoMark from '@/shared/components/ui/LogoMark'
 import { ROUTES } from '@/routes/routes.config'
 import type { ApiError } from '@/shared/types'
 
@@ -55,8 +56,8 @@ export default function VerifyEmailPage() {
       <div className="min-h-screen bg-gray-50 flex items-center justify-center px-4">
         <div className="w-full max-w-sm bg-white rounded-[--radius-lg] shadow-sm border border-gray-100 p-6 text-center">
           <div className="mb-4">
-            <Link to={ROUTES.HOME} className="text-base font-bold text-[--color-primary] hover:opacity-80 transition-opacity">
-              PetHUB
+            <Link to={ROUTES.HOME} className="inline-block hover:opacity-80 transition-opacity">
+              <LogoMark size={26} />
             </Link>
           </div>
           <div className="text-5xl mb-4">✅</div>
