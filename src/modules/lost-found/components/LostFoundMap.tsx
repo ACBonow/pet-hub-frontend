@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { Loader } from '@googlemaps/js-api-loader'
+import { setOptions, importLibrary } from '@googlemaps/js-api-loader'
 import { getGoogleMapsKey } from '@/shared/config/googleMaps'
 import { ROUTES } from '@/routes/routes.config'
 import type { LostFoundReport } from '@/modules/lost-found/types'
@@ -42,13 +42,9 @@ export default function LostFoundMap({ reports, lostCount, foundCount }: Props) 
   useEffect(() => {
     if (!apiKey) return
 
-    const loader = new Loader({
-      apiKey,
-      version: 'weekly',
-      libraries: ['geocoding', 'marker'],
-    })
+    setOptions({ key: apiKey, v: 'weekly', libraries: ['geocoding', 'marker'] })
 
-    loader.load()
+    importLibrary('maps')
       .then(() => setReady(true))
       .catch(() => setLoadError(true))
   }, [apiKey])
