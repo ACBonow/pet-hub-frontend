@@ -17,15 +17,34 @@ interface State {
   hasError: boolean
 }
 
+const CHUNK_RELOAD_KEY = 'pethub:chunk_reload'
+
+function isChunkLoadError(error: Error): boolean {
+  return (
+    error.message.includes('Failed to fetch dynamically imported module') ||
+    error.message.includes('Loading chunk') ||
+    error.name === 'ChunkLoadError'
+  )
+}
+
 export default class ErrorBoundary extends Component<Props, State> {
   state: State = { hasError: false }
 
-  static getDerivedStateFromError(): State {
+  static getDerivedStateFromError(error: Error): State {
+    if (isChunkLoadError(error)) {
+      if (!sessionStorage.getItem(CHUNK_RELOAD_KEY)) {
+        sessionStorage.setItem(CHUNK_RELOAD_KEY, '1')
+        window.location.reload()
+        return { hasError: false }
+      }
+    }
     return { hasError: true }
   }
 
   componentDidCatch(error: Error, info: ErrorInfo): void {
-    console.error('[ErrorBoundary]', error, info.componentStack)
+    if (!isChunkLoadError(error)) {
+      console.error('[ErrorBoundary]', error, info.componentStack)
+    }
   }
 
   render() {

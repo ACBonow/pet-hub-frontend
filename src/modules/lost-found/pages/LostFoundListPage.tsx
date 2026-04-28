@@ -5,24 +5,13 @@ import PublicLayout from '@/shared/components/layout/PublicLayout'
 import { useLostFound } from '@/modules/lost-found/hooks/useLostFound'
 import LostFoundCard from '@/modules/lost-found/components/LostFoundCard'
 import LostFoundFiltersBar from '@/modules/lost-found/components/LostFoundFilters'
+import LostFoundMap from '@/modules/lost-found/components/LostFoundMap'
 import { useAuthStore } from '@/modules/auth/store/authSlice'
 import Pagination from '@/shared/components/ui/Pagination'
 import Icon from '@/shared/components/ui/Icon'
 import type { LostFoundFilters } from '@/modules/lost-found/types'
 
 const PAGE_SIZE = 12
-
-/* Decorative map pins for the mock map */
-const MAP_PINS = [
-  { x: '12%', y: 45, lost: true },
-  { x: '28%', y: 115, lost: true },
-  { x: '44%', y: 72, lost: false },
-  { x: '58%', y: 155, lost: true },
-  { x: '70%', y: 95, lost: false },
-  { x: '83%', y: 55, lost: true },
-  { x: '18%', y: 175, lost: false },
-  { x: '52%', y: 195, lost: true },
-]
 
 export default function LostFoundListPage() {
   const { reports, isLoading, error, currentPage, totalPages, listReports } = useLostFound()
@@ -69,56 +58,8 @@ export default function LostFoundListPage() {
           )}
         </div>
 
-        {/* Map mock */}
-        <div
-          className="relative rounded-2xl overflow-hidden mb-6 border border-line"
-          style={{ height: 240, background: 'linear-gradient(135deg, var(--green-light) 0%, var(--soft) 100%)' }}
-        >
-          {/* Grid lines */}
-          <svg className="absolute inset-0 w-full h-full" aria-hidden="true">
-            {Array.from({ length: 9 }).map((_, i) => (
-              <line key={`h${i}`} x1="0" y1={28 + i * 24} x2="100%" y2={28 + i * 24}
-                stroke="var(--line-strong)" strokeWidth="1" opacity="0.4" />
-            ))}
-            {Array.from({ length: 18 }).map((_, i) => (
-              <line key={`v${i}`} x1={40 + i * 60} y1="0" x2={40 + i * 60} y2="100%"
-                stroke="var(--line-strong)" strokeWidth="1" opacity="0.4" />
-            ))}
-          </svg>
-
-          {/* Pins */}
-          {MAP_PINS.map((pin, i) => (
-            <div
-              key={i}
-              className="absolute flex items-center justify-center rounded-full border-2 border-white shadow-md"
-              style={{
-                left: pin.x, top: pin.y,
-                width: 28, height: 28,
-                background: pin.lost ? 'var(--red)' : 'var(--green)',
-                transform: 'translate(-50%, -50%)',
-              }}
-            >
-              <Icon name="paw" size={12} color="#fff" />
-            </div>
-          ))}
-
-          {/* Location badge */}
-          <div className="absolute top-3 left-3 bg-card rounded-xl px-3 py-2 text-xs font-semibold flex items-center gap-1.5 shadow-sm border border-line">
-            <Icon name="pin" size={13} color="var(--green)" /> Sua região
-          </div>
-
-          {/* Legend */}
-          <div className="absolute top-3 right-3 bg-card rounded-xl px-3 py-2 shadow-sm border border-line flex flex-col gap-1">
-            <div className="flex items-center gap-2 text-xs">
-              <div className="w-2.5 h-2.5 rounded-full" style={{ background: 'var(--red)' }} />
-              <span className="text-body">Perdidos ({lostCount})</span>
-            </div>
-            <div className="flex items-center gap-2 text-xs">
-              <div className="w-2.5 h-2.5 rounded-full" style={{ background: 'var(--green)' }} />
-              <span className="text-body">Achados ({foundCount})</span>
-            </div>
-          </div>
-        </div>
+        {/* Map */}
+        <LostFoundMap reports={reports} lostCount={lostCount} foundCount={foundCount} />
 
         {/* Filters */}
         <div className="bg-card border border-line rounded-2xl p-4 mb-6">

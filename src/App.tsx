@@ -30,6 +30,11 @@ export default function App() {
   const [isInitializing, setIsInitializing] = useState(true)
 
   useEffect(() => {
+    // Clear stale-chunk reload flag once the app loads successfully
+    sessionStorage.removeItem('pethub:chunk_reload')
+  }, [])
+
+  useEffect(() => {
     const storedRefreshToken = localStorage.getItem(STORAGE_REFRESH_KEY)
     const storedUserRaw = localStorage.getItem(STORAGE_USER_KEY)
 
