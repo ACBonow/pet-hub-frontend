@@ -65,6 +65,7 @@ export default function LostFoundMap({ reports, lostCount, foundCount }: Props) 
       mapId,
       disableDefaultUI: true,
       zoomControl: true,
+      fullscreenControl: true,
       gestureHandling: 'cooperative',
     })
   }, [ready])
@@ -133,7 +134,8 @@ export default function LostFoundMap({ reports, lostCount, foundCount }: Props) 
             const result = await geocoder.geocode({ address })
             const loc = result.results[0]?.geometry?.location
             coords = loc ? { lat: loc.lat(), lng: loc.lng() } : null
-          } catch {
+          } catch (err) {
+            console.error('[LostFoundMap] geocoding failed for:', address, err)
             coords = null
           }
           geocodeCache.set(address, coords)
