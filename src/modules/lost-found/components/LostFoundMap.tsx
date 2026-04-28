@@ -34,6 +34,7 @@ export default function LostFoundMap({ reports, lostCount, foundCount }: Props) 
   const mapRef = useRef<HTMLDivElement>(null)
   const mapInstanceRef = useRef<google.maps.Map | null>(null)
   const markersRef = useRef<google.maps.marker.AdvancedMarkerElement[]>([])
+  const userMarkerRef = useRef<google.maps.marker.AdvancedMarkerElement | null>(null)
   const navigate = useNavigate()
   const [loadError, setLoadError] = useState(false)
   const [ready, setReady] = useState(false)
@@ -61,6 +62,44 @@ export default function LostFoundMap({ reports, lostCount, foundCount }: Props) 
       zoomControl: true,
       gestureHandling: 'cooperative',
     })
+  }, [ready])
+
+  // Center on user's location when geolocation is available
+  useEffect(() => {
+    const map = mapInstanceRef.current
+    if (!map || !ready || !window.google) return
+    if (!navigator.geolocation) return
+
+    navigator.geolocation.getCurrentPosition(
+      (pos) => {
+        const userPos = { lat: pos.coords.latitude, lng: pos.coords.longitude }
+
+        // Only pan to user if no report markers have been placed yet
+        if (markersRef.current.length === 0) {
+          map.setCenter(userPos)
+          map.setZoom(12)
+        }
+
+        const dot = document.createElement('div')
+        dot.style.cssText = [
+          'width:16px;height:16px;border-radius:50%',
+          'background:#4285F4',
+          'border:3px solid #fff',
+          'box-shadow:0 2px 6px rgba(66,133,244,0.5)',
+        ].join(';')
+
+        if (userMarkerRef.current) userMarkerRef.current.map = null
+        userMarkerRef.current = new window.google.maps.marker.AdvancedMarkerElement({
+          map,
+          position: userPos,
+          content: dot,
+          title: 'Você está aqui',
+          zIndex: 1000,
+        })
+      },
+      () => { /* permissão negada ou indisponível — Porto Alegre permanece */ },
+      { timeout: 8000 },
+    )
   }, [ready])
 
   // Place markers whenever reports change
@@ -142,6 +181,7 @@ export default function LostFoundMap({ reports, lostCount, foundCount }: Props) 
   useEffect(() => {
     return () => {
       markersRef.current.forEach((m) => { m.map = null })
+      if (userMarkerRef.current) userMarkerRef.current.map = null
     }
   }, [])
 
