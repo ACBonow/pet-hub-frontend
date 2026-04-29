@@ -49,6 +49,10 @@ export async function changeMemberRoleRequest(orgId: string, personId: string, r
   await api.patch(`/api/v1/organizations/${orgId}/members/${personId}/role`, { role })
 }
 
+export async function deleteOrganizationRequest(id: string): Promise<void> {
+  await api.delete(`/api/v1/organizations/${id}`)
+}
+
 export async function uploadOrgPhotoRequest(orgId: string, file: File): Promise<{ photoUrl: string }> {
   const formData = new FormData()
   formData.append('file', file)

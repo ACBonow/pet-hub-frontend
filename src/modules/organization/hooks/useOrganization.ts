@@ -11,6 +11,7 @@ import {
   getOrganizationRequest,
   createOrganizationRequest,
   updateOrganizationRequest,
+  deleteOrganizationRequest,
   getOrgMembersRequest,
   addOrgMemberRequest,
   removeOrgMemberRequest,
@@ -36,6 +37,7 @@ interface UseOrganizationResult {
   removeMember: (orgId: string, personId: string) => Promise<void>
   changeRole: (orgId: string, personId: string, role: OrgRole) => Promise<void>
   uploadOrgPhoto: (orgId: string, file: File) => Promise<void>
+  deleteOrganization: (id: string) => Promise<void>
 }
 
 export function useOrganization(): UseOrganizationResult {
@@ -210,6 +212,20 @@ export function useOrganization(): UseOrganizationResult {
     }
   }
 
+  async function deleteOrganization(id: string): Promise<void> {
+    setIsLoading(true)
+    setError(null)
+    try {
+      await deleteOrganizationRequest(id)
+    } catch (err) {
+      const apiError = err as ApiError
+      setError(apiError.message ?? 'Erro ao excluir organização.')
+      throw err
+    } finally {
+      setIsLoading(false)
+    }
+  }
+
   async function uploadOrgPhoto(orgId: string, file: File): Promise<void> {
     setIsLoading(true)
     setError(null)
@@ -227,5 +243,5 @@ export function useOrganization(): UseOrganizationResult {
     }
   }
 
-  return { organization, organizations, members, isLoading, error, getOrganization, listOrganizations, listMyOrganizations, createOrganization, updateOrganization, getMembers, addMember, removeMember, changeRole, uploadOrgPhoto }
+  return { organization, organizations, members, isLoading, error, getOrganization, listOrganizations, listMyOrganizations, createOrganization, updateOrganization, deleteOrganization, getMembers, addMember, removeMember, changeRole, uploadOrgPhoto }
 }

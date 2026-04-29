@@ -4,7 +4,7 @@
  * @description Tests for OrganizationDetailPage — myRole-based visibility, members list, and member management.
  */
 
-import { render, screen, waitFor } from '@testing-library/react'
+import { render, screen, fireEvent, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { MemoryRouter, Route, Routes } from 'react-router-dom'
 import OrganizationDetailPage from '@/modules/organization/pages/OrganizationDetailPage'
@@ -47,12 +47,20 @@ jest.mock('@/shared/validators/cpf.validator', () => ({
 
 // ─── Hook mock ───────────────────────────────────────────────────────────────
 
+const mockNavigate = jest.fn()
+
+jest.mock('react-router-dom', () => ({
+  ...jest.requireActual('react-router-dom'),
+  useNavigate: () => mockNavigate,
+}))
+
 const mockGetOrganization = jest.fn()
 const mockGetMembers = jest.fn()
 const mockUploadOrgPhoto = jest.fn()
 const mockAddMember = jest.fn()
 const mockRemoveMember = jest.fn()
 const mockChangeRole = jest.fn()
+const mockDeleteOrganization = jest.fn()
 
 const hookState = {
   organization: null as object | null,
@@ -73,6 +81,7 @@ jest.mock('@/modules/organization/hooks/useOrganization', () => ({
     addMember: mockAddMember,
     removeMember: mockRemoveMember,
     changeRole: mockChangeRole,
+    deleteOrganization: mockDeleteOrganization,
   }),
 }))
 
@@ -123,6 +132,7 @@ function renderPage() {
 describe('OrganizationDetailPage', () => {
   beforeEach(() => {
     jest.clearAllMocks()
+    mockNavigate.mockClear()
     hookState.organization = null
     hookState.members = []
     hookState.isLoading = false
@@ -374,6 +384,70 @@ describe('OrganizationDetailPage', () => {
     await waitFor(() => {
       expect(mockChangeRole).toHaveBeenCalledWith('org-1', 'person-1', 'MANAGER')
       expect(mockGetMembers).toHaveBeenCalledWith('org-1')
+    })
+  })
+
+  // ── Delete organization — OWNER only ──────────────────────────────────────────
+
+  it('should show "Excluir organização" button when OWNER', () => {
+    hookState.organization = { ...ORG_BASE, myRole: 'OWNER' }
+    renderPage()
+    expect(screen.getByRole('button', { name: /excluir organização/i })).toBeInTheDocument()
+  })
+
+  it('should NOT show "Excluir organização" button when MANAGER', () => {
+    hookState.organization = { ...ORG_BASE, myRole: 'MANAGER' }
+    renderPage()
+    expect(screen.queryByRole('button', { name: /excluir organização/i })).not.toBeInTheDocument()
+  })
+
+  it('should NOT show "Excluir organização" button when MEMBER', () => {
+    hookState.organization = { ...ORG_BASE, myRole: 'MEMBER' }
+    renderPage()
+    expect(screen.queryByRole('button', { name: /excluir organização/i })).not.toBeInTheDocument()
+  })
+
+  it('should NOT show "Excluir organização" button when not a member', () => {
+    hookState.organization = { ...ORG_BASE }
+    renderPage()
+    expect(screen.queryByRole('button', { name: /excluir organização/i })).not.toBeInTheDocument()
+  })
+
+  it('should show confirmation step when "Excluir organização" clicked', () => {
+    hookState.organization = { ...ORG_BASE, myRole: 'OWNER' }
+    renderPage()
+    fireEvent.click(screen.getByRole('button', { name: /excluir organização/i }))
+    expect(screen.getByRole('button', { name: /confirmar exclusão/i })).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: /cancelar/i })).toBeInTheDocument()
+  })
+
+  it('should hide confirmation when "Cancelar" clicked', () => {
+    hookState.organization = { ...ORG_BASE, myRole: 'OWNER' }
+    renderPage()
+    fireEvent.click(screen.getByRole('button', { name: /excluir organização/i }))
+    fireEvent.click(screen.getByRole('button', { name: /cancelar/i }))
+    expect(screen.queryByRole('button', { name: /confirmar exclusão/i })).not.toBeInTheDocument()
+  })
+
+  it('should call deleteOrganization with org id when confirmed', async () => {
+    hookState.organization = { ...ORG_BASE, myRole: 'OWNER' }
+    mockDeleteOrganization.mockResolvedValue(undefined)
+    renderPage()
+    fireEvent.click(screen.getByRole('button', { name: /excluir organização/i }))
+    fireEvent.click(screen.getByRole('button', { name: /confirmar exclusão/i }))
+    await waitFor(() => {
+      expect(mockDeleteOrganization).toHaveBeenCalledWith('org-1')
+    })
+  })
+
+  it('should navigate to /organizacoes after deletion', async () => {
+    hookState.organization = { ...ORG_BASE, myRole: 'OWNER' }
+    mockDeleteOrganization.mockResolvedValue(undefined)
+    renderPage()
+    fireEvent.click(screen.getByRole('button', { name: /excluir organização/i }))
+    fireEvent.click(screen.getByRole('button', { name: /confirmar exclusão/i }))
+    await waitFor(() => {
+      expect(mockNavigate).toHaveBeenCalledWith('/organizacoes')
     })
   })
 })

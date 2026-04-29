@@ -5,7 +5,7 @@
  */
 
 import { useEffect, useRef, useState } from 'react'
-import { useParams, Link } from 'react-router-dom'
+import { useParams, Link, useNavigate } from 'react-router-dom'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
@@ -45,6 +45,7 @@ type AddMemberForm = z.infer<typeof addMemberSchema>
 
 export default function OrganizationDetailPage() {
   const { id } = useParams<{ id: string }>()
+  const navigate = useNavigate()
   const {
     organization,
     members,
@@ -56,9 +57,11 @@ export default function OrganizationDetailPage() {
     addMember,
     removeMember,
     changeRole,
+    deleteOrganization,
   } = useOrganization()
   const photoInputRef = useRef<HTMLInputElement>(null)
   const [addMemberError, setAddMemberError] = useState<string | null>(null)
+  const [confirmDelete, setConfirmDelete] = useState(false)
 
   const canEditPhoto = organization?.myRole === 'OWNER' || organization?.myRole === 'MANAGER'
   const isOwner = organization?.myRole === 'OWNER'
@@ -96,6 +99,12 @@ export default function OrganizationDetailPage() {
     } catch {
       // error displayed via hook's error state
     }
+  }
+
+  const handleDelete = async () => {
+    if (!id) return
+    await deleteOrganization(id)
+    navigate(ROUTES.ORGANIZATION.LIST)
   }
 
   const handleChangeRole = async (personId: string, role: OrgRole) => {
@@ -274,6 +283,40 @@ export default function OrganizationDetailPage() {
               >
                 Editar organização
               </Link>
+            )}
+
+            {isOwner && (
+              <div className="flex flex-col gap-2 pt-2 border-t border-gray-200">
+                {!confirmDelete ? (
+                  <button
+                    type="button"
+                    onClick={() => setConfirmDelete(true)}
+                    className="text-sm font-medium text-[--color-danger] hover:underline self-start"
+                  >
+                    Excluir organização
+                  </button>
+                ) : (
+                  <div className="flex flex-col gap-2">
+                    <p className="text-sm text-gray-700">Tem certeza? Esta ação não pode ser desfeita.</p>
+                    <div className="flex gap-2">
+                      <button
+                        type="button"
+                        onClick={handleDelete}
+                        className="min-h-[44px] px-4 bg-[--color-danger] text-white text-sm font-medium rounded-[--radius-md]"
+                      >
+                        Confirmar exclusão
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => setConfirmDelete(false)}
+                        className="min-h-[44px] px-4 border border-gray-300 text-sm font-medium rounded-[--radius-md] text-gray-700"
+                      >
+                        Cancelar
+                      </button>
+                    </div>
+                  </div>
+                )}
+              </div>
             )}
           </div>
         )}
