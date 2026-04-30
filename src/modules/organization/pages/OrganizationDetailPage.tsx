@@ -13,6 +13,7 @@ import { ROUTES } from '@/routes/routes.config'
 import AppShell from '@/shared/components/layout/AppShell'
 import Header from '@/shared/components/layout/Header'
 import PageWrapper from '@/shared/components/layout/PageWrapper'
+import Button from '@/shared/components/ui/Button'
 import { useOrganization } from '@/modules/organization/hooks/useOrganization'
 import { applyCnpjMask } from '@/shared/utils/mask'
 import CpfInput from '@/shared/components/forms/CpfInput'
@@ -291,7 +292,7 @@ export default function OrganizationDetailPage() {
                   <button
                     type="button"
                     onClick={() => setConfirmDelete(true)}
-                    className="text-sm font-medium text-[--color-danger] hover:underline self-start"
+                    className="text-sm font-medium text-red hover:underline self-start"
                   >
                     Excluir organização
                   </button>
@@ -299,20 +300,12 @@ export default function OrganizationDetailPage() {
                   <div className="flex flex-col gap-2">
                     <p className="text-sm text-gray-700">Tem certeza? Esta ação não pode ser desfeita.</p>
                     <div className="flex gap-2">
-                      <button
-                        type="button"
-                        onClick={handleDelete}
-                        className="min-h-[44px] px-4 bg-[--color-danger] text-white text-sm font-medium rounded-[--radius-md]"
-                      >
+                      <Button variant="danger" onClick={handleDelete} loading={isLoading}>
                         Confirmar exclusão
-                      </button>
-                      <button
-                        type="button"
-                        onClick={() => setConfirmDelete(false)}
-                        className="min-h-[44px] px-4 border border-gray-300 text-sm font-medium rounded-[--radius-md] text-gray-700"
-                      >
+                      </Button>
+                      <Button variant="ghost" onClick={() => setConfirmDelete(false)}>
                         Cancelar
-                      </button>
+                      </Button>
                     </div>
                   </div>
                 )}
