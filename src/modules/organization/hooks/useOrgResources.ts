@@ -8,7 +8,7 @@ import { useState, useRef, useEffect } from 'react'
 import { getOrgPetsRequest } from '@/modules/pet/services/pet.service'
 import { listAdoptionsRequest } from '@/modules/adoption/services/adoption.service'
 import { listReportsRequest } from '@/modules/lost-found/services/lostFound.service'
-import { listServicesRequest } from '@/modules/services-directory/services/servicesDirectory.service'
+import { listServicesRequest, deleteServiceRequest } from '@/modules/services-directory/services/servicesDirectory.service'
 import type { Pet } from '@/modules/pet/types'
 import type { AdoptionListing } from '@/modules/adoption/types'
 import type { LostFoundReport } from '@/modules/lost-found/types'
@@ -102,11 +102,17 @@ export function useOrgResources() {
     }
   }
 
+  async function deleteService(id: string): Promise<void> {
+    await deleteServiceRequest(id)
+    setState(s => ({ ...s, services: s.services.filter(sv => sv.id !== id) }))
+  }
+
   return {
     ...state,
     loadPets,
     loadAdoptions,
     loadReports,
     loadServices,
+    deleteService,
   }
 }

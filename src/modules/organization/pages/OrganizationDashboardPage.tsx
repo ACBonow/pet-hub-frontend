@@ -4,7 +4,7 @@
  * @description Private dashboard page for managing an organization, with tabs for data, members, and resources.
  */
 
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { useParams, useSearchParams, Link } from 'react-router-dom'
 import { ROUTES } from '@/routes/routes.config'
 import AppShell from '@/shared/components/layout/AppShell'
@@ -53,7 +53,15 @@ export default function OrganizationDashboardPage() {
     loadAdoptions,
     loadReports,
     loadServices,
+    deleteService,
   } = useOrgResources()
+
+  const [confirmingDeleteServiceId, setConfirmingDeleteServiceId] = useState<string | null>(null)
+
+  async function handleDeleteService(serviceId: string) {
+    await deleteService(serviceId)
+    setConfirmingDeleteServiceId(null)
+  }
 
   const myRole = organization?.myRole as OrgRole | undefined
   const visibleTabs = ALL_TABS.filter(tab => !tab.ownerOnly || myRole === 'OWNER')
@@ -193,13 +201,44 @@ export default function OrganizationDashboardPage() {
                   emptyMessage="Nenhum serviço cadastrado para esta organização."
                 >
                   {services.map(service => (
-                    <Link
-                      key={service.id}
-                      to={ROUTES.SERVICES.DETAIL(service.id)}
-                      className="flex items-center gap-2 p-2 rounded border border-gray-200 hover:bg-gray-50 text-sm text-gray-800"
-                    >
-                      {service.name}
-                    </Link>
+                    <div key={service.id} className="flex flex-col gap-1 p-2 rounded border border-gray-200 text-sm">
+                      <div className="flex items-center justify-between gap-2">
+                        <Link
+                          to={ROUTES.SERVICES.DETAIL(service.id)}
+                          className="text-gray-800 hover:underline truncate"
+                        >
+                          {service.name}
+                        </Link>
+                        {confirmingDeleteServiceId !== service.id && (
+                          <button
+                            type="button"
+                            onClick={() => setConfirmingDeleteServiceId(service.id)}
+                            className="text-xs text-red hover:underline shrink-0"
+                          >
+                            Excluir
+                          </button>
+                        )}
+                      </div>
+                      {confirmingDeleteServiceId === service.id && (
+                        <div className="flex items-center gap-2 pt-1 border-t border-gray-100">
+                          <span className="text-xs text-gray-600">Confirmar exclusão?</span>
+                          <button
+                            type="button"
+                            onClick={() => handleDeleteService(service.id)}
+                            className="text-xs font-medium text-white bg-red px-2 py-0.5 rounded"
+                          >
+                            Excluir
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => setConfirmingDeleteServiceId(null)}
+                            className="text-xs text-gray-500 hover:underline"
+                          >
+                            Cancelar
+                          </button>
+                        </div>
+                      )}
+                    </div>
                   ))}
                 </OrgResourceTab>
               )}
