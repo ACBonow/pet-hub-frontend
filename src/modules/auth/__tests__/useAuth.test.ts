@@ -36,7 +36,7 @@ describe('useAuth', () => {
       mockAuthService.loginRequest.mockResolvedValueOnce({
         accessToken: 'jwt-access-token-123',
         refreshToken: 'jwt-refresh-token-123',
-        user: { id: 'user-1', name: 'João Silva', email: 'joao@example.com', personId: 'person-1' },
+        user: { id: 'user-1', name: 'João Silva', email: 'joao@example.com', personId: 'person-1', termsAcceptedAt: null },
       })
 
       const { result } = renderHook(() => useAuth())
@@ -54,7 +54,7 @@ describe('useAuth', () => {
       mockAuthService.loginRequest.mockResolvedValueOnce({
         accessToken: 'jwt-token',
         refreshToken: 'jwt-refresh-token',
-        user: { id: 'u1', name: 'Test', email: 'test@example.com', personId: null },
+        user: { id: 'u1', name: 'Test', email: 'test@example.com', personId: null, termsAcceptedAt: null },
       })
 
       const { result } = renderHook(() => useAuth())
@@ -89,7 +89,7 @@ describe('useAuth', () => {
       mockAuthService.loginRequest.mockResolvedValueOnce({
         accessToken: 'token',
         refreshToken: 'refresh-token',
-        user: { id: 'u1', name: 'Test', email: 'test@example.com', personId: null },
+        user: { id: 'u1', name: 'Test', email: 'test@example.com', personId: null, termsAcceptedAt: null },
       })
 
       const { result } = renderHook(() => useAuth())
@@ -113,7 +113,7 @@ describe('useAuth', () => {
       mockAuthService.loginRequest.mockResolvedValueOnce({
         accessToken: 'any-token',
         refreshToken: 'any-refresh-token',
-        user: { id: 'u1', name: 'Test', email: 'test@example.com', personId: null },
+        user: { id: 'u1', name: 'Test', email: 'test@example.com', personId: null, termsAcceptedAt: null },
       })
 
       const { result } = renderHook(() => useAuth())
