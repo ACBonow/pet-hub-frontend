@@ -7,6 +7,7 @@
 import { Navigate, Outlet, useLocation } from 'react-router-dom'
 import { useAuthStore } from '@/modules/auth/store/authSlice'
 import { ROUTES } from './routes.config'
+import TermsBanner from '@/shared/components/ui/TermsBanner'
 
 export default function PrivateRoute() {
   const isAuthenticated = useAuthStore((state) => state.isAuthenticated)
@@ -17,5 +18,10 @@ export default function PrivateRoute() {
     return <Navigate to={`${ROUTES.LOGIN}?returnTo=${returnTo}`} replace />
   }
 
-  return <Outlet />
+  return (
+    <>
+      <TermsBanner />
+      <Outlet />
+    </>
+  )
 }

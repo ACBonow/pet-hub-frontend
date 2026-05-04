@@ -9,6 +9,7 @@ export interface AuthUser {
   name: string
   email: string
   personId: string | null
+  termsAcceptedAt: string | null
 }
 
 export interface LoginCredentials {

@@ -18,7 +18,7 @@ import type {
 type BackendAuthData = {
   accessToken: string
   refreshToken: string
-  user: { id: string; email: string }
+  user: { id: string; email: string; termsAcceptedAt: string | null }
   person: { id: string; name: string } | null
 }
 
@@ -31,6 +31,7 @@ function mapBackendAuth(data: BackendAuthData): AuthResponse {
       email: data.user.email,
       name: data.person?.name ?? '',
       personId: data.person?.id ?? null,
+      termsAcceptedAt: data.user.termsAcceptedAt,
     },
   }
 }
@@ -41,8 +42,16 @@ export async function loginRequest(credentials: LoginCredentials): Promise<AuthR
 }
 
 export async function registerRequest(data: RegisterData): Promise<AuthResponse> {
-  const response = await api.post<{ success: true; data: BackendAuthData }>('/api/v1/auth/register', data)
+  const response = await api.post<{ success: true; data: BackendAuthData }>('/api/v1/auth/register', {
+    ...data,
+    termsAccepted: true,
+  })
   return mapBackendAuth(response.data.data)
+}
+
+export async function acceptTermsRequest(): Promise<string> {
+  const response = await api.post<{ success: true; data: { termsAcceptedAt: string } }>('/api/v1/auth/accept-terms')
+  return response.data.data.termsAcceptedAt
 }
 
 export async function refreshTokenRequest(data: { refreshToken: string }): Promise<{ accessToken: string; refreshToken: string }> {

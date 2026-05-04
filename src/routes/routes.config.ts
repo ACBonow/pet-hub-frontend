@@ -43,6 +43,7 @@ export const ROUTES = {
     RESET_PASSWORD: '/redefinir-senha',
   },
   PROFILE: '/perfil',
+  TERMS: '/termos-de-uso',
   SERVICES: {
     LIST: '/servicos',
     DETAIL: (id: string) => `/servicos/${id}`,

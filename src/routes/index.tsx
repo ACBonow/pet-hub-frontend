@@ -23,6 +23,7 @@ import ResetPasswordPage from '@/modules/auth/pages/ResetPasswordPage'
 // ── PUBLIC ────────────────────────────────────────────────────────────────────
 const LandingPage = lazy(() => import('@/pages/LandingPage'))
 const NotFoundPage = lazy(() => import('@/pages/NotFoundPage'))
+const TermosDeUsoPage = lazy(() => import('@/pages/TermosDeUsoPage'))
 const AdoptionListPage = lazy(() => import('@/modules/adoption/pages/AdoptionListPage'))
 const AdoptionDetailPage = lazy(() => import('@/modules/adoption/pages/AdoptionDetailPage'))
 const LostFoundListPage = lazy(() => import('@/modules/lost-found/pages/LostFoundListPage'))
@@ -72,6 +73,7 @@ export const router = createBrowserRouter([
 
   // ── PUBLIC ─────────────────────────────────────────────────────────────────
   { path: ROUTES.HOME,               element: <S><LandingPage /></S> },
+  { path: ROUTES.TERMS,             element: <S><TermosDeUsoPage /></S> },
   { path: ROUTES.ADOPTION.LIST,      element: <S><AdoptionListPage /></S> },
   { path: ROUTES.ADOPTION.DETAIL(':id'), element: <S><AdoptionDetailPage /></S> },
   { path: ROUTES.LOST_FOUND.LIST,    element: <S><LostFoundListPage /></S> },

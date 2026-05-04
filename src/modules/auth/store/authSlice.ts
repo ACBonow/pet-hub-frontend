@@ -15,6 +15,7 @@ interface AuthSlice {
   isAuthenticated: boolean
   setAuth: (token: string, user: AuthUser) => void
   clearAuth: () => void
+  setTermsAccepted: (termsAcceptedAt: string) => void
 }
 
 export const useAuthStore = create<AuthSlice>((set) => ({
@@ -28,6 +29,12 @@ export const useAuthStore = create<AuthSlice>((set) => ({
 
   clearAuth: () => {
     set({ accessToken: null, user: null, isAuthenticated: false })
+  },
+
+  setTermsAccepted: (termsAcceptedAt) => {
+    set((state) => ({
+      user: state.user ? { ...state.user, termsAcceptedAt } : null,
+    }))
   },
 }))
 

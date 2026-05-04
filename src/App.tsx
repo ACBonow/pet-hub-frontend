@@ -45,7 +45,8 @@ export default function App() {
 
     let storedUser: AuthUser
     try {
-      storedUser = JSON.parse(storedUserRaw) as AuthUser
+      const parsed = JSON.parse(storedUserRaw) as Partial<AuthUser>
+      storedUser = { termsAcceptedAt: null, ...parsed } as AuthUser
     } catch {
       localStorage.removeItem(STORAGE_REFRESH_KEY)
       localStorage.removeItem(STORAGE_USER_KEY)

@@ -21,6 +21,9 @@ const schema = z.object({
   email: z.string().email('E-mail inválido'),
   password: z.string().min(8, 'Senha deve ter pelo menos 8 caracteres'),
   cpf: z.string().refine((v) => !v || validateCpf(v), { message: 'CPF inválido' }),
+  termsAccepted: z.literal(true, {
+    errorMap: () => ({ message: 'Você deve aceitar os Termos de Uso para continuar' }),
+  }),
 })
 
 type FormData = z.infer<typeof schema>
@@ -37,7 +40,7 @@ export default function RegisterForm() {
     formState: { errors, isSubmitting },
   } = useForm<FormData>({ resolver: zodResolver(schema), mode: 'onBlur' })
 
-  const onSubmit = async (data: FormData) => {
+  const onSubmit = async ({ termsAccepted: _terms, ...data }: FormData) => {
     setApiError(null)
     try {
       await registerUser(data)
@@ -130,6 +133,28 @@ export default function RegisterForm() {
       <Button type="submit" loading={isSubmitting} className="w-full mt-2">
         Cadastrar
       </Button>
+
+      <div className="flex flex-col gap-1">
+        <label className="flex items-start gap-2 cursor-pointer">
+          <input
+            type="checkbox"
+            id="termsAccepted"
+            className="mt-0.5 w-4 h-4 accent-[--color-primary] shrink-0"
+            {...register('termsAccepted')}
+          />
+          <span className="text-xs text-gray-600 leading-relaxed">
+            Li e aceito os{' '}
+            <Link to={ROUTES.TERMS} target="_blank" className="text-[--color-primary] font-medium hover:underline">
+              Termos de Uso e Política de Privacidade
+            </Link>
+          </span>
+        </label>
+        {errors.termsAccepted && (
+          <p role="alert" className="text-xs text-[--color-danger]">
+            {errors.termsAccepted.message}
+          </p>
+        )}
+      </div>
 
       <p className="text-sm text-center text-gray-600">
         Já tem uma conta?{' '}

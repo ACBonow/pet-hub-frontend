@@ -74,6 +74,7 @@ describe('RegisterForm', () => {
     await userEvent.type(screen.getByLabelText(/e-?mail/i), 'joao@example.com')
     await userEvent.type(screen.getByLabelText(/senha/i), 'senhasegura123')
     await userEvent.type(screen.getByLabelText('CPF'), '52998224725')
+    await userEvent.click(screen.getByRole('checkbox', { name: /termos de uso/i }))
     await userEvent.click(screen.getByRole('button', { name: /cadastrar/i }))
 
     await waitFor(() => {
@@ -84,6 +85,19 @@ describe('RegisterForm', () => {
         cpf: '52998224725',
       })
     })
+  })
+
+  it('should show error when terms checkbox is not checked', async () => {
+    renderWithRouter(<RegisterForm />)
+
+    await userEvent.type(screen.getByLabelText(/nome/i), 'João Silva')
+    await userEvent.type(screen.getByLabelText(/e-?mail/i), 'joao@example.com')
+    await userEvent.type(screen.getByLabelText(/senha/i), 'senhasegura123')
+    await userEvent.type(screen.getByLabelText('CPF'), '52998224725')
+    await userEvent.click(screen.getByRole('button', { name: /cadastrar/i }))
+
+    expect(await screen.findByText(/aceitar os Termos de Uso/i)).toBeInTheDocument()
+    expect(mockRegister).not.toHaveBeenCalled()
   })
 
   it('should display API error message when register fails', async () => {
@@ -98,6 +112,7 @@ describe('RegisterForm', () => {
     await userEvent.type(screen.getByLabelText(/e-?mail/i), 'joao@example.com')
     await userEvent.type(screen.getByLabelText(/senha/i), 'senhasegura123')
     await userEvent.type(screen.getByLabelText('CPF'), '52998224725')
+    await userEvent.click(screen.getByRole('checkbox', { name: /termos de uso/i }))
     await userEvent.click(screen.getByRole('button', { name: /cadastrar/i }))
 
     expect(await screen.findByText('Este e-mail já está em uso.')).toBeInTheDocument()
@@ -115,6 +130,7 @@ describe('RegisterForm', () => {
     await userEvent.type(screen.getByLabelText(/e-?mail/i), 'joao@example.com')
     await userEvent.type(screen.getByLabelText(/senha/i), 'senhasegura123')
     await userEvent.type(screen.getByLabelText('CPF'), '52998224725')
+    await userEvent.click(screen.getByRole('checkbox', { name: /termos de uso/i }))
     await userEvent.click(screen.getByRole('button', { name: /cadastrar/i }))
 
     await waitFor(() => {

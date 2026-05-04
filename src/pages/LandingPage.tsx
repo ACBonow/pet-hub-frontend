@@ -187,8 +187,18 @@ export default function LandingPage() {
       </div>
 
       {/* Footer */}
-      <footer className="text-center text-xs text-muted py-6">
-        Tchê PetHub — Cuidar de quem você ama 🐾
+      <footer className="py-8 border-t border-line">
+        <div className="max-w-screen-xl mx-auto px-4 lg:px-8 flex flex-col items-center gap-3">
+          <p className="text-xs text-muted text-center">Tchê PetHub — Cuidar de quem você ama 🐾</p>
+          <div className="flex flex-wrap justify-center gap-x-4 gap-y-1 text-xs">
+            <Link to={ROUTES.TERMS} className="text-muted hover:text-body underline underline-offset-2 transition-colors">
+              Termos de Uso e Privacidade
+            </Link>
+            <a href="mailto:tchepethub@gmail.com" className="text-muted hover:text-body underline underline-offset-2 transition-colors">
+              tchepethub@gmail.com
+            </a>
+          </div>
+        </div>
       </footer>
     </PublicLayout>
   )
