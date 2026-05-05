@@ -16,6 +16,7 @@ export interface PetFormValues {
   gender: string
   castrated: boolean
   birthDate: string
+  notes: string
   tutorshipType: TutorshipType
   photoFile?: File
 }
@@ -44,6 +45,7 @@ export default function PetForm({ onSubmit, initialData, isLoading }: PetFormPro
       gender: initialData?.gender ?? '',
       castrated: initialData?.castrated ?? false,
       birthDate: initialData?.birthDate ?? '',
+      notes: initialData?.notes ?? '',
       tutorshipType: initialData?.tutorshipType ?? 'OWNER',
     },
   })
@@ -189,6 +191,20 @@ export default function PetForm({ onSubmit, initialData, isLoading }: PetFormPro
             aria-label="Foto do pet"
             className="hidden"
             onChange={handleFileChange}
+          />
+        </div>
+
+        <div className="flex flex-col gap-1">
+          <label htmlFor="notes" className="text-sm font-medium text-gray-700">
+            Observações (opcional)
+          </label>
+          <textarea
+            id="notes"
+            {...register('notes')}
+            rows={3}
+            maxLength={2000}
+            placeholder="Temperamento, condições de saúde, informações relevantes..."
+            className="w-full px-3 py-2 border border-gray-300 rounded-[--radius-md] text-sm focus:outline-none focus:ring-2 focus:ring-[--color-primary] resize-none"
           />
         </div>
 

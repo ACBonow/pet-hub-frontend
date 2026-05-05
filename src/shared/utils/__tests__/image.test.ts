@@ -55,20 +55,23 @@ describe('compressImage', () => {
     jest.restoreAllMocks()
   })
 
-  it('retorna o arquivo sem alteração quando tamanho ≤ 1 MB', async () => {
-    const file = makeFile(500 * 1024) // 500 KB
-    const result = await compressImage(file)
-    expect(result).toBe(file)
-    expect(URL.createObjectURL).not.toHaveBeenCalled()
+  it('processa arquivo pequeno via canvas e retorna JPEG', async () => {
+    const file = makeFile(500 * 1024) // 500 KB — below 1 MB limit
+    const blob = new Blob(['comprimido'], { type: 'image/jpeg' })
+    mockToBlob.mockImplementation((cb: (b: Blob) => void) => cb(blob))
+
+    const promise = compressImage(file)
+    mockImage.onload!()
+
+    const result = await promise
+    expect(result).toBeInstanceOf(File)
+    expect(result.name).toBe('foto.jpg')
+    expect(result.type).toBe('image/jpeg')
+    expect(mockGetContext).toHaveBeenCalledWith('2d')
+    expect(mockDrawImage).toHaveBeenCalled()
   })
 
-  it('retorna sem alteração com limite personalizado', async () => {
-    const file = makeFile(800 * 1024) // 800 KB
-    const result = await compressImage(file, { maxSizeMB: 2 })
-    expect(result).toBe(file)
-  })
-
-  it('comprime arquivo grande via canvas e retorna File', async () => {
+  it('comprime arquivo grande via canvas e retorna File JPEG', async () => {
     const file = makeFile(2 * 1024 * 1024) // 2 MB
     const blob = new Blob(['comprimido'], { type: 'image/jpeg' })
     mockToBlob.mockImplementation((cb: (b: Blob) => void) => cb(blob))
@@ -78,7 +81,8 @@ describe('compressImage', () => {
 
     const result = await promise
     expect(result).toBeInstanceOf(File)
-    expect(result.name).toBe(file.name)
+    expect(result.name).toBe('foto.jpg')
+    expect(result.type).toBe('image/jpeg')
     expect(mockGetContext).toHaveBeenCalledWith('2d')
     expect(mockDrawImage).toHaveBeenCalled()
   })

@@ -29,6 +29,7 @@ export default function PetFormPage() {
       gender: data.gender || null,
       castrated: data.castrated ?? null,
       birthDate: data.birthDate || null,
+      notes: data.notes || null,
       tutorshipType: data.tutorshipType,
       organizationId: context.type === 'org' ? context.organizationId ?? null : null,
     })

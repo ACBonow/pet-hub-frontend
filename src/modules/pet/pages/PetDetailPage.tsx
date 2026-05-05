@@ -12,6 +12,7 @@ import CpfInput from '@/shared/components/forms/CpfInput'
 import Chip from '@/shared/components/ui/Chip'
 import Icon from '@/shared/components/ui/Icon'
 import { useForm } from 'react-hook-form'
+import { compressImage } from '@/shared/utils/image'
 
 type Tab = 'info' | 'tutoria'
 
@@ -71,7 +72,8 @@ export default function PetDetailPage() {
   const handlePhotoChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
     if (!file || !id) return
-    await uploadPhoto(id, file)
+    const photo = await compressImage(file)
+    await uploadPhoto(id, photo)
     await getPet(id)
   }
 
@@ -259,24 +261,33 @@ export default function PetDetailPage() {
 
               {/* Tab: Informações */}
               {tab === 'info' && (
-                <div className="bg-card border border-line rounded-2xl overflow-hidden">
-                  {[
-                    ['Espécie', SPECIES_LABELS[pet.species] ?? pet.species],
-                    ['Raça', pet.breed ?? '—'],
-                    ['Sexo', pet.gender ? (GENDER_LABELS[pet.gender] ?? pet.gender) : '—'],
-                    ['Castrado', pet.castrated == null ? '—' : pet.castrated ? 'Sim' : 'Não'],
-                    ['Nascimento', pet.birthDate ? formatBirthDate(pet.birthDate) : '—'],
-                  ].map(([label, value], i, arr) => (
-                    <div
-                      key={label}
-                      className={`flex justify-between items-center px-5 py-4 text-sm ${
-                        i < arr.length - 1 ? 'border-b border-line' : ''
-                      }`}
-                    >
-                      <span className="text-muted">{label}</span>
-                      <span className="font-semibold text-body text-right">{value}</span>
+                <div className="flex flex-col gap-4">
+                  <div className="bg-card border border-line rounded-2xl overflow-hidden">
+                    {[
+                      ['Espécie', SPECIES_LABELS[pet.species] ?? pet.species],
+                      ['Raça', pet.breed ?? '—'],
+                      ['Sexo', pet.gender ? (GENDER_LABELS[pet.gender] ?? pet.gender) : '—'],
+                      ['Castrado', pet.castrated == null ? '—' : pet.castrated ? 'Sim' : 'Não'],
+                      ['Nascimento', pet.birthDate ? formatBirthDate(pet.birthDate) : '—'],
+                    ].map(([label, value], i, arr) => (
+                      <div
+                        key={label}
+                        className={`flex justify-between items-center px-5 py-4 text-sm ${
+                          i < arr.length - 1 ? 'border-b border-line' : ''
+                        }`}
+                      >
+                        <span className="text-muted">{label}</span>
+                        <span className="font-semibold text-body text-right">{value}</span>
+                      </div>
+                    ))}
+                  </div>
+
+                  {pet.notes && (
+                    <div className="bg-card border border-line rounded-2xl px-5 py-4">
+                      <p className="text-xs font-semibold text-muted uppercase tracking-wide mb-2">Observações</p>
+                      <p className="text-sm text-body whitespace-pre-wrap">{pet.notes}</p>
                     </div>
-                  ))}
+                  )}
                 </div>
               )}
 

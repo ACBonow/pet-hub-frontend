@@ -14,8 +14,8 @@ export async function compressImage(file: File, options?: CompressOptions): Prom
   const maxSizeBytes = (options?.maxSizeMB ?? 1) * 1024 * 1024
   const maxWidthPx = options?.maxWidthPx ?? 1200
 
-  if (file.size <= maxSizeBytes) return file
-
+  // Always pass through canvas to normalise format to JPEG (fixes magic-bytes
+  // mismatch when mobile OS crops/zooms produce non-standard blobs).
   return new Promise((resolve, reject) => {
     const img = new Image()
     const url = URL.createObjectURL(file)
@@ -41,16 +41,20 @@ export async function compressImage(file: File, options?: CompressOptions): Prom
 
       ctx.drawImage(img, 0, 0, width, height)
 
+      // Use lower quality only for files that actually exceed the size limit.
+      const quality = file.size <= maxSizeBytes ? 0.92 : 0.85
+      const baseName = file.name.replace(/\.[^.]+$/, '')
+
       canvas.toBlob(
         (blob) => {
           if (!blob) {
             reject(new Error('Compression failed'))
             return
           }
-          resolve(new File([blob], file.name, { type: file.type }))
+          resolve(new File([blob], `${baseName}.jpg`, { type: 'image/jpeg' }))
         },
-        file.type,
-        0.85,
+        'image/jpeg',
+        quality,
       )
     }
 

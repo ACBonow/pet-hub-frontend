@@ -20,6 +20,7 @@ export interface Pet {
   castrated: boolean | null
   birthDate: string | null
   photoUrl: string | null
+  notes: string | null
   primaryTutorId: string
   primaryTutorshipType: TutorshipType
   coTutors: CoTutor[]
@@ -34,6 +35,7 @@ export interface CreatePetData {
   gender?: string | null
   castrated?: boolean | null
   birthDate?: string | null
+  notes?: string | null
   tutorshipType?: TutorshipType
   organizationId?: string | null
 }
@@ -45,6 +47,7 @@ export interface UpdatePetData {
   gender?: string | null
   castrated?: boolean | null
   birthDate?: string | null
+  notes?: string | null
 }
 
 export interface TransferTutorshipData {

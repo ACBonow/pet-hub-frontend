@@ -20,7 +20,7 @@ describe('PetForm', () => {
     mockOnSubmit.mockResolvedValue(undefined)
   })
 
-  it('should render name, species, breed, birth date, gender, and castrated fields', () => {
+  it('should render name, species, breed, birth date, gender, castrated, and notes fields', () => {
     renderWithRouter(<PetForm onSubmit={mockOnSubmit} />)
     expect(screen.getByLabelText(/nome/i)).toBeInTheDocument()
     expect(screen.getByLabelText(/espécie/i)).toBeInTheDocument()
@@ -28,6 +28,7 @@ describe('PetForm', () => {
     expect(screen.getByLabelText(/data de nascimento/i)).toBeInTheDocument()
     expect(screen.getByLabelText(/sexo/i)).toBeInTheDocument()
     expect(screen.getByLabelText(/castrado/i)).toBeInTheDocument()
+    expect(screen.getByLabelText(/observações/i)).toBeInTheDocument()
   })
 
   it('should submit valid pet data without tutor ID field', async () => {
@@ -149,5 +150,26 @@ describe('PetForm', () => {
     const img = screen.getByAltText(/prévia da foto/i)
     expect(img).toBeInTheDocument()
     expect(img).toHaveAttribute('src', 'https://example.com/photo.jpg')
+  })
+
+  it('should submit with notes value', async () => {
+    renderWithRouter(<PetForm onSubmit={mockOnSubmit} />)
+
+    await userEvent.type(screen.getByLabelText(/nome/i), 'Rex')
+    await userEvent.type(screen.getByLabelText(/observações/i), 'Portador de FIV. Muito dócil.')
+    await userEvent.click(screen.getByRole('button', { name: /salvar/i }))
+
+    await waitFor(() => {
+      expect(mockOnSubmit).toHaveBeenCalledWith(
+        expect.objectContaining({ notes: 'Portador de FIV. Muito dócil.' }),
+      )
+    })
+  })
+
+  it('should pre-fill notes when initialData contains notes', () => {
+    renderWithRouter(
+      <PetForm onSubmit={mockOnSubmit} initialData={{ name: 'Luna', notes: 'Muito brincalhona.' }} />,
+    )
+    expect(screen.getByDisplayValue('Muito brincalhona.')).toBeInTheDocument()
   })
 })

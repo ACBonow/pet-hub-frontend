@@ -12,6 +12,7 @@ import Header from '@/shared/components/layout/Header'
 import PageWrapper from '@/shared/components/layout/PageWrapper'
 import PetForm from '@/modules/pet/components/PetForm'
 import { usePet } from '@/modules/pet/hooks/usePet'
+import { compressImage } from '@/shared/utils/image'
 
 export default function PetEditPage() {
   const { id } = useParams<{ id: string }>()
@@ -32,9 +33,11 @@ export default function PetEditPage() {
       gender: data.gender || null,
       castrated: data.castrated ?? null,
       birthDate: data.birthDate || null,
+      notes: data.notes || null,
     })
     if (data.photoFile) {
-      await uploadPhoto(id, data.photoFile)
+      const photo = await compressImage(data.photoFile)
+      await uploadPhoto(id, photo)
     }
     navigate(ROUTES.PET.DETAIL(id))
   }
@@ -47,6 +50,7 @@ export default function PetEditPage() {
         gender: pet.gender ?? '',
         castrated: pet.castrated ?? false,
         birthDate: pet.birthDate ? pet.birthDate.slice(0, 10) : '',
+        notes: pet.notes ?? '',
         photoUrl: pet.photoUrl,
       }
     : undefined
