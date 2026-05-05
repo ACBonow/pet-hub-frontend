@@ -40,6 +40,8 @@ export default function AdoptionForm({ onSubmit, isLoading }: AdoptionFormProps)
   const {
     register,
     handleSubmit,
+    setValue,
+    getValues,
     formState: { errors },
   } = useForm<AdoptionFormValues>({
     defaultValues: {
@@ -74,6 +76,9 @@ export default function AdoptionForm({ onSubmit, isLoading }: AdoptionFormProps)
   const handleSelectPet = (pet: Pet) => {
     setSelectedPet(pet)
     setPetError(null)
+    if (pet.notes && !getValues('description')) {
+      setValue('description', pet.notes)
+    }
   }
 
   return (

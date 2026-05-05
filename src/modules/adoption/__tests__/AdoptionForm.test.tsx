@@ -27,6 +27,9 @@ const MOCK_PET: Pet = {
   updatedAt: '2026-01-01T00:00:00.000Z',
 }
 
+// petToSelect is mutated per-test to control which pet the modal returns
+let petToSelect: Pet
+
 // Isolate AdoptionForm from PetPickerModal internals — modal is tested separately
 jest.mock('@/modules/adoption/components/PetPickerModal', () => ({
   default: ({ isOpen, onSelect, onClose }: {
@@ -36,7 +39,7 @@ jest.mock('@/modules/adoption/components/PetPickerModal', () => ({
   }) =>
     isOpen ? (
       <div role="dialog" aria-label="Selecionar pet">
-        <button onClick={() => onSelect(MOCK_PET)}>Selecionar Rex</button>
+        <button onClick={() => onSelect(petToSelect)}>Selecionar Rex</button>
         <button onClick={onClose}>Fechar modal</button>
       </div>
     ) : null,
@@ -56,6 +59,7 @@ describe('AdoptionForm', () => {
   beforeEach(() => {
     jest.clearAllMocks()
     mockOnSubmit.mockResolvedValue(undefined)
+    petToSelect = MOCK_PET
   })
 
   it('renders "Selecionar pet" button initially', () => {
@@ -173,5 +177,27 @@ describe('AdoptionForm', () => {
 
     const submitButton = screen.getByRole('button', { name: /publicar anúncio/i })
     expect(submitButton).toBeDisabled()
+  })
+
+  it('pre-fills description with pet notes when description is empty', async () => {
+    petToSelect = { ...MOCK_PET, notes: 'Portador de FIV. Temperamento dócil.' }
+    renderForm()
+
+    await userEvent.click(screen.getByRole('button', { name: /selecionar pet/i }))
+    await userEvent.click(screen.getByRole('button', { name: /selecionar rex/i }))
+
+    expect(screen.getByLabelText(/descrição/i)).toHaveValue('Portador de FIV. Temperamento dócil.')
+  })
+
+  it('does not overwrite description when pet is selected and field already has content', async () => {
+    renderForm()
+
+    await userEvent.type(screen.getByLabelText(/descrição/i), 'Texto já preenchido')
+
+    petToSelect = { ...MOCK_PET, notes: 'Portador de FIV.' }
+    await userEvent.click(screen.getByRole('button', { name: /selecionar pet/i }))
+    await userEvent.click(screen.getByRole('button', { name: /selecionar rex/i }))
+
+    expect(screen.getByLabelText(/descrição/i)).toHaveValue('Texto já preenchido')
   })
 })
