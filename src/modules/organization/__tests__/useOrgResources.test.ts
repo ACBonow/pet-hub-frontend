@@ -31,6 +31,7 @@ const PET_FIXTURE: Pet = {
   castrated: false,
   birthDate: null,
   photoUrl: null,
+  notes: null,
   primaryTutorId: 'u1',
   primaryTutorshipType: 'OWNER',
   coTutors: [],

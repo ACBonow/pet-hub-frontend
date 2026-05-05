@@ -77,6 +77,7 @@ const MOCK_PET: Pet = {
   castrated: null,
   birthDate: null,
   photoUrl: null,
+  notes: null,
   primaryTutorId: 'person-1',
   primaryTutorshipType: 'OWNER',
   coTutors: [],

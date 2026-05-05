@@ -21,6 +21,7 @@ const mockPet = {
   castrated: null,
   birthDate: '2022-01-15',
   photoUrl: null,
+  notes: null,
   primaryTutorId: 'person-1',
   primaryTutorshipType: 'OWNER' as const,
   coTutors: [],
